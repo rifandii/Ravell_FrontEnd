@@ -6,11 +6,13 @@ import {
   FolderOpen, // Mengganti Categories
   Hash, // Mengganti Tags
   Archive,
-  //User, // Mengganti Info
+  /*
+  User,
   Github,
   Linkedin,
   Instagram,
   Twitter,
+  */
   Terminal // Ikon dekoratif tambahan
 } from "lucide-react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
@@ -37,13 +39,14 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }: SidebarProps) => {
     ]}
      */ 
   ];
-
+  /* 
   const socialItems = [
     { href: "#", icon: Github, label: "GitHub" },
     { href: "#", icon: Linkedin, label: "LinkedIn" },
     { href: "#", icon: Twitter, label: "Twitter" },
     { href: "#", icon: Instagram, label: "Instagram" },
   ];
+  */
 
   const isActive = (path: string) => {
     if (path === "/") return location.pathname === path;
@@ -86,11 +89,11 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }: SidebarProps) => {
               </div>
               <div>
                 <h1 className="font-bold text-gray-900 dark:text-white leading-tight">
-                  Ravell Net
+                  Ravell
                 </h1>
                 <p className="text-xs text-gray-500 dark:text-gray-400 font-medium flex items-center gap-1">
                   <Terminal className="w-3 h-3" />
-                  Network Engineer
+                  IT Guy.
                 </p>
               </div>
             </div>
@@ -155,6 +158,7 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }: SidebarProps) => {
         {/* --- FOOTER: Socials & Copyright --- */}
         <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50">
           <div className="flex justify-center gap-2 mb-4">
+            {/*
             {socialItems.map((item) => (
               <a
                 key={item.label}
@@ -167,6 +171,7 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }: SidebarProps) => {
                 <item.icon className="w-4 h-4" />
               </a>
             ))}
+            */}
           </div>
           <div className="text-center">
             <p className="text-[10px] text-gray-400 dark:text-gray-600 uppercase tracking-widest">
