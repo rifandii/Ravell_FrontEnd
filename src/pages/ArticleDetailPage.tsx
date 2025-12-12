@@ -173,8 +173,7 @@ const ArticleDetailPage = () => {
             return (
                 <h2 id={id} className="group flex items-center gap-2 text-2xl md:text-3xl font-bold mt-12 mb-6 text-gray-900 dark:text-white scroll-mt-24">
                     {children}
-                    <a href={`#${id}`} className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-blue-500 transition-opacity" aria-label="Link to this section">
-                        #
+                    <a href={`#${id}`} className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-blue-500 transition-opacity" aria-label="Link to this section">                        
                     </a>
                 </h2>
             );
