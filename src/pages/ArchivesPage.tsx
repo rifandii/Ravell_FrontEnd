@@ -33,7 +33,7 @@ const ArchivesPage = () => {
     const fetchArchives = async () => {
       try {
         // Idealnya gunakan apiClient, tapi axios langsung juga oke untuk refactor UI ini
-        const response = await axios.get('https://fandi-beprofile-production.up.railway.app/api/archives/');
+        const response = await axios.get('https://web-production-cb2c8.up.railway.app/api/archives/');
         setArchives(response.data);
       } catch (err) {
         console.error('Error fetching archives:', err);
