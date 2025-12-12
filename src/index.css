@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+body {
+  /* Font Fallback: Inter (primary), Sans-Serif (system default) */
+  font-family: 'Inter', sans-serif; 
+  @apply bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white;
+}
+
+code, pre {
+  font-family: 'Roboto Mono', monospace; 
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Styling untuk Scrollbar Kustom */
+/* Ini adalah solusi yang didukung oleh Chrome, Edge, dan Safari */
+/* Perluasan Scrollbar untuk Firefox, Chrome, dan Safari */
+
+/* Untuk Chrome, Edge, Safari */
+*::-webkit-scrollbar {
+  width: 8px; /* Lebar scrollbar vertikal */
+  height: 8px; /* Tinggi scrollbar horizontal */
+}
+
+*::-webkit-scrollbar-track {
+  /* Warna track (latar belakang) */
+  background: #25252d; /* Warna gelap serasi dengan background dark mode */
+}
+
+*::-webkit-scrollbar-thumb {
+  /* Warna thumb (penggeser) */
+  background-color: #4b5563; /* Gray-600 */
+  border-radius: 4px;
+  border: 1px solid #1f2937; /* Border gelap */
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #6b7280; /* Gray-500 saat hover */
+}
+
+
+.transition-transform {
+  transition-property: transform;
+}
+.transition-opacity {
+  transition-property: opacity;
+}
+.transition-all {
+  transition-property: all;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE & Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
