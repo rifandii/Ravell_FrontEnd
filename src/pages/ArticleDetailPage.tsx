@@ -138,7 +138,7 @@ const ArticleDetailPage = () => {
                                 style={vscDarkPlus}
                                 language={language}
                                 PreTag="div"
-                                showLineNumbers={false} // Matikan line numbers jika ingin seperti terminal murni
+                                showLineNumbers={true} // Matikan line numbers jika ingin seperti terminal murni
                                 customStyle={{ 
                                     margin: 0, 
                                     padding: '1.25rem', 
