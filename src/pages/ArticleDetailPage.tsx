@@ -108,7 +108,10 @@ const ArticleDetailPage = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     code({ inline, className, children, ...props }: any) {
       const match = /language-(\w+)/.exec(className || "");
-      const codeText = String(children).replace(/\n$/, "");
+      // [LINE 108] Hapus backticks (`) di awal/akhir string dan newline
+      const codeText = String(children)
+        .replace(/\n$/, "")
+        .replace(/^`|`$/g, "");
       const language = match ? match[1] : "text";
 
       const isBlockCode = !inline;
@@ -118,8 +121,8 @@ const ArticleDetailPage = () => {
         // bg-[#1e1e1e]: Warna background editor VS Code default
         // border-[#333]: Border gelap yang sangat tipis
         <div className="my-6 rounded-lg overflow-hidden border border-[#333] bg-[#1e1e1e] shadow-2xl relative group font-mono text-sm">
-          {/* [STYLE CHANGE] VS Code Header/Title Bar */}
-          <div className="flex items-center justify-between px-4 py-2 bg-[#252526] border-b border-[#1e1e1e]">
+          {/* [LINE 122] Presisi Header: Gunakan h-10 fix dan hapus padding vertikal (py-2) */}
+          <div className="flex items-center justify-between px-4 h-10 bg-[#252526] border-b border-[#1e1e1e]">
             <div className="flex items-center gap-3">
               {/* Ikon Terminal sederhana */}
               <Terminal className="w-4 h-4 text-blue-400" />
@@ -130,8 +133,8 @@ const ArticleDetailPage = () => {
               </span>
             </div>
 
-            {/* Tombol Copy */}
-            <div className="relative z-10 opacity-70 group-hover:opacity-100 transition-opacity">
+            {/* [LINE 135] Tombol Copy: Tambah 'flex items-center' agar presisi */}
+            <div className="relative z-10 opacity-70 group-hover:opacity-100 transition-opacity flex items-center">
               <CopyButton text={codeText} />
             </div>
           </div>
@@ -205,7 +208,7 @@ const ArticleDetailPage = () => {
             className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-blue-500 transition-opacity"
             aria-label="Link to this section"
           >
-            
+            #
           </a>
         </h2>
       );
