@@ -104,48 +104,51 @@ const ArticleDetailPage = () => {
 
   // --- Custom Markdown Components ---
   const components: Components = {
-    // 1. Code Blocks (Mac Terminal Style)
+    // 1. Code Blocks (VS Code Terminal Style)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     code({ inline, className, children, ...props }: any) {
       const match = /language-(\w+)/.exec(className || "");
       const codeText = String(children).replace(/\n$/, "");
       const language = match ? match[1] : "text";
 
-      // [PERBAIKAN] Cek 'inline' prop. Jika false, berarti ini blok kode.
-      // Sebelumnya hanya mengecek 'match', yang gagal jika tidak ada bahasa spesifik.
       const isBlockCode = !inline;
 
       return isBlockCode ? (
-        <div className="my-6 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-[#1e1e1e] shadow-lg relative group">
-          {/* Mac-style Window Header */}
-          <div className="flex items-center justify-between px-4 py-2 bg-[#2d2d2d] border-b border-gray-700">
-            <div className="flex items-center gap-2">
-              <div className="flex gap-1.5">
-                <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
-                <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
-                <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
-              </div>
-              <span className="ml-3 text-xs text-gray-400 font-mono flex items-center gap-1">
-                <Terminal className="w-3 h-3" />
+        // [STYLE CHANGE] VS Code Style Container
+        // bg-[#1e1e1e]: Warna background editor VS Code default
+        // border-[#333]: Border gelap yang sangat tipis
+        <div className="my-6 rounded-lg overflow-hidden border border-[#333] bg-[#1e1e1e] shadow-2xl relative group font-mono text-sm">
+          {/* [STYLE CHANGE] VS Code Header/Title Bar */}
+          <div className="flex items-center justify-between px-4 py-2 bg-[#252526] border-b border-[#1e1e1e]">
+            <div className="flex items-center gap-3">
+              {/* Ikon Terminal sederhana */}
+              <Terminal className="w-4 h-4 text-blue-400" />
+
+              {/* Nama Bahasa (Uppercase, seperti Tab di VS Code) */}
+              <span className="text-xs text-gray-300 font-medium uppercase tracking-wider">
                 {language}
               </span>
             </div>
-            {/* Copy Button should be here. Ensure z-index if needed */}
-            <div className="relative z-10">
+
+            {/* Tombol Copy */}
+            <div className="relative z-10 opacity-70 group-hover:opacity-100 transition-opacity">
               <CopyButton text={codeText} />
             </div>
           </div>
 
           {/* Code Content */}
-          <div className="text-sm overflow-x-auto">
+          <div className="overflow-x-auto">
             <SyntaxHighlighter
               style={vscDarkPlus}
               language={language}
               PreTag="div"
+              // Padding disesuaikan agar mirip editor
               customStyle={{
                 margin: 0,
-                padding: "1.5rem",
+                padding: "1.25rem",
                 background: "transparent",
+                fontSize: "0.9rem",
+                lineHeight: "1.6",
               }}
               {...props}
             >
@@ -154,9 +157,9 @@ const ArticleDetailPage = () => {
           </div>
         </div>
       ) : (
-        // Inline Code
+        // Inline Code (Tetap sama, tapi disesuaikan sedikit warnanya)
         <code
-          className="px-1.5 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 text-red-500 dark:text-red-400 font-mono text-sm font-medium border border-gray-200 dark:border-gray-700"
+          className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-800 text-red-600 dark:text-red-400 font-mono text-sm font-medium"
           {...props}
         >
           {children}
@@ -164,7 +167,7 @@ const ArticleDetailPage = () => {
       );
     },
 
-    // 2. Images (Zoomable + Caption support logic layout)
+    // 2. Images
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     img({ ...props }: any) {
       const isRelative = props.src && props.src.startsWith("/");
@@ -176,7 +179,7 @@ const ArticleDetailPage = () => {
           <img
             {...props}
             src={fullSrc}
-            className="w-full h-auto rounded-xl shadow-md cursor-zoom-in hover:shadow-xl transition-shadow duration-300 border border-gray-100 dark:border-gray-800"
+            className="w-full h-auto rounded-lg shadow-md cursor-zoom-in hover:shadow-xl transition-shadow duration-300 border border-gray-100 dark:border-gray-800"
             onClick={() => setZoomedImageUrl(fullSrc || null)}
             loading="lazy"
           />
@@ -202,7 +205,7 @@ const ArticleDetailPage = () => {
             className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-blue-500 transition-opacity"
             aria-label="Link to this section"
           >
-            #
+            
           </a>
         </h2>
       );
