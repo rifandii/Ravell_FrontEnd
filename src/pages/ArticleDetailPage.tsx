@@ -107,51 +107,72 @@ const ArticleDetailPage = () => {
         // 1. Code Blocks (VS Code Terminal Style)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         code({ inline, className, children, ...props }: any) {
-            const match = /language-(\w+)/.exec(className || '');
-            
-            // [LINE 109] BERSIHKAN TEXT: Hapus newline di akhir DAN backticks liar
-            const codeText = String(children).replace(/\n$/, '').replace(/^`|`$/g, '');
-            
-            const language = match ? match[1] : 'text'; // Default 'text' jika tidak ada bahasa
-            const isBlockCode = !inline; // Deteksi blok vs inline
+            // Deteksi bahasa (lebih toleran terhadap karakter seperti +, -)
+            const match = /language-([^\s]+)/.exec(className || '');
+            const language = match ? match[1] : 'text';
+            const isBlockCode = !inline;
 
-            return isBlockCode ? (
-                // [STYLE] Container VS Code
-                <div className="my-6 rounded-lg overflow-hidden border border-[#333] bg-[#1e1e1e] shadow-2xl relative group font-mono text-sm">
-                    
-                    {/* [LINE 119] Header Presisi: h-10 fix & flex-between */}
-                    <div className="flex items-center justify-between px-4 h-10 bg-[#252526] border-b border-[#1e1e1e] select-none">
-                        <div className="flex items-center gap-3">
-                            <Terminal className="w-4 h-4 text-blue-400" />
-                            {/* Tampilkan Bahasa (Uppercase) */}
-                            <span className="text-xs text-gray-300 font-medium uppercase tracking-wider">
-                                {language}
-                            </span>
+            // Normalisasi children jadi string dan bersihkan newline akhir
+            const raw = React.Children.toArray(children).join('');
+            let codeText = String(raw).replace(/\n$/, '');
+
+            // Hapus backticks pembungkus hanya jika ada di awal & akhir
+            if (codeText.length > 1 && codeText.startsWith('`') && codeText.endsWith('`')) {
+                codeText = codeText.slice(1, -1);
+            }
+
+            if (isBlockCode) {
+                return (
+                    // [STYLE] Container VS Code
+                    <div className="my-6 rounded-lg overflow-hidden border border-[#333] bg-[#1e1e1e] shadow-2xl relative group font-mono text-sm">
+                        
+                        {/* [HEADER] */}
+                        <div className="flex items-center justify-between px-4 h-10 bg-[#252526] border-b border-[#1e1e1e] select-none">
+                            <div className="flex items-center gap-3">
+                                <Terminal className="w-4 h-4 text-blue-400" />
+                                {/* Tampilkan Bahasa (Uppercase) */}
+                                <span className="text-xs text-gray-300 font-medium uppercase tracking-wider">
+                                    {language}
+                                </span>
+                            </div>
+                            
+                            {/* Copy */}
+                            <div className="flex items-center h-full relative z-10 opacity-70 group-hover:opacity-100 transition-opacity">
+                                <CopyButton text={codeText} />
+                            </div>
                         </div>
                         
-                        {/* [LINE 130] Tombol Copy Container: Flex center untuk presisi vertikal */}
-                        <div className="flex items-center h-full relative z-10 opacity-70 group-hover:opacity-100 transition-opacity">
-                            <CopyButton text={codeText} />
+                        {/* Code Content dengan nomor baris */}
+                        <div className="overflow-x-auto">
+                            <SyntaxHighlighter
+                                style={vscDarkPlus}
+                                language={language}
+                                PreTag="div"
+                                showLineNumbers
+                                wrapLines
+                                // Menata gaya nomor baris agar kontras & tidak mengganggu
+                                lineNumberStyle={{
+                                    minWidth: '2.25rem',
+                                    paddingRight: '0.75rem',
+                                    color: '#6b7280',
+                                    background: 'transparent',
+                                    userSelect: 'none',
+                                    textAlign: 'right'
+                                }}
+                                customStyle={{ margin: 0, padding: '1.25rem', background: 'transparent', fontSize: '0.9rem', lineHeight: '1.6' }}
+                                {...props}
+                            >
+                                {codeText}
+                            </SyntaxHighlighter>
                         </div>
                     </div>
-                    
-                    {/* Code Content */}
-                    <div className="overflow-x-auto">
-                        <SyntaxHighlighter
-                            style={vscDarkPlus}
-                            language={language}
-                            PreTag="div"
-                            customStyle={{ margin: 0, padding: '1.25rem', background: 'transparent', fontSize: '0.9rem', lineHeight: '1.6' }}
-                            {...props}
-                        >
-                            {codeText}
-                        </SyntaxHighlighter>
-                    </div>
-                </div>
-            ) : (
-                // Inline Code
+                );
+            }
+
+            // Inline Code -> gunakan codeText yang sudah dibersihkan
+            return (
                 <code className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-800 text-red-600 dark:text-red-400 font-mono text-sm font-medium" {...props}>
-                    {children}
+                    {codeText}
                 </code>
             );
         },
@@ -262,7 +283,7 @@ const ArticleDetailPage = () => {
 
                 <div className="flex flex-wrap justify-center gap-2 mb-6">
                     {article.tags.map(tag => (
-                        <span key={tag.id} className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-100 dark:border-blue-800">
+                        <span key={tag.id} className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-[...]
                             <Hash className="w-3 h-3 mr-1" />
                             {tag.name}
                         </span>
