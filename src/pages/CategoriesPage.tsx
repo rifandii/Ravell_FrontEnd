@@ -6,9 +6,9 @@ import CategoryItem from '../components/CategoryItem';
 import Skeleton from 'react-loading-skeleton';
 import { 
   FolderTree, 
-  Layers, 
   AlertCircle 
 } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const CategoriesPage = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -73,6 +73,10 @@ const CategoriesPage = () => {
 
   return (
     <div className="w-full px-4 md:px-8 py-12 animate-in fade-in duration-500">
+      <SEO 
+        title="Categories" 
+        description="Explore our structured documentation by topic hierarchy."
+      />
       
       {/* --- HEADER SECTION --- */}
       <div className="max-w-2xl mx-auto text-center mb-12">

@@ -10,6 +10,7 @@ import type { Article, Category, Tag } from "../types/types";
 import ArticleCard from "../components/ArticleCard";
 import SkeletonCard from "../components/SkeletonCard";
 import Skeleton from "react-loading-skeleton";
+import SEO from "../components/SEO";
 
 // Icons from Lucide React
 import {
@@ -129,6 +130,10 @@ const HomePage = () => {
 
   return (
     <div className="w-full animate-in fade-in duration-500">
+      <SEO 
+        title="Home" 
+        description="Your Hub for Networking & Security Insights. Dive into detailed articles, tutorials, and latest trends in networking and security." 
+      />
       {/* --- HERO SECTION: COMMAND CENTER --- */}
       <section className="relative overflow-hidden pt-24 pb-20 md:pt-32 md:pb-28 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-950 dark:to-blue-950/30 text-center">
         {/* Background Dot Grid */}

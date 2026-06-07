@@ -1,176 +1,138 @@
----
+<div align="center">
+  <img src="public/logo.png" alt="Ravell Networks Logo" width="120" />
+  <h1>Ravell Networks Frontend</h1>
+  <p><em>Architecting Secure Digital Infrastructures</em></p>
 
-# **Ravell Networks — Blog Pribadi (React & Tailwind)**
-
-Selamat datang di repositori **Ravell Networks**, sebuah blog teknis modern yang dibangun menggunakan **React**, **TypeScript**, dan **Tailwind CSS**.
-Proyek ini dirancang sebagai platform berbagi pengetahuan yang cepat, responsif, dan kaya fitur, dengan fokus pada **Jaringan** dan **Keamanan**.
-
----
-
-## 📸 **Tampilan (Screenshot)**
-
-> ✨ Sangat direkomendasikan untuk menambahkan 1–2 screenshot tampilan blog Anda.
-
-**Ganti URL berikut dengan screenshot Anda:**
-
-![Tampilan Desktop Ravell Networks](URL_SCREENSHOT_DESKTOP_ANDA_DI_SINI)
-![Tampilan Mobile Ravell Networks](URL_SCREENSHOT_MOBILE_ANDA_DI_SINI)
+  <!-- Badges -->
+  <p>
+    <img src="https://img.shields.io/badge/React-19.0.0-61DAFB?logo=react&logoColor=black" alt="React" />
+    <img src="https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
+    <img src="https://img.shields.io/badge/Tailwind_CSS-4.1-38B2AC?logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+    <img src="https://img.shields.io/badge/Vite-7.0-646CFF?logo=vite&logoColor=white" alt="Vite" />
+  </p>
+</div>
 
 ---
 
-## 🚀 **Fitur Utama**
+## 📖 Overview
 
-### 🎨 **Desain & Pengalaman Pengguna (UX)**
+Welcome to the **Ravell Networks** frontend repository. This project serves as a modern, high-performance technical blog and knowledge base, specifically engineered for professionals in **Network Engineering** and **Cybersecurity**. 
 
-* **Desain Tiga Kolom:** Layout *Holy Grail* dengan Navigasi Kiri, Konten Utama, dan Sidebar Kanan.
-* **Tema Gelap/Terang:** Tombol toggle tema yang smooth dan mengingat preferensi pengguna.
-* **Animasi Header:**
-
-  * Header bersembunyi saat scroll ke bawah, muncul saat scroll ke atas.
-  * Animasi *slide-in* dan *fade-in* saat halaman pertama kali dimuat.
-* **Responsif Sepenuhnya:** Mobile-first dan optimal di layar kecil hingga ultrawide.
-* **Skeleton Loading:** Skeleton elegan yang mencegah layout shift.
-* **Efek Hover Halus:** Transisi halus pada card, tombol, dan link.
+Built with React, TypeScript, and Tailwind CSS, this platform prioritizes speed, responsive design, and an exceptional reading experience. It features dynamic markdown rendering, syntax highlighting for code snippets, and a sophisticated SEO implementation.
 
 ---
 
-## 📰 **Konten & Navigasi**
+## ✨ Key Features
 
-* **Render Markdown:** Artikel ditulis dalam Markdown dan dirender dengan *react-markdown*.
-* **Syntax Highlighting:** Warna sintaks otomatis menggunakan *react-syntax-highlighter*.
-* **Sidebar Kanan Kontekstual:**
+### 🎨 Modern UI/UX Architecture
+- **Holy Grail Layout:** An intuitive three-column design featuring persistent left navigation, a focused reading area, and a context-aware right sidebar.
+- **Smart Theming:** Seamless Dark/Light mode toggle with system preference detection and state persistence.
+- **Micro-interactions:** Fluid animations, including slide-ins, fade-ins, and scroll-aware dynamic headers.
+- **Responsive Design:** A mobile-first approach ensuring pixel-perfect rendering across all device breakpoints.
+- **Performance First:** Integrated Skeleton Loading states to prevent Cumulative Layout Shifts (CLS) during data fetching.
 
-  * Pada Homepage → Artikel Terbaru & Tag Populer.
-  * Pada Halaman Artikel → Table of Contents dengan scroll-spy.
-* **Pencarian Cerdas:**
+### 📝 Content & Reading Experience
+- **Advanced Markdown:** Fully supports GitHub Flavored Markdown (GFM) via `react-markdown`.
+- **Code Highlighting:** Integrated `react-syntax-highlighter` mimicking a VS Code terminal environment.
+- **Intelligent Navigation:** 
+  - Auto-generated, scroll-spy enabled Table of Contents (ToC).
+  - Dynamic breadcrumb trails for spatial awareness.
+- **Interactive Media:** Click-to-zoom image lightboxes for detailed diagram inspection.
+- **Reading Utility:** A sticky reading progress bar to track article completion.
 
-  * Form pencarian di header untuk desktop.
-  * Overlay full-screen untuk mobile.
-* **Breadcrumbs Dinamis:** Otomatis menghasilkan jejak navigasi (Home > Articles > Judul).
-* **Layout Card Responsif:** Berubah dari vertikal di mobile menjadi horizontal di desktop.
-* **Halaman “About Me”:** Tampilan profesional dengan info penulis & portofolio.
-* **Halaman Arsip:** Tampilan timeline berdasarkan tahun dan bulan.
-
----
-
-## 🛠️ **Fungsionalitas Teknis**
-
-* **React Context (SidebarContext):** Mengelola state global seperti judul halaman & TOC.
-* **API Service Terpisah:** *apiClient.ts* dipisahkan dari komponen UI.
-* **Reading Progress Bar:** Menunjukkan progres membaca artikel.
-* **Paginasi:** Navigasi antar halaman daftar artikel.
-* **Image Zoom:** Klik gambar untuk membuka mode lightbox.
-* **Tombol “Copy Code”:** Tersedia pada setiap blok kodee.
+### 🔍 Discovery & SEO
+- **Robust Search & Filtering:** Filter articles by categories, tags, or perform full-text queries.
+- **Timeline Archive:** A chronological timeline view of all published content.
+- **Optimized SEO:** Fully integrated `react-helmet-async` providing dynamic meta tags, Open Graph protocols, and Twitter Cards for rich social sharing.
 
 ---
 
-## 🧰 **Tumpukan Teknologi (Tech Stack)**
+## 💻 Tech Stack
 
-### **Frontend**
+### Core Technologies
+- **Framework:** React 19
+- **Language:** TypeScript
+- **Bundler:** Vite
+- **Routing:** React Router v7
 
-* React (Hooks)
-* TypeScript
+### Styling & UI
+- **CSS Framework:** Tailwind CSS v4
+- **Icons:** Lucide React & FontAwesome
+- **Animations:** Framer Motion & Tailwind Animate
+- **Typography:** `@tailwindcss/typography`
 
-### **Styling**
-
-* Tailwind CSS
-* `tailwindcss-animate`
-* `@tailwindcss/typography` (prose)
-
-### **Routing**
-
-* React Router DOM
-
-### **Markdown Renderer**
-
-* `react-markdown`
-* `remark-gfm`
-
-### **Syntax Highlighting**
-
-* `react-syntax-highlighter`
-
-### **Icons**
-
-* Lucide React
-* Heroicons
+### Data & Content
+- **Data Fetching:** Axios & TanStack React Query
+- **Markdown Handling:** `react-markdown`, `remark-gfm`
+- **SEO:** `react-helmet-async`
 
 ---
 
-## ⚙️ **Instalasi & Menjalankan Proyek**
+## 🚀 Getting Started
 
-### 1. Clone repositori
+### Prerequisites
+Ensure you have the following installed:
+- [Node.js](https://nodejs.org/) (v18 or higher recommended)
+- [npm](https://www.npmjs.com/) or [pnpm](https://pnpm.io/)
 
-```bash
-git clone https://github.com/USERNAME_ANDA/NAMA_REPO_ANDA.git
-cd NAMA_REPO_ANDA
-```
+### Installation
 
-### 2. Instal dependensi
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/USERNAME/ravell-frontend.git
+   cd ravell-frontend
+   ```
 
-```bash
-npm install
-```
+2. **Install dependencies:**
+   ```bash
+   npm install
+   # or
+   pnpm install
+   ```
 
-### 3. Jalankan server pengembangan
+3. **Start the development server:**
+   ```bash
+   npm run dev
+   # or
+   pnpm dev
+   ```
 
-Jika menggunakan **Vite**:
-
-```bash
-npm run dev
-```
-
-Jika menggunakan **Create React App**:
-
-```bash
-npm start
-```
-
-### 4. Buka aplikasi di browser
-
-Buka:
-
-```
-http://localhost:5173
-```
-
-(Port dapat berbeda sesuai konfigurasi Vite/CRA.)
+4. **Open in browser:**
+   Navigate to `http://localhost:5173` to view the application.
 
 ---
 
-## 📂 **Struktur Proyek (Disederhanakan)**
+## 📂 Project Structure
 
-```
-myitblog_frontend/
-├── public/
-│   └── profile.png
+```text
+ravell-frontend/
+├── public/                 # Static assets (robots.txt, sitemap.xml, images)
 ├── src/
-│   ├── components/
-│   │   ├── ArticleCard.tsx
-│   │   ├── Breadcrumbs.tsx
-│   │   ├── Footer.tsx
-│   │   ├── Header.tsx
-│   │   ├── Layout.tsx
-│   │   ├── Navbar.tsx
-│   │   ├── Pagination.tsx
-│   │   ├── ReadingProgressBar.tsx
-│   │   ├── RightSidebar.tsx
-│   │   ├── SkeletonCard.tsx
-│   │   └── ThemeToggle.tsx
-│   ├── pages/
-│   │   ├── AboutPage.tsx
-│   │   ├── ArchivesPage.tsx
-│   │   ├── ArticleDetailPage.tsx
-│   │   ├── ArticleListPage.tsx
-│   │   └── HomePage.tsx
-│   ├── services/
-│   │   └── apiClient.ts
-│   ├── context/
-│   │   └── SidebarContext.tsx
-│   ├── types/
-│   │   └── types.ts
-│   ├── App.tsx
-│   └── main.tsx
-├── tailwind.config.js
-└── package.json
+│   ├── assets/             # Global CSS and local assets
+│   ├── components/         # Reusable UI components (SEO, Header, Cards)
+│   ├── context/            # Global React Contexts (Theme, Sidebar)
+│   ├── hooks/              # Custom React hooks
+│   ├── pages/              # Route-level components (Home, ArticleDetail)
+│   ├── services/           # API integration and HTTP clients
+│   ├── types/              # TypeScript interfaces and type definitions
+│   ├── App.tsx             # Main application shell and routing setup
+│   └── main.tsx            # Application entry point
+├── eslint.config.js        # ESLint configuration
+├── vite.config.ts          # Vite bundler configuration
+└── tailwind.config.js      # Tailwind CSS configuration
 ```
+
+---
+
+## 📜 Scripts
+
+- `npm run dev`: Starts the Vite development server.
+- `npm run build`: Compiles TypeScript and builds the production bundle.
+- `npm run preview`: Bootstraps a local server to preview the production build.
+- `npm run lint`: Runs ESLint to identify and report on patterns in the codebase.
+
+---
+
+<div align="center">
+  <p>Built with ❤️ by <a href="https://github.com/USERNAME">Ravell Networks</a></p>
+</div>

@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { getArticleBySlug } from '../services/apiClient';
 import type { Article, Heading } from '../types/types';
-import { Helmet } from 'react-helmet-async';
+import SEO from '../components/SEO';
 
 // Markdown & Syntax Highlighting
 import React from 'react';
@@ -243,24 +243,13 @@ const ArticleDetailPage = () => {
 
     return (
         <div className="w-full pb-20 animate-in fade-in duration-500">
-            <Helmet>
-                <title>{article.title} - Ravell Networks</title>
-                <meta name="description" content={article.summary || `Read comprehensive guide about ${article.title}`} />
-                <meta name="author" content={article.author_username} />
-                <meta property="og:type" content="article" />
-                <meta property="og:title" content={article.title} />
-                <meta property="og:description" content={article.summary || `Read comprehensive guide about ${article.title}`} />
-                <meta property="og:url" content={window.location.href} />
-                {article.featured_image_url && (
-                    <meta property="og:image" content={article.featured_image_url} />
-                )}
-                <meta name="twitter:card" content="summary_large_image" />
-                <meta name="twitter:title" content={article.title} />
-                <meta name="twitter:description" content={article.summary || `Read comprehensive guide about ${article.title}`} />
-                {article.featured_image_url && (
-                    <meta name="twitter:image" content={article.featured_image_url} />
-                )}
-            </Helmet>
+            <SEO 
+                title={article.title}
+                description={article.summary || `Read comprehensive guide about ${article.title}`}
+                type="article"
+                image={article.featured_image_url || undefined}
+                url={window.location.href}
+            />
 
             <header className="max-w-4xl mx-auto px-4 md:px-8 pt-8 md:pt-12 mb-10 text-center">
                 <div className="flex justify-center mb-6">

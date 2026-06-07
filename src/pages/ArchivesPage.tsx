@@ -10,6 +10,7 @@ import {
   Archive, 
   FileText 
 } from 'lucide-react';
+import SEO from '../components/SEO';
 
 // Types
 interface MonthArchive {
@@ -88,6 +89,10 @@ const ArchivesPage = () => {
 
   return (
     <div className="w-full px-4 md:px-8 py-12 animate-in fade-in duration-500">
+      <SEO 
+        title="Archives" 
+        description="A chronological history of all published articles and updates."
+      />
       
       {/* --- HEADER SECTION --- */}
       <div className="max-w-2xl mx-auto text-center mb-16">

@@ -10,6 +10,7 @@ import {
   AlertCircle, 
   Tag as TagIcon 
 } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const TagsPage = () => {
   const [tags, setTags] = useState<Tag[]>([]);
@@ -70,6 +71,10 @@ const TagsPage = () => {
 
   return (
     <div className="w-full px-4 md:px-8 py-12 animate-in fade-in duration-500">
+      <SEO 
+        title="Tags" 
+        description="Browse articles by specific keywords and technical concepts."
+      />
       
       {/* --- HEADER SECTION --- */}
       <div className="max-w-2xl mx-auto text-center mb-12">

@@ -15,6 +15,7 @@ import {
   XCircle, 
   FileQuestion 
 } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const ArticleListPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -152,6 +153,10 @@ const ArticleListPage = () => {
 
   return (
     <div className="w-full px-4 md:px-8 py-8 min-h-screen animate-in fade-in duration-500">
+      <SEO 
+        title={pageContext.title} 
+        description={`Browse our collection of articles about ${pageContext.title}. Find guides, tutorials, and insights.`}
+      />
       
       {/* --- HEADER SECTION --- */}
       <div className="flex flex-col items-center text-center mb-12">

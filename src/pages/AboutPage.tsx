@@ -10,10 +10,15 @@ import {
   Terminal,
   Cpu
 } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const AboutPage = () => {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
+      <SEO 
+        title="About Ravell" 
+        description="Architecting Secure Digital Infrastructures. I bridge the gap between complex network engineering and modern cybersecurity practices."
+      />
       {/* Background Pattern (Konsisten dengan Home) */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] dark:bg-[radial-gradient(#1f2937_1px,transparent_1px)] opacity-25"></div>
