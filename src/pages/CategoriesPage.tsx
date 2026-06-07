@@ -6,6 +6,7 @@ import CategoryItem from '../components/CategoryItem';
 import Skeleton from 'react-loading-skeleton';
 import { 
   FolderTree, 
+  Layers,
   AlertCircle 
 } from 'lucide-react';
 import SEO from '../components/SEO';
