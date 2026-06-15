@@ -34,7 +34,7 @@ const ArchivesPage = () => {
     const fetchArchives = async () => {
       try {
         // Idealnya gunakan apiClient, tapi axios langsung juga oke untuk refactor UI ini
-        const response = await axios.get('https://ravell-backend-1vej.onrender.com/api/archives/');
+        const response = await axios.get('https://api.ravell.tech/api/archives/');
         setArchives(response.data);
       } catch (err) {
         console.error('Error fetching archives:', err);
