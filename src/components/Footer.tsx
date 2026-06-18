@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Github, Linkedin, Twitter, Instagram } from 'lucide-react';
+import { Github, Linkedin, Twitter, Instagram, Rss } from 'lucide-react';
 
 // Komponen SocialLink Kustom untuk merapikan kode
 const SocialLink: React.FC<{
@@ -35,6 +35,7 @@ const Footer = () => {
     { label: "LinkedIn", href: "#", icon: Linkedin },
     { label: "Twitter", href: "#", icon: Twitter },
     { label: "Instagram", href: "#", icon: Instagram },
+    { label: "RSS Feed", href: "/feed.xml", icon: Rss },
   ];
 
   return (

@@ -46,6 +46,10 @@ export default function SEO({
 
       {/* Canonical Link */}
       <link rel="canonical" href={url} />
+
+      {/* RSS & Atom Feeds */}
+      <link rel="alternate" type="application/rss+xml" title="Ravell Networks - RSS Feed" href="/feed.xml" />
+      <link rel="alternate" type="application/atom+xml" title="Ravell Networks - Atom Feed" href="/atom.xml" />
     </Helmet>
   );
 }
