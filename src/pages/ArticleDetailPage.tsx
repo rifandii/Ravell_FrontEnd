@@ -1,5 +1,6 @@
 // src/pages/ArticleDetailPage.tsx
 import { useState, useEffect, useRef } from 'react';
+import dayjs from 'dayjs';
 import { useParams } from 'react-router-dom';
 import { getArticleBySlug } from '../services/apiClient';
 import type { Article, Heading } from '../types/types';
@@ -277,9 +278,7 @@ const ArticleDetailPage = () => {
                     <div className="flex items-center gap-2">
                         <Calendar className="w-4 h-4 text-blue-500" />
                         <time dateTime={article.published_date}>
-                            {new Date(article.published_date).toLocaleDateString('en-US', { 
-                                day: 'numeric', month: 'long', year: 'numeric' 
-                            })}
+                            {dayjs(article.published_date).format('MMMM D, YYYY')}
                         </time>
                     </div>
                     <div className="flex items-center gap-2">

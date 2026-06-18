@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import type { Article } from '../types/types';
 import ReactMarkdown from 'react-markdown';
 import { Calendar, User, ArrowRight, Hash } from 'lucide-react';
+import dayjs from 'dayjs';
 
 interface ArticleCardProps {
   article: Article;
@@ -28,11 +29,7 @@ const ArticleCard = ({ article }: ArticleCardProps) => {
           <div className="flex items-center gap-1.5">
             <Calendar className="w-3.5 h-3.5" />
             <time dateTime={article.published_date}>
-              {new Date(article.published_date).toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric', 
-                year: 'numeric' 
-              })}
+              {dayjs(article.published_date).format('MMM D, YYYY')}
             </time>
           </div>
           <div className="flex items-center gap-1.5">

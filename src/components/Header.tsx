@@ -1,5 +1,6 @@
 // src/components/Header.tsx
 import { useEffect, useState, useRef } from "react";
+import dayjs from "dayjs";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
 import ReadingProgressBar from "./ReadingProgressBar";
@@ -227,7 +228,7 @@ const Header = ({ setIsMenuOpen }: HeaderProps) => {
                                     {article.title}
                                 </h4>
                                 <p className="text-xs text-gray-500">
-                                    {new Date(article.published_date).toLocaleDateString()}
+                                    {dayjs(article.published_date).format('MMM D, YYYY')}
                                 </p>
                             </div>
                         </Link>

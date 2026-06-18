@@ -1,5 +1,6 @@
 // src/components/FurtherReading.tsx
 import { useState, useEffect } from 'react';
+import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { 
@@ -133,11 +134,7 @@ const FurtherReading = ({ currentArticleSlug, previousArticle, nextArticle }: Fu
                                 
                                 <div className="mt-auto pt-4 flex items-center text-xs text-gray-500 dark:text-gray-400">
                                     <Calendar className="w-3 h-3 mr-1.5" />
-                                    {new Date(article.published_date).toLocaleDateString(undefined, {
-                                        year: 'numeric',
-                                        month: 'short',
-                                        day: 'numeric'
-                                    })}
+                                    {dayjs(article.published_date).format('MMM D, YYYY')}
                                 </div>
                             </Link>
                         ))}

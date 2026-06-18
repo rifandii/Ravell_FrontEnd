@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import type { Article } from '../types/types';
 import ReactMarkdown from 'react-markdown'; // <-- 1. IMPORT ReactMarkdown
 import remarkGfm from 'remark-gfm'; // Opsional: untuk GFM (tabel, dll.)
+import dayjs from 'dayjs';
 
 interface ArticleCardProps {
   article: Article;
@@ -37,7 +38,7 @@ const ArticleCardHome = ({ article }: ArticleCardProps) => {
         
         {/* Metadata */}
         <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm mb-4">
-          Published on {new Date(article.published_date).toLocaleDateString()} by {article.author_username}
+          Published on {dayjs(article.published_date).format('MMM D, YYYY')} by {article.author_username}
         </p>
         
         {/* [PERBAIKAN 3] Ganti <p> dengan ReactMarkdown */}

@@ -1,5 +1,6 @@
 // src/components/ArchiveMonthItem.tsx (Fixing Data Overlap)
 import { useState, useEffect } from 'react';
+import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
 import { getPaginatedArticles } from '../services/apiClient';
 import type { Article } from '../types/types';
@@ -76,7 +77,7 @@ const ArchiveMonthItem = ({ year, monthNumber, monthName, postCount }: ArchiveMo
                 to={`/articles/${article.slug}`} 
                 className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 text-sm transition-colors block pl-4 font-semibold"
               >
-                {new Date(article.published_date).toLocaleDateString('default', { day: 'numeric', month: 'short' })} &mdash; {article.title}
+                {dayjs(article.published_date).format('D MMM')} &mdash; {article.title}
               </Link>
             </li>
           ))}
