@@ -1,7 +1,6 @@
 // src/components/Pagination.tsx
 import { useSearchParams } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 interface PaginationProps {
   count: number;
@@ -54,7 +53,7 @@ const Pagination = ({ count, nextPageUrl, prevPageUrl, handlePageChange }: Pagin
         disabled={!prevPageUrl}
         className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer" 
       >
-        <FontAwesomeIcon icon={faArrowLeft} className="mr-2"/> Previous
+        <ArrowLeft size={16} className="mr-2 inline"/> Previous
       </button>
       
       {/* Tombol Nomor Halaman */}
@@ -71,7 +70,7 @@ const Pagination = ({ count, nextPageUrl, prevPageUrl, handlePageChange }: Pagin
         disabled={!nextPageUrl}
         className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
       >
-        Next <FontAwesomeIcon icon={faArrowRight} className="ml-2"/>
+        Next <ArrowRight size={16} className="ml-2 inline"/>
       </button>
     </div>
   );
