@@ -27,7 +27,7 @@ const RightSidebar = () => {
   // Skeleton loading jika data global sedang diambil
   if (loading && !tags.length) {
     return (
-      <aside className="hidden xl:flex flex-col w-80 h-screen sticky top-0 border-l border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0">
+      <aside className="hidden xl:flex flex-col w-80 h-screen sticky top-0 border-l border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-y-auto shrink-0">
         <div className="h-16 px-6 border-b border-gray-200 dark:border-gray-800 flex items-center shrink-0">
           <div className="w-24 h-4 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
         </div>
@@ -148,7 +148,7 @@ const RightSidebar = () => {
   );
 
   return (
-    <aside className="hidden xl:flex flex-col w-80 h-screen sticky top-0 border-l border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0">
+    <aside className="hidden xl:flex flex-col w-80 h-screen sticky top-0 border-l border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-y-auto shrink-0">
       {/* Header Panel Kanan */}
       <div className="h-16 px-6 border-b border-gray-200 dark:border-gray-800 flex items-center shrink-0">
         <span className="font-bold text-xs text-gray-900 dark:text-white tracking-wider uppercase">
