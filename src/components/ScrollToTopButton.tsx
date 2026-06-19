@@ -1,11 +1,10 @@
-// src/components/ScrollToTopButton.tsx
 import { useState, useEffect } from 'react';
-import { ChevronUpIcon } from '@heroicons/react/24/outline';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronUp } from 'lucide-react';
 
 const ScrollToTopButton = () => {
   const [isVisible, setIsVisible] = useState(false);
 
-  // Tampilkan tombol saat user scroll ke bawah
   const toggleVisibility = () => {
     if (window.scrollY > 300) {
       setIsVisible(true);
@@ -14,7 +13,6 @@ const ScrollToTopButton = () => {
     }
   };
 
-  // Gerakkan halaman ke atas dengan smooth scroll
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -30,15 +28,21 @@ const ScrollToTopButton = () => {
   }, []);
 
   return (
-    <button
-      onClick={scrollToTop}
-      className={`fixed bottom-4 right-4 p-3 bg-blue-600 text-white rounded-full shadow-lg transition-opacity duration-300 ${
-        isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
-      }`}
-      aria-label="Scroll to top"
-    >
-      <ChevronUpIcon className="h-6 w-6" />
-    </button>
+    <AnimatePresence>
+      {isVisible && (
+        <motion.button
+          initial={{ opacity: 0, y: 20, scale: 0.8 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 20, scale: 0.8 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-lg hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+          aria-label="Scroll to top"
+        >
+          <ChevronUp className="w-5 h-5" />
+        </motion.button>
+      )}
+    </AnimatePresence>
   );
 };
 

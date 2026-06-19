@@ -18,7 +18,6 @@ import slugify from 'slugify';
 // Components & Icons
 import ImageModal from '../components/ImageModal';
 import CopyButton from '../components/CopyButton';
-import ScrollToTopButton from '../components/ScrollToTopButton';
 import FurtherReading from '../components/FurtherReading';
 import { useSidebar } from '../SidebarContext';
 import Breadcrumbs from '../components/Breadcrumbs';
@@ -346,7 +345,6 @@ const ArticleDetailPage = () => {
                 imageUrl={zoomedImageUrl}
                 onClose={() => setZoomedImageUrl(null)}
             />
-            <ScrollToTopButton />
         </div>
     );
 };

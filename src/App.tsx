@@ -18,6 +18,7 @@ import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import RightSidebar from "./components/RightSidebar";
 import PageTransition from "./components/PageTransition";
+import ScrollToTopButton from "./components/ScrollToTopButton";
 
 // Pages (Lazy Load)
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -97,6 +98,7 @@ function AppContent() {
         {/* Sidebar statis (kanan) */}
         <RightSidebar />
       </div>
+      <ScrollToTopButton />
     </div>
   );
 }
