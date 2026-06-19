@@ -20,7 +20,6 @@ import {
   Tag as TagIcon,
   MessageCircle,
   Zap,
-  LayoutDashboard,
   CalendarDays,
 } from "lucide-react";
 
@@ -134,42 +133,6 @@ const HomePage = () => {
         title="Home" 
         description="Your Hub for Networking & Security Insights. Dive into detailed articles, tutorials, and latest trends in networking and security." 
       />
-      {/* --- HERO SECTION: COMMAND CENTER --- */}
-      <section className="relative overflow-hidden pt-24 pb-20 md:pt-32 md:pb-28 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-950 dark:to-blue-950/30 text-center">
-        {/* Background Dot Grid */}
-        <div
-          className="absolute inset-0 z-0 opacity-20 dark:opacity-10"
-          style={{
-            backgroundImage:
-              "url(\"data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23a0a0a0' fill-opacity='0.2' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E\")",
-          }}
-        ></div>
-        {/* Background Gradient Blob (Styling ini bisa dibuat di global CSS atau disesuaikan) */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 md:w-96 md:h-96 bg-blue-400/20 dark:bg-blue-600/10 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob delay-700"></div>
-        <div className="absolute top-1/4 right-1/4 w-60 h-60 bg-purple-400/20 dark:bg-purple-600/10 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
-
-        <div className="relative z-10 max-w-4xl mx-auto px-4">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 mb-6 shadow-md animate-in fade-in zoom-in duration-700">
-            <LayoutDashboard className="w-8 h-8" />
-          </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight tracking-tight animate-in fade-in slide-in-from-top-4 duration-700">
-            Your Hub for Networking & Security Insights
-          </h1>
-          <p className="text-base sm:text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-10 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-            Dive into detailed articles, tutorials, and latest trends in
-            networking and security. Empower your IT journey with Ravell
-            Networks.
-          </p>
-
-          <Link
-            to="/articles" // Link ke halaman artikel list
-            className="inline-flex items-center gap-2 px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 dark:shadow-blue-800/40 transition-all duration-300 transform hover:-translate-y-1 animate-in fade-in zoom-in duration-700 delay-300"
-          >
-            Explore All Articles
-            <ArrowRight className="w-5 h-5" />
-          </Link>
-        </div>
-      </section>
 
       {/* --- FEATURED ARTICLES --- */}
       {featuredArticles.length > 0 && (
