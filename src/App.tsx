@@ -19,6 +19,7 @@ import Sidebar from "./components/Sidebar";
 import RightSidebar from "./components/RightSidebar";
 import PageTransition from "./components/PageTransition";
 import ScrollToTopButton from "./components/ScrollToTopButton";
+import UpdateNotification from "./components/UpdateNotification";
 
 // Pages (Lazy Load)
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -99,6 +100,7 @@ function AppContent() {
         <RightSidebar />
       </div>
       <ScrollToTopButton />
+      <UpdateNotification />
     </div>
   );
 }

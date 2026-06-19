@@ -19,7 +19,6 @@ self.addEventListener('install', (event) => {
       return cache.addAll(PRECACHE_ASSETS);
     })
   );
-  self.skipWaiting();
 });
 
 // Activate event: Clean up old caches
@@ -131,4 +130,11 @@ self.addEventListener('fetch', (event) => {
       .then((response) => response)
       .catch(() => caches.match(request))
   );
+});
+
+// Listen for skip waiting messages
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
