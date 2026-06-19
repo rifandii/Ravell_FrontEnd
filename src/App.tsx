@@ -1,23 +1,25 @@
 // src/App.tsx
-import { useState, useEffect, lazy, Suspense } from "react"; // [BARU] Import lazy & Suspense
+import { useState, useEffect, lazy, Suspense } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   useLocation,
 } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 import { SidebarProvider } from "./SidebarContext";
 import { ThemeProvider } from "./ThemeContext";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"; // Import
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { usePageTracking } from "./hooks/usePageTracking";
 
-// Components (Eager Load - Dimuat langsung karena selalu tampil)
+// Components
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import RightSidebar from "./components/RightSidebar";
+import PageTransition from "./components/PageTransition";
 
-// [OPTIMASI] Pages (Lazy Load - Dimuat hanya saat dibutuhkan)
+// Pages (Lazy Load)
 const HomePage = lazy(() => import("./pages/HomePage"));
 const ArticleListPage = lazy(() => import("./pages/ArticleListPage"));
 const ArticleDetailPage = lazy(() => import("./pages/ArticleDetailPage"));
@@ -25,9 +27,9 @@ const CategoriesPage = lazy(() => import("./pages/CategoriesPage"));
 const TagsPage = lazy(() => import("./pages/TagsPage"));
 const ArchivesPage = lazy(() => import("./pages/ArchivesPage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
+
 const queryClient = new QueryClient();
 
-// [BARU] Komponen Loading Sederhana saat transisi halaman
 const PageLoader = () => (
   <div className="flex items-center justify-center h-[50vh]">
     <div className="relative w-12 h-12">
@@ -37,7 +39,6 @@ const PageLoader = () => (
   </div>
 );
 
-// --- Utility: ScrollToTop ---
 const ScrollToTop = () => {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -46,15 +47,61 @@ const ScrollToTop = () => {
   return null;
 };
 
-// --- Utility: PageTracker for Google Analytics ---
 const PageTracker = () => {
   usePageTracking();
   return null;
 };
 
-function App() {
+function AppContent() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
 
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans selection:bg-blue-500/30">
+      <div className="flex w-full px-0">
+        {/* Sidebar statis (kiri) */}
+        <Sidebar
+          isMenuOpen={isMenuOpen}
+          setIsMenuOpen={setIsMenuOpen}
+        />
+
+        {/* Area Konten Tengah */}
+        <div className="flex-1 min-w-0 flex flex-col relative">
+          <Header setIsMenuOpen={setIsMenuOpen} />
+
+          <main className="flex-grow w-full px-4 sm:px-6 lg:px-8 py-6">
+            {/* Suspense membungkus AnimatePresence & Routes untuk menangani loading state */}
+            <Suspense fallback={<PageLoader />}>
+              <AnimatePresence mode="wait">
+                <Routes location={location} key={location.pathname}>
+                  <Route path="/" element={<PageTransition><HomePage /></PageTransition>} />
+                  <Route path="/articles" element={<PageTransition><ArticleListPage /></PageTransition>} />
+                  <Route
+                    path="/articles/:slug"
+                    element={<PageTransition><ArticleDetailPage /></PageTransition>}
+                  />
+                  <Route
+                    path="/categories"
+                    element={<PageTransition><CategoriesPage /></PageTransition>}
+                  />
+                  <Route path="/tags" element={<PageTransition><TagsPage /></PageTransition>} />
+                  <Route path="/archives" element={<PageTransition><ArchivesPage /></PageTransition>} />
+                  <Route path="/about" element={<PageTransition><AboutPage /></PageTransition>} />
+                </Routes>
+              </AnimatePresence>
+            </Suspense>
+            <SpeedInsights />
+          </main>
+        </div>
+
+        {/* Sidebar statis (kanan) */}
+        <RightSidebar />
+      </div>
+    </div>
+  );
+}
+
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
@@ -62,45 +109,7 @@ function App() {
           <SidebarProvider>
             <ScrollToTop />
             <PageTracker />
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans selection:bg-blue-500/30">
-              <div className="flex w-full px-0">
-                {/* Sidebar statis (kiri) */}
-                <Sidebar
-                  isMenuOpen={isMenuOpen}
-                  setIsMenuOpen={setIsMenuOpen}
-                />
-
-                {/* Area Konten Tengah */}
-                <div className="flex-1 min-w-0 flex flex-col relative">
-                  <Header setIsMenuOpen={setIsMenuOpen} />
-
-                  <main className="flex-grow w-full px-4 sm:px-6 lg:px-8 py-6">
-                    {/* [OPTIMASI] Suspense membungkus Routes untuk menangani loading state */}
-                    <Suspense fallback={<PageLoader />}>
-                      <Routes>
-                        <Route path="/" element={<HomePage />} />
-                        <Route path="/articles" element={<ArticleListPage />} />
-                        <Route
-                          path="/articles/:slug"
-                          element={<ArticleDetailPage />}
-                        />
-                        <Route
-                          path="/categories"
-                          element={<CategoriesPage />}
-                        />
-                        <Route path="/tags" element={<TagsPage />} />
-                        <Route path="/archives" element={<ArchivesPage />} />
-                        <Route path="/about" element={<AboutPage />} />
-                      </Routes>
-                    </Suspense>
-                    <SpeedInsights />
-                  </main>
-                </div>
-
-                {/* Sidebar statis (kanan) */}
-                <RightSidebar />
-              </div>
-            </div>
+            <AppContent />
           </SidebarProvider>
         </ThemeProvider>
       </Router>
