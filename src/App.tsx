@@ -65,18 +65,16 @@ function App() {
             <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans selection:bg-blue-500/30">
               <div className="flex justify-center mx-auto max-w-[1600px] w-full px-0">
                 {/* Sidebar statis (kiri) */}
-                <div className="shrink-0">
-                  <Sidebar
-                    isMenuOpen={isMenuOpen}
-                    setIsMenuOpen={setIsMenuOpen}
-                  />
-                </div>
+                <Sidebar
+                  isMenuOpen={isMenuOpen}
+                  setIsMenuOpen={setIsMenuOpen}
+                />
 
                 {/* Area Konten Tengah */}
-                <div className="flex-1 min-w-0 flex flex-col relative mx-3 sm:mx-4 lg:mx-6">
+                <div className="flex-1 min-w-0 flex flex-col relative">
                   <Header setIsMenuOpen={setIsMenuOpen} />
 
-                  <main className="flex-grow w-full">
+                  <main className="flex-grow w-full px-4 sm:px-6 lg:px-8 py-6">
                     {/* [OPTIMASI] Suspense membungkus Routes untuk menangani loading state */}
                     <Suspense fallback={<PageLoader />}>
                       <Routes>

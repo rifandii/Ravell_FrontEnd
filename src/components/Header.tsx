@@ -99,7 +99,7 @@ const Header = ({ setIsMenuOpen }: HeaderProps) => {
         `}
       >
         {/* Container Glassmorphism */}
-        <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800 shadow-sm">
+        <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800">
           <nav className="px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
             
             {/* LEFT: Menu & Title */}
