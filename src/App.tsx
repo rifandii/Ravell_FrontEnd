@@ -63,7 +63,7 @@ function App() {
             <ScrollToTop />
             <PageTracker />
             <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans selection:bg-blue-500/30">
-              <div className="flex justify-center mx-auto max-w-[1600px] w-full px-0">
+              <div className="flex w-full px-0">
                 {/* Sidebar statis (kiri) */}
                 <Sidebar
                   isMenuOpen={isMenuOpen}
