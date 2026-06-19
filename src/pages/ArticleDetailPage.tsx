@@ -168,7 +168,8 @@ const ArticleDetailPage = () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         img({ ...props }: any) { 
             const isRelative = props.src && props.src.startsWith('/');
-            const fullSrc = isRelative ? `http://127.0.0.1:8000${props.src}` : props.src;
+            const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://api.ravell.tech';
+            const fullSrc = isRelative ? `${apiBaseUrl}${props.src}` : props.src;
             return (
                 <figure className="my-8">
                     <img
