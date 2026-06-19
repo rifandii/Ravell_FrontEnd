@@ -118,7 +118,7 @@ const ArticleListPage = () => {
            <div className="h-4 w-32 bg-gray-200 dark:bg-gray-800 rounded-full mx-auto animate-pulse"></div>
         </div>
         {/* Skeleton Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           {Array.from({ length: 6 }).map((_, index) => (
             <div key={index} className="h-full">
                {/* Asumsi SkeletonCard sudah ada */}
@@ -164,7 +164,7 @@ const ArticleListPage = () => {
           <Icon className="w-6 h-6" />
         </div>
         
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight">
           {pageContext.title}
         </h1>
         
@@ -190,7 +190,7 @@ const ArticleListPage = () => {
       {articles.length > 0 ? (
         <div className="space-y-12">
           {/* Grid Artikel */}
-          <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {articles.map(article => (
               <ArticleCard key={article.id} article={article} />
             ))}

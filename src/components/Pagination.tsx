@@ -45,22 +45,24 @@ const Pagination = ({ count, nextPageUrl, prevPageUrl, handlePageChange }: Pagin
   };
 
   return (
-    <div className="flex justify-center items-center mt-12 space-x-4">
+    <div className="flex flex-wrap justify-center items-center mt-12 gap-2 sm:gap-3">
       
       {/* Tombol Previous */}
       <button
         onClick={() => handlePageChange(prevPageUrl)}
         disabled={!prevPageUrl}
-        className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer" 
+        className="px-3 py-2 sm:px-4 bg-gray-200 dark:bg-gray-700 rounded-full text-sm sm:text-base text-gray-700 dark:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer" 
       >
-        <ArrowLeft size={16} className="mr-2 inline"/> Previous
+        <ArrowLeft size={16} className="mr-1 sm:mr-2 inline"/> <span className="hidden sm:inline">Previous</span><span className="sm:hidden">Prev</span>
       </button>
       
-      {/* Tombol Nomor Halaman */}
-      {renderPaginationButtons()}
+      {/* Tombol Nomor Halaman — hidden on very small screens */}
+      <div className="hidden sm:flex gap-2">
+        {renderPaginationButtons()}
+      </div>
       
       {/* Display Halaman */}
-      <span className="text-gray-700 dark:text-gray-300 font-semibold hidden sm:inline">
+      <span className="text-gray-700 dark:text-gray-300 font-semibold text-sm sm:text-base">
         Page {currentPage} of {totalPages}
       </span>
       
@@ -68,9 +70,9 @@ const Pagination = ({ count, nextPageUrl, prevPageUrl, handlePageChange }: Pagin
       <button
         onClick={() => handlePageChange(nextPageUrl)}
         disabled={!nextPageUrl}
-        className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+        className="px-3 py-2 sm:px-4 bg-gray-200 dark:bg-gray-700 rounded-full text-sm sm:text-base text-gray-700 dark:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
       >
-        Next <ArrowRight size={16} className="ml-2 inline"/>
+        Next <ArrowRight size={16} className="ml-1 sm:ml-2 inline"/>
       </button>
     </div>
   );

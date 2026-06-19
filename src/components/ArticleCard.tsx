@@ -22,24 +22,24 @@ const ArticleCard = ({ article }: ArticleCardProps) => {
       
       
       {/* --- 2. CONTENT BODY --- */}
-      <div className="flex flex-col flex-grow p-6">
+      <div className="flex flex-col flex-grow p-4 sm:p-6">
         
         {/* Metadata Row */}
-        <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400 mb-3 font-medium">
+        <div className="flex items-center gap-3 sm:gap-4 text-xs text-gray-500 dark:text-gray-400 mb-3 font-medium">
           <div className="flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5" />
+            <Calendar className="w-3.5 h-3.5 shrink-0" />
             <time dateTime={article.published_date}>
               {dayjs(article.published_date).format('MMM D, YYYY')}
             </time>
           </div>
-          <div className="flex items-center gap-1.5">
-            <User className="w-3.5 h-3.5" />
-            <span className="truncate max-w-[100px]">{article.author_username}</span>
+          <div className="flex items-center gap-1.5 min-w-0">
+            <User className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate max-w-[80px] sm:max-w-[100px]">{article.author_username}</span>
           </div>
         </div>
 
         {/* Title */}
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight">
+        <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight">
           {article.title}
         </h2>
         

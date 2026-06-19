@@ -69,13 +69,13 @@ const FurtherReading = ({ currentArticleSlug, previousArticle, nextArticle }: Fu
                     {previousArticle ? (
                         <Link 
                             to={`/articles/${previousArticle.slug}`}
-                            className="group flex flex-col p-6 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-lg transition-all duration-300"
+                            className="group flex flex-col p-4 sm:p-6 bg-white dark:bg-gray-900 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-lg transition-all duration-300"
                         >
-                            <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+                            <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 sm:mb-3">
                                 <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform duration-300" />
                                 Previous Article
                             </div>
-                            <span className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+                            <span className="text-base sm:text-lg font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
                                 {previousArticle.title}
                             </span>
                         </Link>
@@ -88,13 +88,13 @@ const FurtherReading = ({ currentArticleSlug, previousArticle, nextArticle }: Fu
                     {nextArticle ? (
                         <Link 
                             to={`/articles/${nextArticle.slug}`}
-                            className="group flex flex-col items-end text-right p-6 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-lg transition-all duration-300"
+                            className="group flex flex-col items-end text-right p-4 sm:p-6 bg-white dark:bg-gray-900 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-lg transition-all duration-300"
                         >
-                            <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+                            <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 sm:mb-3">
                                 Next Article
                                 <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform duration-300" />
                             </div>
-                            <span className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+                            <span className="text-base sm:text-lg font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
                                 {nextArticle.title}
                             </span>
                         </Link>
@@ -114,7 +114,7 @@ const FurtherReading = ({ currentArticleSlug, previousArticle, nextArticle }: Fu
                         </h3>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
                         {randomArticles.map((article) => (
                             <Link 
                                 key={article.id} 

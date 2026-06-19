@@ -85,7 +85,7 @@ const CategoriesPage = () => {
           <FolderTree className="w-8 h-8" />
         </div>
         
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3 tracking-tight">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3 tracking-tight">
           Knowledge Index
         </h1>
         <p className="text-gray-500 dark:text-gray-400 text-lg">

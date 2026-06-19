@@ -116,7 +116,7 @@ const Header = ({ setIsMenuOpen }: HeaderProps) => {
               <div className="flex items-center gap-3 overflow-hidden">
                  {/* Separator vertical hanya di desktop */}
                  <span className="hidden md:flex h-6 w-px bg-gray-300 dark:bg-gray-700"></span>
-                 <h1 className="text-lg font-semibold text-gray-900 dark:text-white truncate tracking-tight">
+                 <h1 className="text-sm sm:text-base md:text-lg font-semibold text-gray-900 dark:text-white truncate tracking-tight">
                     {currentTitle}
                  </h1>
               </div>

@@ -252,7 +252,7 @@ const ArticleDetailPage = () => {
                 url={window.location.href}
             />
 
-            <header className="max-w-4xl mx-auto px-4 md:px-8 pt-8 md:pt-12 mb-10 text-center">
+            <header className="max-w-4xl mx-auto px-3 sm:px-4 md:px-8 pt-6 sm:pt-8 md:pt-12 mb-8 sm:mb-10 text-center">
                 <div className="flex justify-center mb-6">
                     <Breadcrumbs articleTitle={article.title} />
                 </div>
@@ -266,7 +266,7 @@ const ArticleDetailPage = () => {
                     ))}
                 </div>
 
-                <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 dark:text-white mb-8 leading-tight tracking-tight">
+                <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 dark:text-white mb-8 leading-tight tracking-tight">
                     {article.title}
                 </h1>
 
@@ -289,8 +289,8 @@ const ArticleDetailPage = () => {
             </header>
 
             {article.featured_image_url && (
-                <div className="max-w-5xl mx-auto px-4 md:px-8 mb-12 md:mb-16">
-                    <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-blue-900/10 aspect-video group">
+                <div className="max-w-5xl mx-auto px-3 sm:px-4 md:px-8 mb-8 sm:mb-12 md:mb-16">
+                    <div className="relative rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl shadow-blue-900/10 aspect-video group">
                         <img
                             src={article.featured_image_url}
                             alt={article.title}
@@ -303,11 +303,11 @@ const ArticleDetailPage = () => {
                 </div>
             )}
 
-            <main className="max-w-4xl mx-auto px-4 md:px-8">
+            <main className="max-w-4xl mx-auto px-3 sm:px-4 md:px-8">
                 <article 
                     ref={markdownContainerRef}
                     className="
-                        prose prose-lg md:prose-xl dark:prose-invert max-w-none 
+                        prose prose-base md:prose-lg lg:prose-xl dark:prose-invert max-w-none 
                         prose-headings:font-bold prose-headings:tracking-tight
                         prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
                         prose-img:rounded-xl prose-img:shadow-lg

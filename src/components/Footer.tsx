@@ -41,14 +41,14 @@ const Footer = () => {
   return (
     <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 mt-4">
       {/* Container utama dengan padding dan max-width */}
-      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16">
         
         {/* Grid 3-kolom untuk konten utama footer */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           
           {/* Kolom 1: Tentang Blog */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+          <div className="space-y-4 text-center sm:text-left sm:col-span-2 md:col-span-1">
+            <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
               Ravell Networks
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
@@ -57,11 +57,11 @@ const Footer = () => {
           </div>
 
           {/* Kolom 2: Quick Links */}
-          <div className="space-y-4 md:mx-auto">
+          <div className="space-y-4 text-center sm:text-left md:mx-auto">
             <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               Quick Links
             </h4>
-            <ul className="space-y-3">
+            <ul className="space-y-2 sm:space-y-3">
               {quickLinks.map(link => (
                 <li key={link.name}>
                   <Link 
@@ -77,11 +77,11 @@ const Footer = () => {
           </div>
 
           {/* Kolom 3: Sosial Media */}
-          <div className="space-y-4 md:mx-auto">
+          <div className="space-y-4 text-center sm:text-left md:mx-auto">
             <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               Follow Me
             </h4>
-            <div className="flex space-x-5">
+            <div className="flex justify-center sm:justify-start space-x-5">
               {socialLinks.map(social => (
                 <SocialLink
                   key={social.label}
@@ -95,8 +95,8 @@ const Footer = () => {
         </div>
 
         {/* Garis Pemisah & Copyright */}
-        <div className="mt-12 border-t border-gray-200 dark:border-gray-700 pt-8">
-          <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+        <div className="mt-8 sm:mt-12 border-t border-gray-200 dark:border-gray-700 pt-6 sm:pt-8">
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 text-center">
             © {new Date().getFullYear()} Ravell Networks. All rights reserved.
           </p>
         </div>

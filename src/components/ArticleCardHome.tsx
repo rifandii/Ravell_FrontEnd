@@ -29,15 +29,15 @@ const ArticleCardHome = ({ article }: ArticleCardProps) => {
       )}
       
       {/* Wrapper konten dibuat flex-col agar footer (tags) bisa 'menempel' di bawah */}
-      <div className="p-4 flex flex-col flex-grow">
+      <div className="p-3 sm:p-4 flex flex-col flex-grow">
         {/* Judul */}
-        <h2 className="text-lg md:text-xl font-bold mb-2 text-gray-900 dark:text-gray-200 
-                       group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+        <h2 className="text-base sm:text-lg md:text-xl font-bold mb-2 text-gray-900 dark:text-gray-200 
+                       group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
           {article.title}
         </h2>
         
         {/* Metadata */}
-        <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm mb-4">
+        <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4">
           Published on {dayjs(article.published_date).format('MMM D, YYYY')} by {article.author_username}
         </p>
         

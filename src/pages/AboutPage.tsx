@@ -25,26 +25,26 @@ const AboutPage = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent dark:from-gray-900"></div>
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-16 max-w-6xl">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 max-w-6xl">
         
         {/* --- HEADER SECTION --- */}
-        <div className="max-w-3xl mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 dark:text-white mb-6">
+        <div className="max-w-3xl mb-10 sm:mb-16">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 dark:text-white mb-4 sm:mb-6">
             Architecting Secure <br/>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Digital Infrastructures</span>
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400 leading-relaxed">
+          <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 leading-relaxed">
             Hi, I'm the human behind <span className="font-semibold text-gray-900 dark:text-gray-200">Ravell Networks</span>. 
             I bridge the gap between complex network engineering and modern cybersecurity practices.
           </p>
         </div>
 
         {/* --- BENTO GRID LAYOUT --- */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
           
           {/* 1. PROFILE CARD (Span 2 columns on mobile, 1 on desktop) */}
-          <div className="md:col-span-1 row-span-2 bg-white dark:bg-gray-800 rounded-3xl p-8 border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col items-center text-center">
-            <div className="relative w-40 h-40 mb-6 group">
+          <div className="sm:col-span-2 md:col-span-1 row-span-2 bg-white dark:bg-gray-800 rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col items-center text-center">
+            <div className="relative w-28 h-28 sm:w-40 sm:h-40 mb-4 sm:mb-6 group">
               <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-500"></div>
               <img
                 src="public/profile.png" // Pastikan path ini benar
@@ -54,8 +54,8 @@ const AboutPage = () => {
               <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 border-4 border-white dark:border-gray-800 rounded-full" title="Online"></div>
             </div>
             
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Ravell Networks</h2>
-            <p className="text-sm font-medium text-blue-600 dark:text-blue-400 mb-6">NetSec Engineer</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-1">Ravell Networks</h2>
+            <p className="text-sm font-medium text-blue-600 dark:text-blue-400 mb-4 sm:mb-6">NetSec Engineer</p>
             
             <div className="w-full space-y-3">
                {[
@@ -78,7 +78,7 @@ const AboutPage = () => {
           </div>
 
           {/* 2. TECH STACK (Wide Card) */}
-          <div className="md:col-span-2 bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-3xl p-8 shadow-lg relative overflow-hidden">
+          <div className="sm:col-span-2 bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-lg relative overflow-hidden">
             <div className="absolute top-0 right-0 p-8 opacity-10">
               <Server className="w-32 h-32 rotate-12 translate-x-8 -translate-y-8" />
             </div>
@@ -116,7 +116,7 @@ const AboutPage = () => {
           </div>
 
           {/* 3. CORE FOCUS: Engineering */}
-          <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow group">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow group">
             <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <Network className="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
@@ -127,7 +127,7 @@ const AboutPage = () => {
           </div>
 
           {/* 4. CORE FOCUS: Security */}
-          <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow group">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow group">
             <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <ShieldCheck className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
             </div>
@@ -138,7 +138,7 @@ const AboutPage = () => {
           </div>
 
           {/* 5. CERTIFICATIONS (Wide Card) */}
-          <div className="md:col-span-2 bg-white dark:bg-gray-800 rounded-3xl p-8 border border-gray-200 dark:border-gray-700 shadow-sm">
+          <div className="sm:col-span-2 bg-white dark:bg-gray-800 rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-gray-200 dark:border-gray-700 shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                 <Award className="w-5 h-5 text-orange-500" />
@@ -193,7 +193,7 @@ const AboutPage = () => {
           </div>
 
           {/* 6. GITHUB / CODE (Tall Card) */}
-          <div className="md:col-span-1 bg-gradient-to-b from-gray-900 to-gray-800 text-white rounded-3xl p-6 shadow-lg flex flex-col justify-between">
+          <div className="sm:col-span-2 md:col-span-1 bg-gradient-to-b from-gray-900 to-gray-800 text-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-lg flex flex-col justify-between">
              <div>
                 <div className="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center mb-4">
                   <Terminal className="w-5 h-5 text-green-400" />

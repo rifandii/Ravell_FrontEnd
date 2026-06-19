@@ -152,10 +152,10 @@ const HomePage = () => {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 mb-6 shadow-md animate-in fade-in zoom-in duration-700">
             <LayoutDashboard className="w-8 h-8" />
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight tracking-tight animate-in fade-in slide-in-from-top-4 duration-700">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight tracking-tight animate-in fade-in slide-in-from-top-4 duration-700">
             Your Hub for Networking & Security Insights
           </h1>
-          <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-10 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+          <p className="text-base sm:text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-10 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
             Dive into detailed articles, tutorials, and latest trends in
             networking and security. Empower your IT journey with Ravell
             Networks.
@@ -176,8 +176,8 @@ const HomePage = () => {
         <section className="py-16 md:py-20 bg-white dark:bg-gray-900">
           <div className="max-w-7xl mx-auto px-4 md:px-8">
             <div className="flex items-center justify-between mb-10 md:mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-                <Star className="w-7 h-7 text-yellow-500" />
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2 sm:gap-3">
+                <Star className="w-5 h-5 sm:w-7 sm:h-7 text-yellow-500" />
                 Featured Content
               </h2>
               <Link
@@ -187,7 +187,7 @@ const HomePage = () => {
                 View All <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
               {featuredArticles.map((article) => (
                 <ArticleCard key={article.id} article={article} />
               ))}
@@ -201,8 +201,8 @@ const HomePage = () => {
         <section className="py-16 md:py-20 bg-gray-50 dark:bg-gray-900">
           <div className="max-w-7xl mx-auto px-4 md:px-8">
             <div className="flex items-center justify-between mb-10 md:mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-                <CalendarDays className="w-7 h-7 text-blue-600" />
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2 sm:gap-3">
+                <CalendarDays className="w-5 h-5 sm:w-7 sm:h-7 text-blue-600" />
                 Latest Updates
               </h2>
               <Link
@@ -212,7 +212,7 @@ const HomePage = () => {
                 View All <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
               {latestArticles.map((article) => (
                 <ArticleCard key={article.id} article={article} />
               ))}
@@ -224,22 +224,22 @@ const HomePage = () => {
       {/* --- EXPLORE BY TOPICS --- */}
       <section className="py-16 md:py-20 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-3">
               Explore by Topics
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-400">
               Find exactly what you need with our structured categories and
               detailed tags.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
             {/* Categories */}
             <div>
               <div className="flex items-center gap-3 mb-6">
                 <Folder className="w-6 h-6 text-indigo-600" />
-                <h3 className="text-2xl font-semibold text-gray-900 dark:text-white">
+                <h3 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900 dark:text-white">
                   Categories
                 </h3>
               </div>
@@ -248,9 +248,9 @@ const HomePage = () => {
                   <Link
                     key={category.id}
                     to={`/articles?category_name=${category.name}`}
-                    className="flex items-center justify-between p-5 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-indigo-400 dark:hover:border-indigo-600 hover:shadow-md transition-all duration-300 group"
+                    className="flex items-center justify-between p-3 sm:p-5 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-indigo-400 dark:hover:border-indigo-600 hover:shadow-md transition-all duration-300 group"
                   >
-                    <span className="text-lg font-medium text-gray-800 dark:text-gray-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+                    <span className="text-sm sm:text-base md:text-lg font-medium text-gray-800 dark:text-gray-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
                       {category.name}
                     </span>
                     <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 group-hover:translate-x-1 transition-transform" />
@@ -269,7 +269,7 @@ const HomePage = () => {
             <div>
               <div className="flex items-center gap-3 mb-6">
                 <TagIcon className="w-6 h-6 text-teal-600" />
-                <h3 className="text-2xl font-semibold text-gray-900 dark:text-white">
+                <h3 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900 dark:text-white">
                   Popular Tags
                 </h3>
               </div>
@@ -278,7 +278,7 @@ const HomePage = () => {
                   <Link
                     key={tag.id}
                     to={`/articles?tags__slug=${tag.slug}&tag_name=${tag.name}`}
-                    className="px-5 py-2.5 bg-gray-50 dark:bg-gray-800 rounded-full border border-gray-200 dark:border-gray-700 text-base font-medium text-gray-700 dark:text-gray-300 hover:border-teal-400 dark:hover:border-teal-600 hover:text-teal-600 dark:hover:text-teal-400 transition-colors group"
+                    className="px-3 py-2 sm:px-5 sm:py-2.5 bg-gray-50 dark:bg-gray-800 rounded-full border border-gray-200 dark:border-gray-700 text-sm sm:text-base font-medium text-gray-700 dark:text-gray-300 hover:border-teal-400 dark:hover:border-teal-600 hover:text-teal-600 dark:hover:text-teal-400 transition-colors group"
                   >
                     #{tag.name}
                   </Link>
