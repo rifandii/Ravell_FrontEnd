@@ -10,6 +10,7 @@ import { SidebarProvider } from "./SidebarContext";
 import { ThemeProvider } from "./ThemeContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"; // Import
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { usePageTracking } from "./hooks/usePageTracking";
 
 // Components (Eager Load - Dimuat langsung karena selalu tampil)
 import Header from "./components/Header";
@@ -45,6 +46,12 @@ const ScrollToTop = () => {
   return null;
 };
 
+// --- Utility: PageTracker for Google Analytics ---
+const PageTracker = () => {
+  usePageTracking();
+  return null;
+};
+
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -54,6 +61,7 @@ function App() {
         <ThemeProvider>
           <SidebarProvider>
             <ScrollToTop />
+            <PageTracker />
             <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans selection:bg-blue-500/30">
               <div className="flex justify-center mx-auto max-w-[1600px] w-full px-0">
                 {/* Sidebar statis (kiri) */}
