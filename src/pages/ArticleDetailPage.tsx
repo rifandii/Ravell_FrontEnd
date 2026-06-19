@@ -199,6 +199,19 @@ const ArticleDetailPage = () => {
                 </h2>
             );
         },
+        p: ({ children }) => {
+            const hasImg = React.Children.toArray(children).some(
+                (child) =>
+                    React.isValidElement(child) &&
+                    (child.type === 'img' ||
+                     child.type === components.img ||
+                     (typeof child.type === 'function' && child.type.name === 'img'))
+            );
+            if (hasImg) {
+                return <>{children}</>;
+            }
+            return <p>{children}</p>;
+        },
         blockquote: ({ children }) => (
             <blockquote className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-4 my-6 rounded-r-lg text-gray-700 dark:text-gray-300 italic">
                 {children}

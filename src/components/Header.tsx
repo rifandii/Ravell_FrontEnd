@@ -1,5 +1,5 @@
 // src/components/Header.tsx
-import { useEffect, useState, useRef } from "react";
+import { useState } from "react";
 import dayjs from "dayjs";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
@@ -33,29 +33,7 @@ const Header = ({ setIsMenuOpen }: HeaderProps) => {
   const location = useLocation();
   const { pageTitle } = useSidebar();
   
-  // [LOGIKA SCROLL] Menambahkan fitur auto-hide saat scroll ke bawah
-  const [isVisible, setIsVisible] = useState(true);
-  const lastScrollY = useRef(0);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      // Tampilkan jika di paling atas, atau jika scroll ke atas
-      if (currentScrollY < 100) {
-        setIsVisible(true);
-      } else if (currentScrollY > lastScrollY.current) {
-        setIsVisible(false); // Scroll ke bawah -> Sembunyi
-      } else {
-        setIsVisible(true);  // Scroll ke atas -> Muncul
-      }
-      
-      lastScrollY.current = currentScrollY;
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   // --- Handlers ---
   const handleSearch = (e: React.FormEvent) => {
@@ -91,13 +69,7 @@ const Header = ({ setIsMenuOpen }: HeaderProps) => {
 
   return (
     <>
-      <header 
-        className={`
-          sticky top-0 z-30 w-full
-          transition-transform duration-300 ease-in-out will-change-transform
-          ${isVisible ? 'translate-y-0' : '-translate-y-full'}
-        `}
-      >
+      <header className="sticky top-0 z-30 w-full">
         {/* Container Glassmorphism */}
         <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800">
           <nav className="px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">

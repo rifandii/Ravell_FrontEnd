@@ -110,7 +110,7 @@ const RightSidebar = () => {
         <nav className="relative">
           <div className="absolute left-[5px] top-2 bottom-2 w-[1px] bg-gray-150 dark:bg-gray-800"></div>
           
-          <ul className="space-y-1 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
+          <ul className="space-y-1">
             {headings.map((heading) => (
               <li key={heading.id}>
                 <button
@@ -141,7 +141,7 @@ const RightSidebar = () => {
   );
 
   return (
-    <aside className="hidden xl:flex flex-col w-80 h-screen sticky top-0 border-l border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-y-auto shrink-0">
+    <aside className="hidden xl:flex flex-col w-80 h-screen sticky top-0 border-l border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0">
       {/* Header Panel Kanan */}
       <div className="h-16 px-6 border-b border-gray-200 dark:border-gray-800 flex items-center shrink-0">
         <span className="font-bold text-xs text-gray-900 dark:text-white tracking-wider uppercase">
