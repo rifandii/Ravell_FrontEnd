@@ -74,6 +74,7 @@ self.addEventListener('fetch', (event) => {
             if (request.mode === 'navigate') {
               return caches.match('/index.html');
             }
+            return new Response('Network error', { status: 503, statusText: 'Service Unavailable' });
           });
         })
     );
@@ -128,7 +129,11 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(request)
       .then((response) => response)
-      .catch(() => caches.match(request))
+      .catch(() => {
+        return caches.match(request).then((cachedResponse) => {
+          return cachedResponse || new Response('Network error', { status: 503, statusText: 'Service Unavailable' });
+        });
+      })
   );
 });
 
