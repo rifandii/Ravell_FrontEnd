@@ -5,6 +5,7 @@ import {
   Hash, 
   Clock, 
   FileText, 
+  List,
   ChevronRight 
 } from 'lucide-react';
 
@@ -106,6 +107,12 @@ const RightSidebar = () => {
 
   const TableOfContentsWidget = () => (
     <div className="w-full">
+      <div className="flex items-center gap-2 mb-4">
+        <List className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+        <h3 className="font-bold text-xs text-gray-950 dark:text-gray-200 uppercase tracking-wider">
+          On This Page
+        </h3>
+      </div>
       {headings && headings.length > 0 ? (
         <nav className="relative">
           <div className="absolute left-[5px] top-2 bottom-2 w-[1px] bg-gray-150 dark:bg-gray-800"></div>
@@ -145,7 +152,7 @@ const RightSidebar = () => {
       {/* Header Panel Kanan */}
       <div className="h-16 px-6 border-b border-gray-200 dark:border-gray-800 flex items-center shrink-0">
         <span className="font-bold text-xs text-gray-900 dark:text-white tracking-wider uppercase">
-          {isArticleDetailPage ? "Table of Contents" : "Discover"}
+          Discover
         </span>
       </div>
 
@@ -154,13 +161,13 @@ const RightSidebar = () => {
         {isArticleDetailPage ? (
           <>
             <div className="p-6">
-              <TableOfContentsWidget />
-            </div>
-            <div className="p-6">
               <RecentArticlesWidget />
             </div>
             <div className="p-6">
               <TrendingTagsWidget />
+            </div>
+            <div className="p-6">
+              <TableOfContentsWidget />
             </div>
           </>
         ) : (
