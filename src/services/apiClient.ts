@@ -2,7 +2,7 @@
 import axios from 'axios';
 import type { Article, Category, Tag } from '../types/types';
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.ravell.tech';
 const API_BASE_URL = `${BASE_URL}/api`;
 
 // [PERBAIKAN 1] Membuat Axios Instance
