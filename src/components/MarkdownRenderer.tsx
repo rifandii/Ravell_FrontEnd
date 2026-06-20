@@ -1,17 +1,20 @@
 // src/components/MarkdownRenderer.tsx
+import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import remarkGfm from 'remark-gfm';
+import slugify from 'slugify';
 import CopyButton from './CopyButton';
 import { Terminal } from 'lucide-react';
 
 interface MarkdownRendererProps {
   content: string;
+  onImageClick?: (src: string) => void;
 }
 
-export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
+export default function MarkdownRenderer({ content, onImageClick }: MarkdownRendererProps) {
   const components: Components = {
     // Override standard code blocks
     code({ className, children, ...props }) {
@@ -73,6 +76,7 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
         </code>
       );
     },
+
     // Table block override to prevent layout breaks in parent grid/flex views
     table({ children }) {
       return (
@@ -82,7 +86,75 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
           </table>
         </div>
       );
-    }
+    },
+
+    // Custom Images rendering with zoom support
+    img({ ...props }: any) { 
+      const isRelative = props.src && props.src.startsWith('/');
+      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://api.ravell.tech';
+      const fullSrc = isRelative ? `${apiBaseUrl}${props.src}` : props.src;
+      return (
+        <figure className="my-8">
+          <img
+            {...props}
+            src={fullSrc}
+            className="w-full h-auto rounded-lg shadow-md cursor-zoom-in hover:shadow-xl transition-shadow duration-300 border border-gray-100 dark:border-gray-800"
+            onClick={() => onImageClick && onImageClick(fullSrc)}
+            loading="lazy"
+          />
+          {props.alt && (
+            <figcaption className="text-center text-sm text-gray-500 dark:text-gray-400 mt-2 italic">
+              {props.alt}
+            </figcaption>
+          )}
+        </figure>
+      );
+    },
+
+    // Custom Headings (H2) rendering with auto-ID slugification for ToC jump anchors
+    h2: ({ children }) => {
+      const text = React.Children.toArray(children).join('');
+      const id = slugify(text, { lower: true, strict: true });
+      return (
+        <h2 id={id} className="group flex items-center gap-2 text-2xl md:text-3xl font-bold mt-12 mb-6 text-gray-900 dark:text-white scroll-mt-24">
+          {children}
+          <a href={`#${id}`} className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-blue-500 transition-opacity" aria-label="Link to this section">
+            
+          </a>
+        </h2>
+      );
+    },
+
+    // Custom Headings (H3) rendering with auto-ID slugification
+    h3: ({ children }) => {
+      const text = React.Children.toArray(children).join('');
+      const id = slugify(text, { lower: true, strict: true });
+      return (
+        <h3 id={id} className="group flex items-center gap-2 text-xl md:text-2xl font-bold mt-8 mb-4 text-gray-900 dark:text-white scroll-mt-24">
+          {children}
+        </h3>
+      );
+    },
+
+    // Prevent wrapping images inside paragraphs
+    p({ children }) {
+      const hasImg = React.Children.toArray(children).some(
+        (child) =>
+          React.isValidElement(child) &&
+          (child.type === 'img' || (typeof child.type === 'function' && child.type.name === 'img'))
+      );
+      if (hasImg) {
+        return <>{children}</>;
+      }
+      return <p className="leading-relaxed mb-6">{children}</p>;
+    },
+
+    // Custom Blockquote rendering
+    blockquote: ({ children }) => (
+      <blockquote className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-4 my-6 rounded-r-lg text-gray-700 dark:text-gray-300 italic">
+        {children}
+      </blockquote>
+    ),
   };
 
   return (
