@@ -25,26 +25,34 @@ const ArticleListPage = () => {
   const [count, setCount] = useState<number>(0);
   const [nextPageUrl, setNextPageUrl] = useState<string | null>(null);
   const [prevPageUrl, setPrevPageUrl] = useState<string | null>(null);
+  // State untuk menyimpan nama tag/category yang sudah divalidasi
+  const [validatedTagName, setValidatedTagName] = useState<string | null>(null);
+  const [validatedCategoryName, setValidatedCategoryName] = useState<string | null>(null);
 
   // --- 1. Contextual Header Logic ---
-  // Kita memisahkan judul, ikon, dan deskripsi berdasarkan filter yang aktif
+  // Menggunakan nama yang sudah divalidasi dari data API, bukan dari URL params
   const pageContext = useMemo(() => {
-    const category = searchParams.get('category_name');
-    const tag = searchParams.get('tag_name');
+    const categorySlug = searchParams.get('categories__slug');
+    const tagSlug = searchParams.get('tags__slug');
+    const categoryParam = searchParams.get('category_name');
+    const tagParam = searchParams.get('tag_name');
     const search = searchParams.get('search');
     const year = searchParams.get('year');
     
-    if (category) {
+    if (categorySlug || categoryParam) {
+      // Gunakan nama yang divalidasi dari API, fallback ke URL param
+      const displayName = validatedCategoryName || categoryParam || categorySlug || '';
       return {
-        title: category,
+        title: displayName,
         subtitle: 'Category Archive',
         icon: FolderOpen,
         isFiltered: true
       };
     }
-    if (tag) {
+    if (tagSlug || tagParam) {
+      const displayName = validatedTagName || tagParam || tagSlug || '';
       return {
-        title: `#${tag}`,
+        title: `#${displayName}`,
         subtitle: 'Tagged Articles',
         icon: Hash,
         isFiltered: true
@@ -72,7 +80,7 @@ const ArticleListPage = () => {
       icon: BookOpen,
       isFiltered: false
     };
-  }, [searchParams]);
+  }, [searchParams, validatedTagName, validatedCategoryName]);
 
   const fetchArticles = useCallback(async (url: string) => {
     setLoading(true);
@@ -83,6 +91,31 @@ const ArticleListPage = () => {
       setCount(data.count);
       setNextPageUrl(data.next);
       setPrevPageUrl(data.previous);
+
+      // --- Validasi tag_name/category_name dari data API ---
+      const currentParams = new URLSearchParams(url.split('?')[1] || '');
+      const tagSlug = currentParams.get('tags__slug');
+      const categorySlug = currentParams.get('categories__slug');
+
+      // Validasi tag: cari nama tag asli dari artikel hasil API
+      if (tagSlug && data.results.length > 0) {
+        const matchedTag = data.results[0]?.tags?.find(
+          (t) => t.slug === tagSlug
+        );
+        setValidatedTagName(matchedTag ? matchedTag.name : null);
+      } else {
+        setValidatedTagName(null);
+      }
+
+      // Validasi category: cari nama category asli dari artikel hasil API
+      if (categorySlug && data.results.length > 0) {
+        const matchedCategory = data.results[0]?.categories?.find(
+          (c) => c.slug === categorySlug
+        );
+        setValidatedCategoryName(matchedCategory ? matchedCategory.name : null);
+      } else {
+        setValidatedCategoryName(null);
+      }
     } catch (err) {
       setError('Failed to load content stream. Please check your connection.');
       console.error(err);
