@@ -29,6 +29,7 @@ const CategoriesPage = lazy(() => import("./pages/CategoriesPage"));
 const TagsPage = lazy(() => import("./pages/TagsPage"));
 const ArchivesPage = lazy(() => import("./pages/ArchivesPage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
 const queryClient = new QueryClient();
 
@@ -89,6 +90,7 @@ function AppContent() {
                   <Route path="/tags" element={<PageTransition><TagsPage /></PageTransition>} />
                   <Route path="/archives" element={<PageTransition><ArchivesPage /></PageTransition>} />
                   <Route path="/about" element={<PageTransition><AboutPage /></PageTransition>} />
+                  <Route path="*" element={<PageTransition><NotFoundPage /></PageTransition>} />
                 </Routes>
               </AnimatePresence>
             </Suspense>
