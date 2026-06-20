@@ -1,7 +1,7 @@
 // src/pages/ArticleListPage.tsx
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { getPaginatedArticles } from '../services/apiClient';
+import { getPaginatedArticles, getTagBySlug, getCategoryBySlug } from '../services/apiClient';
 import type { Article } from '../types/types';
 import ArticleCard from '../components/ArticleCard';
 import Pagination from '../components/Pagination';
@@ -13,7 +13,8 @@ import {
   Calendar, 
   BookOpen, 
   XCircle, 
-  FileQuestion 
+  FileQuestion,
+  AlertCircle
 } from 'lucide-react';
 import SEO from '../components/SEO';
 
@@ -28,6 +29,7 @@ const ArticleListPage = () => {
   // State untuk menyimpan nama tag/category yang sudah divalidasi
   const [validatedTagName, setValidatedTagName] = useState<string | null>(null);
   const [validatedCategoryName, setValidatedCategoryName] = useState<string | null>(null);
+  const [isInvalidFilter, setIsInvalidFilter] = useState<boolean>(false);
 
   // --- 1. Contextual Header Logic ---
   // Menggunakan nama yang sudah divalidasi dari data API, bukan dari URL params
@@ -82,52 +84,85 @@ const ArticleListPage = () => {
     };
   }, [searchParams, validatedTagName, validatedCategoryName]);
 
-  const fetchArticles = useCallback(async (url: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await getPaginatedArticles(url);
-      setArticles(data.results);
-      setCount(data.count);
-      setNextPageUrl(data.next);
-      setPrevPageUrl(data.previous);
-
-      // --- Validasi tag_name/category_name dari data API ---
-      const currentParams = new URLSearchParams(url.split('?')[1] || '');
-      const tagSlug = currentParams.get('tags__slug');
-      const categorySlug = currentParams.get('categories__slug');
-
-      // Validasi tag: cari nama tag asli dari artikel hasil API
-      if (tagSlug && data.results.length > 0) {
-        const matchedTag = data.results[0]?.tags?.find(
-          (t) => t.slug === tagSlug
-        );
-        setValidatedTagName(matchedTag ? matchedTag.name : null);
-      } else {
-        setValidatedTagName(null);
-      }
-
-      // Validasi category: cari nama category asli dari artikel hasil API
-      if (categorySlug && data.results.length > 0) {
-        const matchedCategory = data.results[0]?.categories?.find(
-          (c) => c.slug === categorySlug
-        );
-        setValidatedCategoryName(matchedCategory ? matchedCategory.name : null);
-      } else {
-        setValidatedCategoryName(null);
-      }
-    } catch (err) {
-      setError('Failed to load content stream. Please check your connection.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
-    const query = searchParams.toString();
-    fetchArticles(`/articles/?${query}`);
-  }, [searchParams, fetchArticles]);
+    const loadData = async () => {
+      setLoading(true);
+      setError(null);
+      
+      const query = searchParams.toString();
+      const tagSlug = searchParams.get('tags__slug');
+      const categorySlug = searchParams.get('categories__slug');
+      const tagParam = searchParams.get('tag_name');
+      const categoryParam = searchParams.get('category_name');
+
+      try {
+        // Parallel validation & fetching
+        const promises: [Promise<any>, Promise<any> | null, Promise<any> | null] = [
+          getPaginatedArticles(`/articles/?${query}`),
+          tagSlug ? getTagBySlug(tagSlug) : null,
+          categorySlug ? getCategoryBySlug(categorySlug) : null,
+        ];
+
+        const [articlesData, tagData, categoryData] = await Promise.all(promises);
+
+        // 1. Validasi Tag
+        if (tagSlug) {
+          if (tagData) {
+            setIsInvalidFilter(false);
+            setValidatedTagName(tagData.name);
+            if (tagParam !== tagData.name) {
+              const newParams = new URLSearchParams(searchParams);
+              newParams.set('tag_name', tagData.name);
+              setSearchParams(newParams, { replace: true });
+            }
+          } else {
+            setIsInvalidFilter(true);
+            setLoading(false);
+            return;
+          }
+        } else {
+          setValidatedTagName(null);
+        }
+
+        // 2. Validasi Kategori
+        if (categorySlug) {
+          if (categoryData) {
+            setIsInvalidFilter(false);
+            setValidatedCategoryName(categoryData.name);
+            if (categoryParam !== categoryData.name) {
+              const newParams = new URLSearchParams(searchParams);
+              newParams.set('category_name', categoryData.name);
+              setSearchParams(newParams, { replace: true });
+            }
+          } else {
+            setIsInvalidFilter(true);
+            setLoading(false);
+            return;
+          }
+        } else {
+          setValidatedCategoryName(null);
+        }
+
+        if (!tagSlug && !categorySlug) {
+          setIsInvalidFilter(false);
+        }
+
+        // 3. Set Articles data
+        setArticles(articlesData.results);
+        setCount(articlesData.count);
+        setNextPageUrl(articlesData.next);
+        setPrevPageUrl(articlesData.previous);
+
+      } catch (err) {
+        setError('Failed to load content stream. Please check your connection.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, [searchParams, setSearchParams]);
 
   const handlePageChange = (url: string | null) => {
     if (url) {
@@ -163,21 +198,31 @@ const ArticleListPage = () => {
     );
   }
 
-  // --- 3. Error State ---
-  if (error) {
+  // --- 3. Error State / Invalid Filter ---
+  if (error || isInvalidFilter) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-8">
         <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mb-4">
-          <XCircle className="w-8 h-8 text-red-500" />
+          <AlertCircle className="w-8 h-8 text-red-500" />
         </div>
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Connection Failed</h2>
-        <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-md">{error}</p>
-        <button 
-          onClick={() => window.location.reload()}
-          className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
-        >
-          Retry Connection
-        </button>
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Content Unavailable</h2>
+        <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-md">
+          {error || "The tag or category you are looking for doesn't exist or is invalid."}
+        </p>
+        <div className="flex gap-4">
+          <button 
+            onClick={() => window.history.back()}
+            className="px-6 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors animate-in fade-in"
+          >
+            Go Back
+          </button>
+          <Link 
+            to="/articles"
+            className="px-6 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors animate-in fade-in"
+          >
+            Browse Articles
+          </Link>
+        </div>
       </div>
     );
   }
