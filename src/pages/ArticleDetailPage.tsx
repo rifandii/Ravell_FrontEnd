@@ -7,22 +7,16 @@ import type { Article, Heading } from '../types/types';
 import SEO from '../components/SEO';
 
 // Markdown & Syntax Highlighting
-import React from 'react';
-import ReactMarkdown from 'react-markdown';
-import type { Components } from 'react-markdown';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import remarkGfm from 'remark-gfm';
 import slugify from 'slugify';
+import MarkdownRenderer from '../components/MarkdownRenderer';
 
 // Components & Icons
 import ImageModal from '../components/ImageModal';
-import CopyButton from '../components/CopyButton';
 import FurtherReading from '../components/FurtherReading';
 import { useSidebar } from '../SidebarContext';
 import Breadcrumbs from '../components/Breadcrumbs';
 import Skeleton from 'react-loading-skeleton';
-import { Calendar, User, Clock, Hash, Terminal, AlertCircle } from 'lucide-react';
+import { Calendar, User, Clock, Hash, AlertCircle } from 'lucide-react';
 
 const ArticleDetailPage = () => {
     const { slug } = useParams<{ slug: string }>();
@@ -95,128 +89,7 @@ const ArticleDetailPage = () => {
         }
     }, [article, setHeadings]);
 
-    // --- Custom Markdown Components ---
-    const components: Components = {
-        // 1. Code Blocks (VS Code Terminal Style)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        code({ inline, className, children, ...props }: any) {
-            // [FIX 1] Regex lebih fleksibel menangkap 'c++', 'c#', dll
-            const match = /language-([^\s]+)/.exec(className || '');
-            
-            // [FIX 2] Bersihkan backticks (`) di awal/akhir string
-            const codeText = String(children)
-                .replace(/\n$/, '')
-                .replace(/^`+|`+$/g, ''); 
-            
-            const language = match ? match[1] : 'text'; // Default 'text' jika tidak terdeteksi
-            const isBlockCode = !inline; 
-
-            // [FIX 3] Gunakan 'isBlockCode' saja, jangan bergantung pada 'match'
-            // Ini memastikan blok tanpa bahasa tetap dirender sebagai terminal window
-            if (isBlockCode) {
-                return (
-                    <div className="my-6 rounded-lg overflow-hidden border border-[#333] bg-[#1e1e1e] shadow-2xl relative group font-mono text-sm">
-                        
-                        {/* [FIX 4] Header Presisi: h-10 fix & flex items-center */}
-                        <div className="flex items-center justify-between px-4 h-10 bg-[#252526] border-b border-[#1e1e1e] select-none">
-                            <div className="flex items-center gap-3">
-                                <Terminal className="w-4 h-4 text-blue-400" />
-                                <span className="text-xs text-gray-300 font-medium uppercase tracking-wider">
-                                    {language}
-                                </span>
-                            </div>
-                            
-                            {/* Tombol Copy: Flex center untuk presisi vertikal */}
-                            <div className="flex items-center h-full relative z-10 opacity-70 group-hover:opacity-100 transition-opacity">
-                                <CopyButton text={codeText} />
-                            </div>
-                        </div>
-                        
-                        {/* Code Content */}
-                        <div className="overflow-x-auto">
-                            <SyntaxHighlighter
-                                style={vscDarkPlus}
-                                language={language}
-                                PreTag="div"
-                                showLineNumbers={true} // Matikan line numbers jika ingin seperti terminal murni
-                                customStyle={{ 
-                                    margin: 0, 
-                                    padding: '1.25rem', 
-                                    background: 'transparent', 
-                                    fontSize: '0.9rem', 
-                                    lineHeight: '1.6' 
-                                }}
-                                {...props}
-                            >
-                                {codeText}
-                            </SyntaxHighlighter>
-                        </div>
-                    </div>
-                );
-            }
-
-            // Inline Code
-            return (
-                <code className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-800 text-red-600 dark:text-red-400 font-mono text-sm font-medium" {...props}>
-                    {children}
-                </code>
-            );
-        },
-
-        // 2. Images 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        img({ ...props }: any) { 
-            const isRelative = props.src && props.src.startsWith('/');
-            const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://api.ravell.tech';
-            const fullSrc = isRelative ? `${apiBaseUrl}${props.src}` : props.src;
-            return (
-                <figure className="my-8">
-                    <img
-                        {...props}
-                        src={fullSrc}
-                        className="w-full h-auto rounded-lg shadow-md cursor-zoom-in hover:shadow-xl transition-shadow duration-300 border border-gray-100 dark:border-gray-800"
-                        onClick={() => setZoomedImageUrl(fullSrc || null)}
-                        loading="lazy"
-                    />
-                    {props.alt && (
-                        <figcaption className="text-center text-sm text-gray-500 dark:text-gray-400 mt-2 italic">
-                            {props.alt}
-                        </figcaption>
-                    )}
-                </figure>
-            );
-        },
-        h2: ({ children }) => {
-            const text = React.Children.toArray(children).join('');
-            const id = slugify(text, { lower: true, strict: true });
-            return (
-                <h2 id={id} className="group flex items-center gap-2 text-2xl md:text-3xl font-bold mt-12 mb-6 text-gray-900 dark:text-white scroll-mt-24">
-                    {children}
-                    <a href={`#${id}`} className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-blue-500 transition-opacity" aria-label="Link to this section">
-                        
-                    </a>
-                </h2>
-            );
-        },
-        p: ({ children }) => {
-            const hasImg = React.Children.toArray(children).some(
-                (child) =>
-                    React.isValidElement(child) &&
-                    (child.type === 'img' ||
-                     child.type === components.img ||
-                     (typeof child.type === 'function' && child.type.name === 'img'))
-            );
-            if (hasImg) {
-                return <>{children}</>;
-            }
-            return <p>{children}</p>;
-        },
-        blockquote: ({ children }) => (
-            <blockquote className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-4 my-6 rounded-r-lg text-gray-700 dark:text-gray-300 italic">
-                {children}
-            </blockquote>
-        ),
-    };
+    // Custom Markdown Components removed and delegated to reusable <MarkdownRenderer />
 
     // --- RENDER STATES ---
     if (loading) {
@@ -327,9 +200,10 @@ const ArticleDetailPage = () => {
                         text-gray-700 dark:text-gray-300 leading-relaxed
                     "
                 >
-                    <ReactMarkdown components={components} remarkPlugins={[remarkGfm]}>
-                        {article.markdown_content}
-                    </ReactMarkdown>
+                    <MarkdownRenderer 
+                        content={article.markdown_content} 
+                        onImageClick={(src) => setZoomedImageUrl(src)}
+                    />
                 </article>
 
                 <div className="my-16 border-t border-gray-200 dark:border-gray-800"></div>
