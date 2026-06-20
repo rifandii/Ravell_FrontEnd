@@ -84,3 +84,23 @@ export const getPaginatedTags = async (): Promise<PaginatedResponse<Tag>> => {
     return { count: 0, next: null, previous: null, results: [] };
   }
 };
+
+export const getCategoryBySlug = async (slug: string): Promise<Category | null> => {
+  try {
+    const response = await apiClient.get(`/categories/${slug}/`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching category with slug ${slug}:`, error);
+    return null;
+  }
+};
+
+export const getTagBySlug = async (slug: string): Promise<Tag | null> => {
+  try {
+    const response = await apiClient.get(`/tags/${slug}/`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching tag with slug ${slug}:`, error);
+    return null;
+  }
+};
