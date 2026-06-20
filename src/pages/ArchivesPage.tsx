@@ -33,8 +33,8 @@ const ArchivesPage = () => {
   useEffect(() => {
     const fetchArchives = async () => {
       try {
-        // Idealnya gunakan apiClient, tapi axios langsung juga oke untuk refactor UI ini
-        const response = await axios.get('https://api.ravell.tech/api/archives/');
+        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://api.ravell.tech';
+        const response = await axios.get(`${apiBaseUrl}/api/archives/`);
         setArchives(response.data);
       } catch (err) {
         console.error('Error fetching archives:', err);
