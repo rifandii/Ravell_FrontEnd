@@ -40,7 +40,7 @@ const CategoriesPage = () => {
   // --- LOADING STATE (Tree Pattern) ---
   if (loading) {
     return (
-      <div className="max-w-3xl mx-auto px-4 md:px-8 py-12">
+      <div className="max-w-5xl mx-auto px-4 md:px-8 py-12">
         <div className="text-center mb-12">
            <Skeleton width={60} height={60} circle className="mb-4" />
            <Skeleton width={200} height={32} className="mb-2" />
@@ -99,7 +99,7 @@ const CategoriesPage = () => {
       </div>
 
       {/* --- MAIN CONTENT (Directory Card) --- */}
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         {categories.length > 0 ? (
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl shadow-purple-900/5 border border-gray-200 dark:border-gray-700 overflow-hidden">
             
