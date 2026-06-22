@@ -1,7 +1,7 @@
 // src/pages/ArticleDetailPage.tsx
 import { useState, useEffect, useRef } from 'react';
 import dayjs from 'dayjs';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { getArticleBySlug } from '../services/apiClient';
 import type { Article, Heading } from '../types/types';
 import SEO from '../components/SEO';
@@ -131,6 +131,10 @@ const ArticleDetailPage = () => {
         );
     }
 
+    // Calculate dynamic reading time (200 words per minute average)
+    const wordCount = article ? article.markdown_content.trim().split(/\s+/).length : 0;
+    const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+
     return (
         <div className="w-full pb-20 animate-in fade-in duration-500">
             <SEO 
@@ -148,10 +152,14 @@ const ArticleDetailPage = () => {
 
                 <div className="flex flex-wrap justify-center gap-2 mb-6">
                     {article.tags.map(tag => (
-                        <span key={tag.id} className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 border border-purple-100 dark:border-purple-800">
+                        <Link 
+                            key={tag.id} 
+                            to={`/articles?tags__slug=${tag.slug}&tag_name=${tag.name}`}
+                            className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 border border-purple-100 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900/50 hover:text-purple-800 dark:hover:text-purple-200 hover:scale-105 hover:shadow-sm active:scale-95 transition-all duration-200 cursor-pointer"
+                        >
                             <Hash className="w-3 h-3 mr-1" />
                             {tag.name}
-                        </span>
+                        </Link>
                     ))}
                 </div>
 
@@ -170,9 +178,9 @@ const ArticleDetailPage = () => {
                             {dayjs(article.published_date).format('MMMM D, YYYY')}
                         </time>
                     </div>
-                    <div className="flex items-center gap-2">
+                     <div className="flex items-center gap-2" title={`${wordCount} words`}>
                         <Clock className="w-4 h-4 text-purple-500" />
-                        <span>5 min read</span>
+                        <span>{readingTime} min read</span>
                     </div>
                 </div>
             </header>
