@@ -201,24 +201,24 @@ const ArticleListPage = () => {
   // --- 3. Error State / Invalid Filter ---
   if (error || isInvalidFilter) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-8">
+      <div className="flex flex-col items-center justify-center min-h-[50vh] px-4 text-center">
         <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mb-4">
           <AlertCircle className="w-8 h-8 text-red-500" />
         </div>
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Content Unavailable</h2>
-        <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-md">
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Failed to Load Content</h3>
+        <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-md mb-6">
           {error || "The tag or category you are looking for doesn't exist or is invalid."}
         </p>
-        <div className="flex gap-4">
+        <div className="flex gap-4 justify-center">
           <button 
             onClick={() => window.history.back()}
-            className="px-6 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors animate-in fade-in"
+            className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-medium transition-colors cursor-pointer"
           >
             Go Back
           </button>
           <Link 
             to="/articles"
-            className="px-6 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors animate-in fade-in"
+            className="px-6 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
           >
             Browse Articles
           </Link>
