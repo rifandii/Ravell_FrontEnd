@@ -34,7 +34,7 @@ export default function MarkdownRenderer({ content, onImageClick }: MarkdownRend
             {/* Header Toolbar */}
             <div className="flex items-center justify-between px-4 h-10 bg-[#252526] border-b border-[#1e1e1e] select-none">
               <div className="flex items-center gap-3">
-                <Terminal className="w-4 h-4 text-blue-400" />
+                <Terminal className="w-4 h-4 text-purple-400" />
                 <span className="text-xs text-gray-300 font-medium uppercase tracking-wider">
                   {language}
                 </span>
@@ -118,7 +118,7 @@ export default function MarkdownRenderer({ content, onImageClick }: MarkdownRend
       return (
         <h2 id={id} className="group flex items-center gap-2 text-2xl md:text-3xl font-bold mt-12 mb-6 text-gray-900 dark:text-white scroll-mt-24">
           {children}
-          <a href={`#${id}`} className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-blue-500 transition-opacity" aria-label="Link to this section">
+          <a href={`#${id}`} className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-purple-500 transition-opacity" aria-label="Link to this section">
             
           </a>
         </h2>
@@ -151,7 +151,7 @@ export default function MarkdownRenderer({ content, onImageClick }: MarkdownRend
 
     // Custom Blockquote rendering
     blockquote: ({ children }) => (
-      <blockquote className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-4 my-6 rounded-r-lg text-gray-700 dark:text-gray-300 italic">
+      <blockquote className="border-l-4 border-purple-500 bg-purple-50 dark:bg-purple-900/20 p-4 my-6 rounded-r-lg text-gray-700 dark:text-gray-300 italic">
         {children}
       </blockquote>
     ),

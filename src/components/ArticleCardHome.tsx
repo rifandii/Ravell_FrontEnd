@@ -32,7 +32,7 @@ const ArticleCardHome = ({ article }: ArticleCardProps) => {
       <div className="p-3 sm:p-4 flex flex-col flex-grow">
         {/* Judul */}
         <h2 className="text-base sm:text-lg md:text-xl font-bold mb-2 text-gray-900 dark:text-gray-200 
-                       group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+                       group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors line-clamp-2">
           {article.title}
         </h2>
         
@@ -57,7 +57,7 @@ const ArticleCardHome = ({ article }: ArticleCardProps) => {
           {article.tags.map(tag => (
             <span 
               key={tag.id} 
-              className="bg-blue-100 text-blue-800 px-3 py-1 text-xs font-semibold rounded-full dark:bg-blue-900 dark:text-blue-300"
+              className="bg-purple-100 text-purple-800 px-3 py-1 text-xs font-semibold rounded-full dark:bg-purple-900 dark:text-purple-300"
             >
               #{tag.name}
             </span>

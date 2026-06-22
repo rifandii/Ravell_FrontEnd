@@ -25,7 +25,7 @@ const ReadingProgressBar = () => {
   return (
     <div className="w-full h-1 bg-gray-200 dark:bg-gray-700 fixed top-0 left-0 z-50">
       <div
-        className="h-full bg-blue-600 transition-all duration-100 ease-out"
+        className="h-full bg-purple-600 transition-all duration-100 ease-out"
         style={{ width: `${width}%` }}
       ></div>
     </div>

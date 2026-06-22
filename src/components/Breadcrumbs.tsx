@@ -41,7 +41,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ articleTitle }) => {
         <li className="inline-flex items-center">
           <Link 
             to="/" 
-            className="inline-flex items-center text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white transition-colors duration-200"
+            className="inline-flex items-center text-gray-700 hover:text-purple-600 dark:text-gray-400 dark:hover:text-white transition-colors duration-200"
           >
             <Home className="w-4 h-4 mr-2" />
             Home
@@ -73,7 +73,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ articleTitle }) => {
               ) : (
                 <Link
                   to={to}
-                  className="text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white transition-colors duration-200"
+                  className="text-gray-700 hover:text-purple-600 dark:text-gray-400 dark:hover:text-white transition-colors duration-200"
                 >
                   {name}
                 </Link>

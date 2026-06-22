@@ -33,7 +33,7 @@ const Pagination = ({ count, nextPageUrl, prevPageUrl, handlePageChange }: Pagin
           onClick={() => setSearchParams(newSearchParams)}
           className={`px-4 py-2 rounded-full font-semibold transition-colors cursor-pointer ${
             i === currentPage
-              ? 'bg-blue-600 text-white'
+              ? 'bg-purple-600 text-white'
               : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
           }`}
         >

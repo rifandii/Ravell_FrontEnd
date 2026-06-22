@@ -98,7 +98,7 @@ const UpdateNotification = () => {
           className="fixed bottom-6 left-6 right-6 md:left-auto md:max-w-md z-50 p-4 rounded-2xl bg-white/95 dark:bg-gray-900/95 backdrop-blur border border-gray-200 dark:border-gray-800 shadow-2xl dark:shadow-black/70 flex flex-col gap-3"
         >
           <div className="flex items-start gap-3">
-            <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 shrink-0">
+            <div className="p-2.5 rounded-xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 shrink-0">
               <Bell className="w-5 h-5 animate-bounce" />
             </div>
             <div className="flex-1 min-w-0">
@@ -126,7 +126,7 @@ const UpdateNotification = () => {
             </button>
             <button
               onClick={handleRefresh}
-              className="group flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-blue-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+              className="group flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-purple-600 hover:bg-purple-700 text-white shadow-md hover:shadow-purple-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
             >
               <RefreshCw className="w-3.5 h-3.5 group-hover:rotate-180 transition-transform duration-500" />
               Muat Ulang

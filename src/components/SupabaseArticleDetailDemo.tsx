@@ -68,7 +68,7 @@ export default function SupabaseArticleDetailDemo() {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="animate-pulse flex flex-col items-center">
-          <div className="w-12 h-12 rounded-full border-4 border-blue-500 border-t-transparent animate-spin mb-4" />
+          <div className="w-12 h-12 rounded-full border-4 border-purple-500 border-t-transparent animate-spin mb-4" />
           <p className="text-gray-500 font-medium">Loading content and metadata...</p>
         </div>
       </div>

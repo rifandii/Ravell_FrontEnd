@@ -45,8 +45,8 @@ const ArchiveMonthItem = ({ year, monthNumber, monthName, postCount }: ArchiveMo
       <div 
         className={`flex items-center justify-between py-1 transition-colors duration-200 cursor-pointer
                   before:content-[''] before:absolute before:-left-[10px] before:top-2.5 before:h-3 before:w-3 before:rounded-full 
-                  before:bg-blue-600 dark:before:bg-blue-500 before:z-10 before:ring-4 before:ring-white dark:before:ring-gray-800 
-                  ${hasPosts ? 'hover:text-blue-600 dark:hover:text-blue-400' : 'text-gray-500 dark:text-gray-600'}`}
+                  before:bg-purple-600 dark:before:bg-purple-500 before:z-10 before:ring-4 before:ring-white dark:before:ring-gray-800 
+                  ${hasPosts ? 'hover:text-purple-600 dark:hover:text-purple-400' : 'text-gray-500 dark:text-gray-600'}`}
         onClick={() => hasPosts && setIsExpanded(!isExpanded)}
       >
         <span className="text-lg font-semibold pl-4">
@@ -71,11 +71,11 @@ const ArchiveMonthItem = ({ year, monthNumber, monthName, postCount }: ArchiveMo
             <li 
                 key={article.id} 
                 // MARKER ARTIKEL: Ganti -left-7 menjadi -left-[14px] (atau -left-3.5) untuk menempel ke garis
-                className="relative before:content-[''] before:absolute before:-left-[14px] before:top-3 before:h-1.5 before:w-1.5 before:rounded-full before:bg-blue-500 dark:before:bg-blue-400 before:z-10"
+                className="relative before:content-[''] before:absolute before:-left-[14px] before:top-3 before:h-1.5 before:w-1.5 before:rounded-full before:bg-purple-500 dark:before:bg-purple-400 before:z-10"
             >
               <Link 
                 to={`/articles/${article.slug}`} 
-                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 text-sm transition-colors block pl-4 font-semibold"
+                className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 text-sm transition-colors block pl-4 font-semibold"
               >
                 {dayjs(article.published_date).format('D MMM')} &mdash; {article.title}
               </Link>

@@ -100,13 +100,13 @@ const Header = ({ setIsMenuOpen }: HeaderProps) => {
               <form onSubmit={handleSearch} className="hidden md:block relative group">
                 <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Search className="h-4 w-4 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                        <Search className="h-4 w-4 text-gray-400 group-focus-within:text-purple-500 transition-colors" />
                     </div>
                     <input
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="block w-64 pl-10 pr-10 py-2 bg-gray-100 dark:bg-gray-800 border border-transparent focus:border-blue-500/50 focus:bg-white dark:focus:bg-gray-900 focus:ring-4 focus:ring-blue-500/10 rounded-xl text-sm transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500"
+                        className="block w-64 pl-10 pr-10 py-2 bg-gray-100 dark:bg-gray-800 border border-transparent focus:border-purple-500/50 focus:bg-white dark:focus:bg-gray-900 focus:ring-4 focus:ring-purple-500/10 rounded-xl text-sm transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500"
                         placeholder="Search documentation..."
                     />
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -139,14 +139,14 @@ const Header = ({ setIsMenuOpen }: HeaderProps) => {
         <div className="fixed inset-0 z-[60] bg-white dark:bg-gray-950 animate-in fade-in duration-200 flex flex-col md:hidden">
             <div className="flex items-center gap-3 p-4 border-b border-gray-100 dark:border-gray-800">
             <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-blue-600 dark:text-blue-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-purple-600 dark:text-purple-400" />
                 <form onSubmit={handleSearch}>
                     <input
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         autoFocus
-                        className="w-full pl-10 pr-4 py-3 bg-gray-100 dark:bg-gray-900 rounded-xl border-none text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 placeholder-gray-500"
+                        className="w-full pl-10 pr-4 py-3 bg-gray-100 dark:bg-gray-900 rounded-xl border-none text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 placeholder-gray-500"
                         placeholder="Search articles, tags..."
                     />
                 </form>
@@ -172,7 +172,7 @@ const Header = ({ setIsMenuOpen }: HeaderProps) => {
                         <button
                             key={tag.id}
                             onClick={() => handleTagClick(tag.slug, tag.name)}
-                            className="px-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                            className="px-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-purple-500 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
                         >
                             #{tag.name}
                         </button>
@@ -194,7 +194,7 @@ const Header = ({ setIsMenuOpen }: HeaderProps) => {
                             onClick={() => setIsMobileSearchOpen(false)}
                             className="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors group"
                         >
-                            <div className="w-1 h-12 bg-gray-200 dark:bg-gray-800 rounded-full group-hover:bg-blue-500 transition-colors"></div>
+                            <div className="w-1 h-12 bg-gray-200 dark:bg-gray-800 rounded-full group-hover:bg-purple-500 transition-colors"></div>
                             <div>
                                 <h4 className="text-sm font-semibold text-gray-900 dark:text-white leading-snug mb-1">
                                     {article.title}
