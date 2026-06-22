@@ -171,18 +171,18 @@ const UpdateNotification = () => {
             </div>
             <div className="flex-1 min-w-0">
               <h4 className="font-bold text-sm text-gray-900 dark:text-gray-100 mb-0.5">
-                {updateReason === 'content' ? 'Konten Baru Tersedia!' : 'Update Website Tersedia!'}
+                {updateReason === 'content' ? 'New Content Available!' : 'Website Update Available!'}
               </h4>
               <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
                 {updateReason === 'content' 
-                  ? 'Artikel, kategori, atau tag baru saja diperbarui. Silakan muat ulang halaman untuk melihat pembaruan terkini.' 
-                  : 'Administrator baru saja melakukan pembaruan pada website. Silakan muat ulang halaman untuk mendapatkan versi terbaru.'}
+                  ? 'Articles, categories, or tags have just been updated. Please reload the page to see the latest updates.' 
+                  : 'The website has been updated to a newer version. Please reload the page to apply the updates.'}
               </p>
             </div>
             <button
               onClick={() => setShow(false)}
               className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors p-1 rounded-lg"
-              aria-label="Tutup"
+              aria-label="Close"
             >
               <X className="w-4 h-4" />
             </button>
@@ -192,14 +192,14 @@ const UpdateNotification = () => {
               onClick={() => setShow(false)}
               className="px-3.5 py-1.5 rounded-xl text-xs font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer"
             >
-              Nanti Saja
+              Maybe Later
             </button>
             <button
               onClick={handleRefresh}
               className="group flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-purple-600 hover:bg-purple-700 text-white shadow-md hover:shadow-purple-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
             >
               <RefreshCw className="w-3.5 h-3.5 group-hover:rotate-180 transition-transform duration-500" />
-              Muat Ulang
+              Reload
             </button>
           </div>
         </motion.div>
