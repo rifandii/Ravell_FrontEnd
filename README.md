@@ -234,6 +234,28 @@ server {
 }
 ```
 
+## 🛠️ Dual-Environment Workflow (Production & Development)
+
+The platform is configured with two distinct running environments: **Production** and **Development**.
+
+| Config / Parameter | Production Environment (Main) | Development Environment (Dev) |
+|---|---|---|
+| **Git Branch** | `main` | `development` |
+| **Frontend URL** | `https://ravell.tech` | `https://dev.ravell.tech` |
+| **Backend API URL** | `https://api.ravell.tech` | `https://api-dev.ravell.tech` |
+| **VPS Directory** | `/var/www/ravell-backend` | `/var/www/ravell-backend-dev` |
+| **Systemd Service** | `ravell-backend.service` | `ravell-backend-dev.service` |
+| **Port (Local Gunicorn)** | `8000` | `8001` |
+| **Database Integration** | Supabase (Shared) | Supabase (Shared) |
+
+> [!WARNING]
+> **Shared Database Architecture**: Both environments currently share the same Supabase database. This guarantees identical article, category, and tag content on both sites, but means any edits, additions, or deletions made in the Development Admin Panel (`https://api-dev.ravell.tech/ravell-manage/`) will immediately impact the Production website.
+
+### Git Branching Workflow
+1. All new features, style adjustments, or bug fixes must be committed to the `development` branch first.
+2. Verify the changes on the development frontend (`https://dev.ravell.tech`) and backend (`https://api-dev.ravell.tech`).
+3. Once fully verified, create a Pull Request to merge `development` into `main`, resolve any conflicts, and deploy to production.
+
 ---
 
 ## 🚀 Local Setup & Deployment Guides
@@ -303,6 +325,27 @@ python manage.py collectstatic --noinput
 
 # Restart backend process
 sudo systemctl restart ravell-backend
+```
+
+### 4. Development Redeployment (Cheat Sheet)
+When codes are pushed to GitHub `development` branch, log in to the Tencent Cloud server and run:
+```bash
+ssh ravell-tech
+cd /var/www/ravell-backend-dev
+source venv/bin/activate
+git pull origin development
+
+# Convert dependency file & install changes
+iconv -f UTF-16 -t UTF-8 requirements.txt > requirements_utf8.txt
+pip install -r requirements_utf8.txt -q
+
+# Run database migrations (optional, since it shares the same database as production)
+set -a && source .env && set +a
+python manage.py migrate
+python manage.py collectstatic --noinput
+
+# Restart backend dev process
+sudo systemctl restart ravell-backend-dev
 ```
 
 ---
