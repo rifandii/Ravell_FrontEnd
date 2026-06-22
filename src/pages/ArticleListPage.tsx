@@ -178,11 +178,15 @@ const ArticleListPage = () => {
     const categoryParam = searchParams.get('category_name');
     const tagSlug = searchParams.get('tags__slug');
     const tagParam = searchParams.get('tag_name');
+    const year = searchParams.get('year');
+    const month = searchParams.get('month');
 
     if (tagSlug || tagParam) {
       navigate('/tags');
     } else if (categorySlug || categoryParam) {
       navigate('/categories');
+    } else if (year || month) {
+      navigate('/archives');
     } else {
       setSearchParams({});
     }
