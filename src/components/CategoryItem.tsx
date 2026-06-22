@@ -6,11 +6,12 @@ import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 
 interface CategoryItemProps {
   category: Category;
+  depth?: number;
 }
 
-const CategoryItem = ({ category }: CategoryItemProps) => {
+const CategoryItem = ({ category, depth = 0 }: CategoryItemProps) => {
   const hasChildren = category.children && category.children.length > 0;
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
 
   const toggleExpand = () => {
     if (hasChildren) {
@@ -18,31 +19,40 @@ const CategoryItem = ({ category }: CategoryItemProps) => {
     }
   };
 
+  const isChild = depth > 0;
+
   return (
     // Setiap kategori adalah <li>
     <li className="list-none">
-      {/* Container utama kategori: Tambahkan hover:bg-gray-200 dark:hover:bg-gray-700 */}
-      <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg flex items-center justify-between transition-colors duration-200 shadow-sm hover:shadow-md hover:bg-gray-200 dark:hover:bg-gray-700">
+      {/* Container utama kategori */}
+      <div 
+        className={`flex items-center justify-between transition-all duration-200 rounded-xl border ${
+          isChild 
+            ? 'bg-purple-50/40 border-purple-200/40 dark:bg-purple-950/15 dark:border-purple-900/30 hover:bg-purple-50/80 hover:border-purple-300/60 dark:hover:bg-purple-950/30 dark:hover:border-purple-800/40 p-3.5 shadow-sm hover:shadow' 
+            : 'bg-purple-50 border-purple-200/80 dark:bg-purple-950/40 dark:border-purple-800/40 hover:bg-purple-100/80 hover:border-purple-300 dark:hover:bg-purple-950/60 dark:hover:border-purple-700/50 p-4 shadow-sm hover:shadow-md'
+        }`}
+      >
         <Link
           to={`/articles?categories__slug=${category.slug}&category_name=${category.name}`}
-          // Link hanya mengubah warna teks saat hover, bukan warna latar belakang
-          className="flex-grow font-bold text-lg text-gray-800 dark:text-white hover:text-purple-600 dark:hover:text-purple-400"
+          className={`flex-grow hover:text-purple-600 dark:hover:text-purple-400 transition-colors ${
+            isChild ? 'font-semibold text-base text-gray-700 dark:text-gray-200' : 'font-bold text-lg text-gray-900 dark:text-white'
+          }`}
         >
           {category.name}
-          <span className="ml-3 text-sm text-gray-500 dark:text-gray-400 font-normal">
-            ({category.post_count} posts)
+          <span className="ml-3 text-xs text-gray-400 dark:text-gray-500 font-normal">
+            ({category.post_count} {category.post_count === 1 ? 'post' : 'posts'})
           </span>
         </Link>
         
         {hasChildren && (
           <button 
             onClick={toggleExpand} 
-            className="p-1 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-full transition-colors"
+            className="p-1.5 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors cursor-pointer"
           >
             {isExpanded ? (
-              <ChevronUpIcon className="h-5 w-5" />
+              <ChevronUpIcon className="h-4 w-4" />
             ) : (
-              <ChevronDownIcon className="h-5 w-5" />
+              <ChevronDownIcon className="h-4 w-4" />
             )}
           </button>
         )}
@@ -50,10 +60,9 @@ const CategoryItem = ({ category }: CategoryItemProps) => {
       
       {/* Rekursi untuk Sub-Kategori */}
       {hasChildren && isExpanded && (
-        <ul className="mt-2 pl-4 border-l border-gray-300 dark:border-gray-600 space-y-1">
+        <ul className="mt-2.5 pl-6 border-l-2 border-dashed border-purple-200 dark:border-purple-950/60 space-y-2 ml-5 mb-2.5">
           {category.children!.map((child) => (
-            // Untuk Sub-kategori, kita kembalikan gaya yang lebih ringkas
-            <CategoryItem key={child.id} category={child} />
+            <CategoryItem key={child.id} category={child} depth={depth + 1} />
           ))}
         </ul>
       )}
