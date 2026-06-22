@@ -18,6 +18,11 @@ import {
 } from 'lucide-react';
 import SEO from '../components/SEO';
 
+const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
 const ArticleListPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -41,6 +46,7 @@ const ArticleListPage = () => {
     const tagParam = searchParams.get('tag_name');
     const search = searchParams.get('search');
     const year = searchParams.get('year');
+    const month = searchParams.get('month');
     
     if (categorySlug || categoryParam) {
       // Gunakan nama yang divalidasi dari API, fallback ke URL param
@@ -70,9 +76,16 @@ const ArticleListPage = () => {
       };
     }
     if (year) {
+      let subtitle = `Archive from ${year}`;
+      if (month) {
+        const monthInt = parseInt(month, 10);
+        if (monthInt >= 1 && monthInt <= 12) {
+          subtitle = `Archive from ${MONTH_NAMES[monthInt - 1]} ${year}`;
+        }
+      }
       return {
         title: 'Time Capsule',
-        subtitle: `Archive from ${year}`,
+        subtitle: subtitle,
         icon: Calendar,
         isFiltered: true
       };
