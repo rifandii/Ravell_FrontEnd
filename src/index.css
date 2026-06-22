@@ -17,7 +17,7 @@ body {
 }
 
 code, pre {
-  font-family: 'Roboto Mono', monospace;
+  font-family: 'Consolas', 'Roboto Mono', monospace;
 }
 
 /* Prevent any element from causing horizontal overflow */
@@ -28,13 +28,6 @@ img, video, iframe, embed, object {
 
 /* Ensure prose code blocks don't overflow on small screens */
 .prose pre {
-  max-width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.prose table {
-  display: block;
   max-width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;

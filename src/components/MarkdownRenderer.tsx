@@ -2,12 +2,9 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import remarkGfm from 'remark-gfm';
 import slugify from 'slugify';
-import CopyButton from './CopyButton';
-import { Terminal } from 'lucide-react';
+import CodeBlock from './CodeBlock';
 
 interface MarkdownRendererProps {
   content: string;
@@ -29,62 +26,62 @@ export default function MarkdownRenderer({ content, onImageClick }: MarkdownRend
       const language = match ? match[1] : 'text';
 
       if (isBlockCode) {
-        return (
-          <div className="my-6 rounded-lg overflow-hidden border border-[#333] bg-[#1e1e1e] shadow-2xl relative group font-mono text-sm">
-            {/* Header Toolbar */}
-            <div className="flex items-center justify-between px-4 h-10 bg-[#252526] border-b border-[#1e1e1e] select-none">
-              <div className="flex items-center gap-3">
-                <Terminal className="w-4 h-4 text-purple-400" />
-                <span className="text-xs text-gray-300 font-medium uppercase tracking-wider">
-                  {language}
-                </span>
-              </div>
-              
-              {/* Copy button container */}
-              <div className="flex items-center h-full relative z-10 opacity-70 group-hover:opacity-100 transition-opacity">
-                <CopyButton text={codeText} />
-              </div>
-            </div>
-            
-            {/* Code highlight layout with layout prevention */}
-            <div className="overflow-x-auto">
-              <SyntaxHighlighter
-                style={vscDarkPlus}
-                language={language}
-                PreTag="div"
-                showLineNumbers={true}
-                customStyle={{ 
-                  margin: 0, 
-                  padding: '1.25rem', 
-                  background: 'transparent', 
-                  fontSize: '0.9rem', 
-                  lineHeight: '1.6' 
-                }}
-                {...(props as any)}
-              >
-                {codeText}
-              </SyntaxHighlighter>
-            </div>
-          </div>
-        );
+        return <CodeBlock codeText={codeText} language={language} />;
       }
 
       // Inline code block rendering
       return (
-        <code className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-800 text-red-600 dark:text-red-400 font-mono text-sm font-medium" {...props}>
+        <code className="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-purple-950/35 text-purple-600 dark:text-purple-300 font-mono text-sm font-semibold border border-gray-200 dark:border-purple-900/20" {...props}>
           {children}
         </code>
       );
     },
 
-    // Table block override to prevent layout breaks in parent grid/flex views
+    // Table elements overrides for beautiful premium layout
     table({ children }) {
       return (
-        <div className="overflow-x-auto my-6 w-full">
-          <table className="min-w-full border-collapse border border-gray-200 dark:border-gray-800 text-left text-sm">
-            {children}
-          </table>
+        <div className="my-6 overflow-hidden rounded-2xl border border-gray-200 dark:border-purple-900/30 bg-white dark:bg-[#120e22]/20 shadow-md dark:shadow-purple-950/5">
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-sm font-sans" style={{ display: 'table', tableLayout: 'auto', borderCollapse: 'collapse' }}>
+              {children}
+            </table>
+          </div>
         </div>
+      );
+    },
+    thead({ children }) {
+      return (
+        <thead className="bg-purple-50/70 dark:bg-purple-950/40 text-purple-900 dark:text-purple-300 text-xs font-bold uppercase tracking-wider border-b-2 border-purple-100 dark:border-purple-950/60" style={{ display: 'table-header-group' }}>
+          {children}
+        </thead>
+      );
+    },
+    tbody({ children }) {
+      return (
+        <tbody className="divide-y divide-gray-100 dark:divide-purple-950/20 bg-transparent" style={{ display: 'table-row-group' }}>
+          {children}
+        </tbody>
+      );
+    },
+    tr({ children }) {
+      return (
+        <tr className="hover:bg-purple-50/30 dark:hover:bg-purple-950/10 transition-colors duration-150" style={{ display: 'table-row' }}>
+          {children}
+        </tr>
+      );
+    },
+    th({ children }) {
+      return (
+        <th className="px-6 py-4 font-bold text-left text-purple-900 dark:text-purple-300" style={{ display: 'table-cell', verticalAlign: 'middle' }}>
+          {children}
+        </th>
+      );
+    },
+    td({ children }) {
+      return (
+        <td className="px-6 py-4 text-gray-700 dark:text-gray-200 border-b border-gray-100 dark:border-purple-950/10" style={{ display: 'table-cell', verticalAlign: 'middle' }}>
+          {children}
+        </td>
       );
     },
 
