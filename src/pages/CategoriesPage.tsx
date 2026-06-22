@@ -1,6 +1,6 @@
 // src/pages/CategoriesPage.tsx
 import { useState, useEffect } from 'react';
-import { getPaginatedCategories } from '../services/apiClient';
+import { getPaginatedCategories, getPaginatedArticles } from '../services/apiClient';
 import type { Category } from '../types/types';
 import CategoryItem from '../components/CategoryItem';
 import Skeleton from 'react-loading-skeleton';
@@ -13,6 +13,7 @@ import SEO from '../components/SEO';
 
 const CategoriesPage = () => {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [totalArticles, setTotalArticles] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,8 +21,12 @@ const CategoriesPage = () => {
     const fetchCategories = async () => {
       setLoading(true);
       try {
-        const data = await getPaginatedCategories();
-        setCategories(data.results); 
+        const [categoriesData, articlesData] = await Promise.all([
+          getPaginatedCategories(),
+          getPaginatedArticles('/articles/')
+        ]);
+        setCategories(categoriesData.results); 
+        setTotalArticles(articlesData.count);
       } catch (err) {
         setError('Unable to load category tree.');
         console.error(err);
@@ -105,7 +110,7 @@ const CategoriesPage = () => {
                  Root Directory
                </span>
                <span className="ml-auto text-xs bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 px-2 py-0.5 rounded-md font-medium">
-                 {categories.length} Topics
+                 {totalArticles} Articles
                </span>
             </div>
 
