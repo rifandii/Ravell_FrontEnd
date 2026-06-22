@@ -42,7 +42,7 @@ export default function MarkdownRenderer({ content, onImageClick }: MarkdownRend
       return (
         <div className="my-6 overflow-hidden rounded-2xl border border-gray-200 dark:border-purple-900/30 bg-white dark:bg-[#120e22]/20 shadow-md dark:shadow-purple-950/5">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-purple-950/40 text-sm">
+            <table className="min-w-full text-sm font-sans" style={{ display: 'table', tableLayout: 'auto', borderCollapse: 'collapse' }}>
               {children}
             </table>
           </div>
@@ -51,35 +51,35 @@ export default function MarkdownRenderer({ content, onImageClick }: MarkdownRend
     },
     thead({ children }) {
       return (
-        <thead className="bg-gray-50/75 dark:bg-purple-950/40 text-gray-700 dark:text-purple-300 text-xs font-bold uppercase tracking-wider">
+        <thead className="bg-purple-50/70 dark:bg-purple-950/40 text-purple-900 dark:text-purple-300 text-xs font-bold uppercase tracking-wider border-b-2 border-purple-100 dark:border-purple-950/60" style={{ display: 'table-header-group' }}>
           {children}
         </thead>
       );
     },
     tbody({ children }) {
       return (
-        <tbody className="divide-y divide-gray-100 dark:divide-purple-950/20 bg-transparent">
+        <tbody className="divide-y divide-gray-100 dark:divide-purple-950/20 bg-transparent" style={{ display: 'table-row-group' }}>
           {children}
         </tbody>
       );
     },
     tr({ children }) {
       return (
-        <tr className="hover:bg-gray-50/50 dark:hover:bg-purple-950/10 transition-colors duration-200">
+        <tr className="hover:bg-purple-50/30 dark:hover:bg-purple-950/10 transition-colors duration-150" style={{ display: 'table-row' }}>
           {children}
         </tr>
       );
     },
     th({ children }) {
       return (
-        <th className="px-6 py-4 border-b border-gray-200 dark:border-purple-950/40 font-bold text-left text-gray-900 dark:text-purple-300">
+        <th className="px-6 py-4 font-bold text-left text-purple-900 dark:text-purple-300" style={{ display: 'table-cell', verticalAlign: 'middle' }}>
           {children}
         </th>
       );
     },
     td({ children }) {
       return (
-        <td className="px-6 py-4 text-gray-600 dark:text-gray-300">
+        <td className="px-6 py-4 text-gray-700 dark:text-gray-200 border-b border-gray-100 dark:border-purple-950/10" style={{ display: 'table-cell', verticalAlign: 'middle' }}>
           {children}
         </td>
       );

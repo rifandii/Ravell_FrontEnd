@@ -200,7 +200,13 @@ const CodeBlock = ({ codeText, language }: CodeBlockProps) => {
             padding: '1.25rem 1.25rem 1.25rem 0.5rem', 
             background: 'transparent', 
             fontSize: '0.875rem', 
-            lineHeight: '1.7' 
+            lineHeight: '1.7',
+            fontFamily: 'Consolas, Monaco, monospace'
+          }}
+          codeTagProps={{
+            style: {
+              fontFamily: 'Consolas, Monaco, monospace'
+            }
           }}
         >
           {codeText}
