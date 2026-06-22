@@ -2,12 +2,9 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import remarkGfm from 'remark-gfm';
 import slugify from 'slugify';
-import CopyButton from './CopyButton';
-import { Terminal } from 'lucide-react';
+import CodeBlock from './CodeBlock';
 
 interface MarkdownRendererProps {
   content: string;
@@ -29,53 +26,7 @@ export default function MarkdownRenderer({ content, onImageClick }: MarkdownRend
       const language = match ? match[1] : 'text';
 
       if (isBlockCode) {
-        return (
-          <div className="my-6 rounded-2xl overflow-hidden border border-gray-200 dark:border-purple-900/30 bg-[#07050e] dark:bg-[#07050e]/95 backdrop-blur shadow-xl dark:shadow-purple-950/15 relative group font-mono text-sm">
-            {/* Header Toolbar */}
-            <div className="flex items-center justify-between px-4 h-11 bg-gray-50/80 dark:bg-[#120e22]/90 border-b border-gray-200 dark:border-purple-950/50 select-none">
-              <div className="flex items-center gap-3">
-                <Terminal className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                <span className="text-xs text-gray-500 dark:text-purple-300 font-bold uppercase tracking-wider">
-                  {language}
-                </span>
-              </div>
-              
-              {/* Copy button container */}
-              <div className="flex items-center h-full relative z-10 opacity-80 group-hover:opacity-100 transition-opacity">
-                <CopyButton text={codeText} />
-              </div>
-            </div>
-            
-            {/* Code highlight layout with layout prevention */}
-            <div className="overflow-x-auto">
-              <SyntaxHighlighter
-                style={vscDarkPlus}
-                language={language}
-                PreTag="div"
-                showLineNumbers={true}
-                lineNumberStyle={{
-                  color: 'rgba(167, 139, 250, 0.4)',
-                  paddingRight: '1rem',
-                  borderRight: '1px solid rgba(167, 139, 250, 0.15)',
-                  marginRight: '0.75rem',
-                  minWidth: '2.5rem',
-                  textAlign: 'right',
-                  userSelect: 'none'
-                }}
-                customStyle={{ 
-                  margin: 0, 
-                  padding: '1.25rem 1.25rem 1.25rem 0.5rem', 
-                  background: 'transparent', 
-                  fontSize: '0.875rem', 
-                  lineHeight: '1.7' 
-                }}
-                {...(props as any)}
-              >
-                {codeText}
-              </SyntaxHighlighter>
-            </div>
-          </div>
-        );
+        return <CodeBlock codeText={codeText} language={language} />;
       }
 
       // Inline code block rendering
