@@ -145,7 +145,7 @@ const ArticleDetailPage = () => {
 
                 <div className="flex flex-wrap justify-center gap-2 mb-6">
                     {article.tags.map(tag => (
-                        <span key={tag.id} className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-100 dark:border-blue-800">
+                        <span key={tag.id} className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 border border-purple-100 dark:border-purple-800">
                             <Hash className="w-3 h-3 mr-1" />
                             {tag.name}
                         </span>
@@ -158,17 +158,17 @@ const ArticleDetailPage = () => {
 
                 <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 text-sm text-gray-500 dark:text-gray-400 border-y border-gray-100 dark:border-gray-800 py-4">
                     <div className="flex items-center gap-2">
-                        <User className="w-4 h-4 text-blue-500" />
+                        <User className="w-4 h-4 text-purple-500" />
                         <span className="font-medium text-gray-900 dark:text-gray-200">{article.author_username}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-blue-500" />
+                        <Calendar className="w-4 h-4 text-purple-500" />
                         <time dateTime={article.published_date}>
                             {dayjs(article.published_date).format('MMMM D, YYYY')}
                         </time>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4 text-blue-500" />
+                        <Clock className="w-4 h-4 text-purple-500" />
                         <span>5 min read</span>
                     </div>
                 </div>
@@ -176,7 +176,7 @@ const ArticleDetailPage = () => {
 
             {article.featured_image_url && (
                 <div className="max-w-5xl mx-auto px-3 sm:px-4 md:px-8 mb-8 sm:mb-12 md:mb-16">
-                    <div className="relative rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl shadow-blue-900/10 aspect-video group">
+                    <div className="relative rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl shadow-purple-900/10 aspect-video group">
                         <img
                             src={article.featured_image_url}
                             alt={article.title}
@@ -195,7 +195,7 @@ const ArticleDetailPage = () => {
                     className="
                         prose prose-base md:prose-lg lg:prose-xl dark:prose-invert max-w-none 
                         prose-headings:font-bold prose-headings:tracking-tight
-                        prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
+                        prose-a:text-purple-600 dark:prose-a:text-purple-400 prose-a:no-underline hover:prose-a:underline
                         prose-img:rounded-xl prose-img:shadow-lg
                         text-gray-700 dark:text-gray-300 leading-relaxed
                     "

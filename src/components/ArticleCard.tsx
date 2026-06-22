@@ -16,7 +16,7 @@ const ArticleCard = ({ article }: ArticleCardProps) => {
   return (
     <Link 
       to={`/articles/${article.slug}`} 
-      className="group flex flex-col h-full bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-300 hover:-translate-y-1"
+      className="group flex flex-col h-full bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden hover:shadow-xl hover:shadow-purple-900/5 transition-all duration-300 hover:-translate-y-1"
     >
       {/* --- 1. FEATURED IMAGE --- */}
       
@@ -39,7 +39,7 @@ const ArticleCard = ({ article }: ArticleCardProps) => {
         </div>
 
         {/* Title */}
-        <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight">
+        <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors leading-tight">
           {article.title}
         </h2>
         
@@ -76,7 +76,7 @@ const ArticleCard = ({ article }: ArticleCardProps) => {
             </div>
 
             {/* Visual Cue "Read Article" */}
-            <div className="flex items-center gap-1 text-sm font-semibold text-blue-600 dark:text-blue-400 opacity-0 transform translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+            <div className="flex items-center gap-1 text-sm font-semibold text-purple-600 dark:text-purple-400 opacity-0 transform translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
               Read
               <ArrowRight className="w-4 h-4" />
             </div>

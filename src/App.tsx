@@ -37,7 +37,7 @@ const PageLoader = () => (
   <div className="flex items-center justify-center h-[50vh]">
     <div className="relative w-12 h-12">
       <div className="absolute top-0 left-0 w-full h-full border-4 border-gray-200 dark:border-gray-700 rounded-full"></div>
-      <div className="absolute top-0 left-0 w-full h-full border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div>
+      <div className="absolute top-0 left-0 w-full h-full border-4 border-purple-500 rounded-full border-t-transparent animate-spin"></div>
     </div>
   </div>
 );
@@ -60,7 +60,7 @@ function AppContent() {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans selection:bg-blue-500/30">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans selection:bg-purple-500/30">
       <div className="flex w-full px-0">
         {/* Sidebar statis (kiri) */}
         <Sidebar

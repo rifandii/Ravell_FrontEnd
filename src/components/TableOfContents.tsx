@@ -53,7 +53,7 @@ const TableOfContents = ({ headings }: TableOfContentsProps) => {
                   text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300
                   // Styling untuk item aktif: border kiri dan warna biru
                   ${isActive 
-                    ? 'text-blue-600 dark:text-blue-400 font-semibold border-l-4 border-blue-600 dark:border-blue-400 pl-2 -ml-2' 
+                    ? 'text-purple-600 dark:text-purple-400 font-semibold border-l-4 border-purple-600 dark:border-purple-400 pl-2 -ml-2' 
                     : 'pl-3' 
                   }
                 `}

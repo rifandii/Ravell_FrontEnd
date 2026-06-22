@@ -119,7 +119,7 @@ const HomePage = () => {
         </p>
         <button
           onClick={() => window.location.reload()}
-          className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium"
+          className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-medium"
         >
           Reload Page
         </button>
@@ -145,7 +145,7 @@ const HomePage = () => {
               </h2>
               <Link
                 to="/articles"
-                className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                className="inline-flex items-center gap-2 text-purple-600 dark:text-purple-400 hover:underline font-medium"
               >
                 View All <ArrowRight className="w-4 h-4" />
               </Link>
@@ -165,12 +165,12 @@ const HomePage = () => {
           <div className="max-w-7xl mx-auto px-4 md:px-8">
             <div className="flex items-center justify-between mb-10 md:mb-12">
               <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2 sm:gap-3">
-                <CalendarDays className="w-5 h-5 sm:w-7 sm:h-7 text-blue-600" />
+                <CalendarDays className="w-5 h-5 sm:w-7 sm:h-7 text-purple-600" />
                 Latest Updates
               </h2>
               <Link
                 to="/articles"
-                className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                className="inline-flex items-center gap-2 text-purple-600 dark:text-purple-400 hover:underline font-medium"
               >
                 View All <ArrowRight className="w-4 h-4" />
               </Link>
@@ -201,7 +201,7 @@ const HomePage = () => {
             {/* Categories */}
             <div>
               <div className="flex items-center gap-3 mb-6">
-                <Folder className="w-6 h-6 text-indigo-600" />
+                <Folder className="w-6 h-6 text-purple-600" />
                 <h3 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900 dark:text-white">
                   Categories
                 </h3>
@@ -211,17 +211,17 @@ const HomePage = () => {
                   <Link
                     key={category.id}
                     to={`/articles?category_name=${category.name}`}
-                    className="flex items-center justify-between p-3 sm:p-5 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-indigo-400 dark:hover:border-indigo-600 hover:shadow-md transition-all duration-300 group"
+                    className="flex items-center justify-between p-3 sm:p-5 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-purple-400 dark:hover:border-purple-600 hover:shadow-md transition-all duration-300 group"
                   >
-                    <span className="text-sm sm:text-base md:text-lg font-medium text-gray-800 dark:text-gray-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+                    <span className="text-sm sm:text-base md:text-lg font-medium text-gray-800 dark:text-gray-200 group-hover:text-purple-600 dark:group-hover:text-purple-400">
                       {category.name}
                     </span>
-                    <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-purple-600 dark:group-hover:text-purple-400 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 ))}
                 <Link
                   to="/categories"
-                  className="inline-flex items-center gap-2 text-indigo-600 dark:text-indigo-400 hover:underline font-medium mt-4"
+                  className="inline-flex items-center gap-2 text-purple-600 dark:text-purple-400 hover:underline font-medium mt-4"
                 >
                   View All Categories <ArrowRight className="w-4 h-4" />
                 </Link>
@@ -231,7 +231,7 @@ const HomePage = () => {
             {/* Tags */}
             <div>
               <div className="flex items-center gap-3 mb-6">
-                <TagIcon className="w-6 h-6 text-teal-600" />
+                <TagIcon className="w-6 h-6 text-purple-600" />
                 <h3 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900 dark:text-white">
                   Popular Tags
                 </h3>
@@ -241,14 +241,14 @@ const HomePage = () => {
                   <Link
                     key={tag.id}
                     to={`/articles?tags__slug=${tag.slug}&tag_name=${tag.name}`}
-                    className="px-3 py-2 sm:px-5 sm:py-2.5 bg-gray-50 dark:bg-gray-800 rounded-full border border-gray-200 dark:border-gray-700 text-sm sm:text-base font-medium text-gray-700 dark:text-gray-300 hover:border-teal-400 dark:hover:border-teal-600 hover:text-teal-600 dark:hover:text-teal-400 transition-colors group"
+                    className="px-3 py-2 sm:px-5 sm:py-2.5 bg-gray-50 dark:bg-gray-800 rounded-full border border-gray-200 dark:border-gray-700 text-sm sm:text-base font-medium text-gray-700 dark:text-gray-300 hover:border-purple-400 dark:hover:border-purple-600 hover:text-purple-600 dark:hover:text-purple-400 transition-colors group"
                   >
                     #{tag.name}
                   </Link>
                 ))}
                 <Link
                   to="/tags"
-                  className="inline-flex items-center gap-2 text-teal-600 dark:text-teal-400 hover:underline font-medium mt-2 ml-1"
+                  className="inline-flex items-center gap-2 text-purple-600 dark:text-purple-400 hover:underline font-medium mt-2 ml-1"
                 >
                   View All Tags <ArrowRight className="w-4 h-4" />
                 </Link>
@@ -261,7 +261,7 @@ const HomePage = () => {
       {/* --- TESTIMONIALS/QUOTES (Optional) --- */}
       <section className="py-16 md:py-20 bg-white dark:bg-gray-900">
         <div className="max-w-5xl mx-auto px-4 md:px-8 text-center">
-          <MessageCircle className="w-12 h-12 text-blue-500 mx-auto mb-6" />
+          <MessageCircle className="w-12 h-12 text-purple-500 mx-auto mb-6" />
           <p className="text-xl md:text-2xl italic font-serif text-gray-700 dark:text-gray-300 leading-relaxed mb-8">
                         "The bad guys only need to be right once. The defender has to be right every single time."
           </p>

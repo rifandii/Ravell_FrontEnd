@@ -14,7 +14,7 @@ const SocialLink: React.FC<{
     rel="noopener noreferrer"
     aria-label={label}
     className="text-gray-500 dark:text-gray-400 transition-colors duration-200
-               hover:text-blue-600 dark:hover:text-blue-400"
+               hover:text-purple-600 dark:hover:text-purple-400"
   >
     <Icon className="w-6 h-6" />
   </a>
@@ -67,7 +67,7 @@ const Footer = () => {
                   <Link 
                     to={link.path} 
                     className="text-sm font-medium text-gray-600 dark:text-gray-300 
-                               hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                               hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
                   >
                     {link.name}
                   </Link>

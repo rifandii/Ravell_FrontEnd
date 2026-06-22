@@ -81,7 +81,7 @@ const CategoriesPage = () => {
       
       {/* --- HEADER SECTION --- */}
       <div className="max-w-2xl mx-auto text-center mb-12">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 mb-6 shadow-sm hover:scale-110 transition-transform duration-300">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 mb-6 shadow-sm hover:scale-110 transition-transform duration-300">
           <FolderTree className="w-8 h-8" />
         </div>
         
@@ -96,7 +96,7 @@ const CategoriesPage = () => {
       {/* --- MAIN CONTENT (Directory Card) --- */}
       <div className="max-w-3xl mx-auto">
         {categories.length > 0 ? (
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl shadow-indigo-900/5 border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl shadow-purple-900/5 border border-gray-200 dark:border-gray-700 overflow-hidden">
             
             {/* Card Header / Toolbar */}
             <div className="px-6 py-4 bg-gray-50/50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-700 flex items-center gap-2">
@@ -104,7 +104,7 @@ const CategoriesPage = () => {
                <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
                  Root Directory
                </span>
-               <span className="ml-auto text-xs bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 px-2 py-0.5 rounded-md font-medium">
+               <span className="ml-auto text-xs bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 px-2 py-0.5 rounded-md font-medium">
                  {categories.length} Topics
                </span>
             </div>

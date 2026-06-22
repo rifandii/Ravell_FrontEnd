@@ -31,7 +31,7 @@ const AboutPage = () => {
         <div className="max-w-3xl mb-10 sm:mb-16">
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 dark:text-white mb-4 sm:mb-6">
             Architecting Secure <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Digital Infrastructures</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-fuchsia-600">Digital Infrastructures</span>
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 leading-relaxed">
             Hi, I'm the human behind <span className="font-semibold text-gray-900 dark:text-gray-200">Ravell Networks</span>. 
@@ -45,7 +45,7 @@ const AboutPage = () => {
           {/* 1. PROFILE CARD (Span 2 columns on mobile, 1 on desktop) */}
           <div className="sm:col-span-2 md:col-span-1 row-span-2 bg-white dark:bg-gray-800 rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col items-center text-center">
             <div className="relative w-28 h-28 sm:w-40 sm:h-40 mb-4 sm:mb-6 group">
-              <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-500"></div>
+              <div className="absolute inset-0 bg-purple-500/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-500"></div>
               <img
                 src="public/profile.png" // Pastikan path ini benar
                 alt="Ravell Networks"
@@ -55,7 +55,7 @@ const AboutPage = () => {
             </div>
             
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-1">Ravell Networks</h2>
-            <p className="text-sm font-medium text-blue-600 dark:text-blue-400 mb-4 sm:mb-6">NetSec Engineer</p>
+            <p className="text-sm font-medium text-purple-600 dark:text-purple-400 mb-4 sm:mb-6">NetSec Engineer</p>
             
             <div className="w-full space-y-3">
                {[
@@ -85,7 +85,7 @@ const AboutPage = () => {
             
             <div className="relative z-10">
               <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                <Cpu className="w-5 h-5 text-blue-400" />
+                <Cpu className="w-5 h-5 text-purple-400" />
                 Technical Arsenal
               </h3>
               
@@ -105,7 +105,7 @@ const AboutPage = () => {
                   <p className="text-sm text-slate-400 mb-3 font-medium uppercase tracking-wider">Tools & Automation</p>
                   <div className="flex flex-wrap gap-2">
                     {['Python', 'Ansible', 'Wireshark', 'GNS3', 'EVE-NG', 'Linux'].map(tech => (
-                      <span key={tech} className="px-3 py-1.5 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-200 text-sm backdrop-blur-sm">
+                      <span key={tech} className="px-3 py-1.5 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-200 text-sm backdrop-blur-sm">
                         {tech}
                       </span>
                     ))}
@@ -117,8 +117,8 @@ const AboutPage = () => {
 
           {/* 3. CORE FOCUS: Engineering */}
           <div className="bg-white dark:bg-gray-800 rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow group">
-            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-              <Network className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <Network className="w-6 h-6 text-purple-600 dark:text-purple-400" />
             </div>
             <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Network Engineering</h3>
             <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
@@ -128,8 +128,8 @@ const AboutPage = () => {
 
           {/* 4. CORE FOCUS: Security */}
           <div className="bg-white dark:bg-gray-800 rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow group">
-            <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-              <ShieldCheck className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <ShieldCheck className="w-6 h-6 text-purple-600 dark:text-purple-400" />
             </div>
             <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Cybersecurity</h3>
             <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">

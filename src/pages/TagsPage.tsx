@@ -78,7 +78,7 @@ const TagsPage = () => {
       
       {/* --- HEADER SECTION --- */}
       <div className="max-w-2xl mx-auto text-center mb-12">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 mb-6 shadow-sm hover:rotate-12 transition-transform duration-300">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 mb-6 shadow-sm hover:rotate-12 transition-transform duration-300">
           <Hash className="w-8 h-8" />
         </div>
         
@@ -98,7 +98,7 @@ const TagsPage = () => {
               <Link
                 key={tag.id}
                 to={`/articles?tags__slug=${tag.slug}&tag_name=${tag.name}`}
-                className="group relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:shadow-blue-500/10 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-300 transform hover:-translate-y-1"
+                className="group relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:shadow-purple-500/10 hover:border-purple-300 dark:hover:border-purple-700 transition-all duration-300 transform hover:-translate-y-1"
               >
                 {/* Background Decoration (# Watermark) */}
                 <div className="absolute -right-6 -top-6 text-9xl font-black text-gray-50 dark:text-gray-700/20 opacity-50 group-hover:scale-110 transition-transform duration-500 pointer-events-none select-none font-sans">
@@ -108,14 +108,14 @@ const TagsPage = () => {
                 <div className="relative z-10 flex flex-col h-full justify-between min-h-[100px]">
                   {/* Top: Icon */}
                   <div className="mb-4">
-                    <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-10 h-10 rounded-lg bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform duration-300">
                       <TagIcon className="w-5 h-5" />
                     </div>
                   </div>
 
                   {/* Bottom: Content */}
                   <div>
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
                       {tag.name}
                     </h2>
                     

@@ -69,13 +69,13 @@ const FurtherReading = ({ currentArticleSlug, previousArticle, nextArticle }: Fu
                     {previousArticle ? (
                         <Link 
                             to={`/articles/${previousArticle.slug}`}
-                            className="group flex flex-col p-4 sm:p-6 bg-white dark:bg-gray-900 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-lg transition-all duration-300"
+                            className="group flex flex-col p-4 sm:p-6 bg-white dark:bg-gray-900 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-purple-300 dark:hover:border-purple-700 hover:shadow-lg transition-all duration-300"
                         >
                             <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 sm:mb-3">
                                 <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform duration-300" />
                                 Previous Article
                             </div>
-                            <span className="text-base sm:text-lg font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+                            <span className="text-base sm:text-lg font-bold text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors line-clamp-2">
                                 {previousArticle.title}
                             </span>
                         </Link>
@@ -88,13 +88,13 @@ const FurtherReading = ({ currentArticleSlug, previousArticle, nextArticle }: Fu
                     {nextArticle ? (
                         <Link 
                             to={`/articles/${nextArticle.slug}`}
-                            className="group flex flex-col items-end text-right p-4 sm:p-6 bg-white dark:bg-gray-900 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-lg transition-all duration-300"
+                            className="group flex flex-col items-end text-right p-4 sm:p-6 bg-white dark:bg-gray-900 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-purple-300 dark:hover:border-purple-700 hover:shadow-lg transition-all duration-300"
                         >
                             <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 sm:mb-3">
                                 Next Article
                                 <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform duration-300" />
                             </div>
-                            <span className="text-base sm:text-lg font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+                            <span className="text-base sm:text-lg font-bold text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors line-clamp-2">
                                 {nextArticle.title}
                             </span>
                         </Link>
@@ -108,7 +108,7 @@ const FurtherReading = ({ currentArticleSlug, previousArticle, nextArticle }: Fu
             {randomArticles.length > 0 && (
                 <div>
                     <div className="flex items-center gap-2 mb-8">
-                        <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                        <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                         <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                             You Might Also Like
                         </h3>
@@ -123,12 +123,12 @@ const FurtherReading = ({ currentArticleSlug, previousArticle, nextArticle }: Fu
                             >
                                 {/* Icon Decorative */}
                                 <div className="mb-4">
-                                    <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                    <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                         <BookOpen className="w-4 h-4" />
                                     </div>
                                 </div>
 
-                                <h4 className="text-base font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                <h4 className="text-base font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
                                     {article.title}
                                 </h4>
                                 

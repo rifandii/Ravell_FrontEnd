@@ -126,7 +126,7 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }: SidebarProps) => {
                       className={`
                         group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200
                         ${active 
-                          ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400" 
+                          ? "bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400" 
                           : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
                         }
                       `}
@@ -134,7 +134,7 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }: SidebarProps) => {
                       {/* Icon Wrapper */}
                       <span className={`
                         transition-colors duration-200
-                        ${active ? "text-blue-600 dark:text-blue-400" : "text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300"}
+                        ${active ? "text-purple-600 dark:text-purple-400" : "text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300"}
                       `}>
                         <Icon className="w-5 h-5" strokeWidth={2} />
                       </span>
@@ -143,7 +143,7 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }: SidebarProps) => {
 
                       {/* Active Indicator Dot (Right aligned) */}
                       {active && (
-                        <span className="ml-auto w-1.5 h-1.5 bg-blue-600 dark:bg-blue-400 rounded-full"></span>
+                        <span className="ml-auto w-1.5 h-1.5 bg-purple-600 dark:bg-purple-400 rounded-full"></span>
                       )}
                     </Link>
                   );

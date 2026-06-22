@@ -238,7 +238,7 @@ const ArticleListPage = () => {
       
       {/* --- HEADER SECTION --- */}
       <div className="flex flex-col items-center text-center mb-12">
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 mb-4 shadow-sm">
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 mb-4 shadow-sm">
           <Icon className="w-6 h-6" />
         </div>
         
@@ -302,7 +302,7 @@ const ArticleListPage = () => {
           <div className="flex gap-4">
             <button 
               onClick={clearFilters}
-              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all shadow-lg shadow-blue-600/20"
+              className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-xl transition-all shadow-lg shadow-purple-600/20"
             >
               View All Articles
             </button>

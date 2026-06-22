@@ -55,7 +55,7 @@ const RightSidebar = () => {
   const RecentArticlesWidget = () => (
     <div className="w-full">
       <div className="flex items-center gap-2 mb-4">
-        <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+        <Clock className="w-4 h-4 text-purple-600 dark:text-purple-400" />
         <h3 className="font-bold text-xs text-gray-950 dark:text-gray-200 uppercase tracking-wider">
           Fresh Updates
         </h3>
@@ -64,7 +64,7 @@ const RightSidebar = () => {
         {latestArticles.map((article) => (
           <li key={article.id} className="group">
             <Link to={`/articles/${article.slug}`} className="block cursor-pointer">
-              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 leading-relaxed mb-1">
+              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors line-clamp-2 leading-relaxed mb-1">
                 {article.title}
               </h4>
               <div className="flex items-center text-xs text-gray-400 gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
@@ -94,8 +94,8 @@ const RightSidebar = () => {
             className="
               text-xs font-medium px-3 py-1.5 rounded-lg transition-all duration-200 cursor-pointer
               bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-750
-              hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 
-              dark:hover:bg-blue-900/20 dark:hover:text-blue-300 dark:hover:border-blue-800
+              hover:bg-purple-50 hover:text-purple-600 hover:border-purple-200 
+              dark:hover:bg-purple-900/20 dark:hover:text-purple-300 dark:hover:border-purple-800
             "
           >
             #{tag.name}
@@ -108,7 +108,7 @@ const RightSidebar = () => {
   const TableOfContentsWidget = () => (
     <div className="w-full">
       <div className="flex items-center gap-2 mb-4">
-        <List className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+        <List className="w-4 h-4 text-purple-600 dark:text-purple-400" />
         <h3 className="font-bold text-xs text-gray-950 dark:text-gray-200 uppercase tracking-wider">
           On This Page
         </h3>
@@ -128,8 +128,8 @@ const RightSidebar = () => {
                       ? "font-medium text-gray-700 dark:text-gray-200 border-transparent hover:border-gray-300 dark:hover:border-gray-600" 
                       : "text-[11px] text-gray-500 dark:text-gray-400 ml-1 border-transparent hover:text-gray-900 dark:hover:text-gray-200"
                     }
-                    hover:text-blue-600 dark:hover:text-blue-400
-                    focus:outline-none focus:text-blue-600 dark:focus:text-blue-400
+                    hover:text-purple-600 dark:hover:text-purple-400
+                    focus:outline-none focus:text-purple-600 dark:focus:text-purple-400
                   `}
                 >
                   {heading.text}
