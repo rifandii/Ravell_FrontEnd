@@ -1,5 +1,5 @@
 // src/components/Header.tsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
@@ -23,6 +23,21 @@ const Header = ({ setIsMenuOpen }: HeaderProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   
+  // [HOTKEY UX] Focus search input on Ctrl+K or Cmd+K
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        const searchInput = document.getElementById("desktop-search-input");
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   // [OPTIMASI UTAMA]
   // 1. Hapus state lokal.
   // 2. Ambil data dari GlobalContext.
@@ -99,18 +114,19 @@ const Header = ({ setIsMenuOpen }: HeaderProps) => {
               {/* Desktop Search */}
               <form onSubmit={handleSearch} className="hidden md:block relative group">
                 <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Search className="h-4 w-4 text-gray-400 group-focus-within:text-purple-500 transition-colors" />
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+                        <Search className="h-4 w-4 text-gray-400 group-focus-within:text-purple-500 group-focus-within:scale-110 group-focus-within:rotate-3 transition-all duration-300 ease-in-out" />
                     </div>
                     <input
+                        id="desktop-search-input"
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="block w-64 pl-10 pr-10 py-2 bg-gray-100 dark:bg-gray-800 border border-transparent focus:border-purple-500/50 focus:bg-white dark:focus:bg-gray-900 focus:ring-4 focus:ring-purple-500/10 rounded-xl text-sm transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500"
+                        className="block w-64 focus:w-80 lg:focus:w-96 pl-10 pr-12 py-2 bg-gray-100 dark:bg-gray-800 border border-transparent focus:border-purple-500/50 focus:bg-white dark:focus:bg-gray-900 focus:ring-4 focus:ring-purple-500/10 rounded-xl text-sm transition-all duration-300 ease-in-out text-gray-900 dark:text-white placeholder-gray-500 outline-none shadow-sm focus:shadow-md"
                         placeholder="Search documentation..."
                     />
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <span className="text-xs text-gray-400 bg-white dark:bg-gray-700 px-1.5 py-0.5 rounded border border-gray-200 dark:border-gray-600">⌘K</span>
+                        <span className="text-[10px] text-gray-400 dark:text-gray-500 bg-white dark:bg-gray-700 px-1.5 py-0.5 rounded border border-gray-200 dark:border-gray-600 shadow-sm group-focus-within:opacity-0 group-focus-within:scale-90 transition-all duration-300 ease-in-out font-mono">⌘K</span>
                     </div>
                 </div>
               </form>
