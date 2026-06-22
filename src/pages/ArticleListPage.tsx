@@ -1,6 +1,6 @@
 // src/pages/ArticleListPage.tsx
 import { useEffect, useState, useMemo } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { getPaginatedArticles, getTagBySlug, getCategoryBySlug } from '../services/apiClient';
 import type { Article } from '../types/types';
 import ArticleCard from '../components/ArticleCard';
@@ -20,6 +20,7 @@ import SEO from '../components/SEO';
 
 const ArticleListPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -173,7 +174,18 @@ const ArticleListPage = () => {
   };
 
   const clearFilters = () => {
-    setSearchParams({});
+    const categorySlug = searchParams.get('categories__slug');
+    const categoryParam = searchParams.get('category_name');
+    const tagSlug = searchParams.get('tags__slug');
+    const tagParam = searchParams.get('tag_name');
+
+    if (tagSlug || tagParam) {
+      navigate('/tags');
+    } else if (categorySlug || categoryParam) {
+      navigate('/categories');
+    } else {
+      setSearchParams({});
+    }
   };
 
   // --- 2. Loading State (Grid Layout) ---
