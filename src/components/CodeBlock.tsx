@@ -11,7 +11,7 @@ interface CodeBlockProps {
 
 const CodeBlock = ({ codeText, language }: CodeBlockProps) => {
   const [copied, setCopied] = useState(false);
-  const [isHoverHighlightEnabled, setIsHoverHighlightEnabled] = useState(false);
+  const [isHoverHighlightEnabled, setIsHoverHighlightEnabled] = useState(true);
   const [hoveredLine, setHoveredLine] = useState<number | null>(null);
 
   const handleCopy = () => {
@@ -21,7 +21,17 @@ const CodeBlock = ({ codeText, language }: CodeBlockProps) => {
   };
 
   const handleExtern = () => {
-    const newWin = window.open('', '_blank');
+    const w = 900;
+    const h = 700;
+    const left = window.screen.width / 2 - w / 2;
+    const top = window.screen.height / 2 - h / 2;
+    
+    const newWin = window.open(
+      '', 
+      '_blank', 
+      `width=${w},height=${h},top=${top},left=${left},resizable=yes,scrollbars=yes,status=no,toolbar=no,menubar=no,location=no`
+    );
+
     if (newWin) {
       newWin.document.open();
       newWin.document.write(`
@@ -64,15 +74,19 @@ const CodeBlock = ({ codeText, language }: CodeBlockProps) => {
       .replace(/'/g, '&#039;');
   };
 
+  const isDefaultLang = ['text', 'plaintext'].includes(language.toLowerCase());
+
   return (
     <div className="my-6 rounded-2xl overflow-hidden border border-gray-200 dark:border-purple-900/30 bg-[#07050e] dark:bg-[#07050e]/95 backdrop-blur shadow-xl dark:shadow-purple-950/15 relative group font-mono text-sm">
       {/* Header Toolbar */}
       <div className="flex items-center justify-between px-4 h-11 bg-gray-50/80 dark:bg-[#120e22]/90 border-b border-gray-200 dark:border-purple-950/50 select-none">
         <div className="flex items-center gap-3">
           <Terminal className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-          <span className="text-xs text-gray-500 dark:text-purple-300 font-bold uppercase tracking-wider">
-            {language}
-          </span>
+          {!isDefaultLang && (
+            <span className="text-xs text-gray-500 dark:text-purple-300 font-bold uppercase tracking-wider">
+              {language}
+            </span>
+          )}
         </div>
         
         {/* Toolbar Buttons */}
