@@ -1,52 +1,56 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RefreshCw, Bell, X } from 'lucide-react';
+import { getLatestArticles, getPaginatedCategories, getPaginatedTags } from '../services/apiClient';
 
 const UpdateNotification = () => {
   const [show, setShow] = useState(false);
+  const [updateReason, setUpdateReason] = useState<'app' | 'content' | null>(null);
   const [waitingWorker, setWaitingWorker] = useState<ServiceWorker | null>(null);
 
+  // Effect 1: Service Worker (App Update) Listener
   useEffect(() => {
     // For testing/mocking in development environment
     if (!import.meta.env.PROD) {
       (window as any).__triggerUpdateNotification = () => {
+        setUpdateReason('app');
+        setShow(true);
+      };
+      (window as any).__triggerContentNotification = () => {
+        setUpdateReason('content');
         setShow(true);
       };
     }
 
     if (!('serviceWorker' in navigator)) return;
 
-    // Listen to when a new controller starts taking over (after skipWaiting is done)
     const handleControllerChange = () => {
       window.location.reload();
     };
     navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
 
-    // Get the registration
     navigator.serviceWorker.getRegistration().then((reg) => {
       if (!reg) return;
 
       const checkWaiting = (registration: ServiceWorkerRegistration) => {
-        // If there's already a waiting worker, show the update prompt
         if (registration.waiting) {
           setWaitingWorker(registration.waiting);
+          setUpdateReason('app');
           setShow(true);
         }
       };
 
-      // Initial check
       checkWaiting(reg);
 
-      // Listen for updates
       const onUpdateFound = () => {
         const newWorker = reg.installing;
         if (!newWorker) return;
 
         newWorker.addEventListener('statechange', () => {
           if (newWorker.state === 'installed') {
-            // New worker is ready and waiting to take over
             if (navigator.serviceWorker.controller) {
               setWaitingWorker(newWorker);
+              setUpdateReason('app');
               setShow(true);
             }
           }
@@ -55,12 +59,10 @@ const UpdateNotification = () => {
 
       reg.addEventListener('updatefound', onUpdateFound);
 
-      // Check for updates periodically (every 1 minute for faster detection)
       const updateInterval = setInterval(() => {
         reg.update().catch((err) => console.log('Error updating SW:', err));
       }, 60000);
 
-      // Check for updates when user refocuses the tab
       const onFocus = () => {
         reg.update().catch((err) => console.log('Error updating SW on focus:', err));
       };
@@ -78,11 +80,77 @@ const UpdateNotification = () => {
     };
   }, []);
 
+  // Effect 2: Content Database Update Polling
+  useEffect(() => {
+    let active = true;
+    let signature = "";
+
+    const checkContentUpdates = async (initialSignature?: string) => {
+      try {
+        const [articles, categories, tags] = await Promise.all([
+          getLatestArticles(),
+          getPaginatedCategories(),
+          getPaginatedTags()
+        ]);
+        
+        // Compute a unique signature based on top 5 latest articles, category count, and tag count
+        const articlesSignature = articles.map(a => `${a.id}-${a.updated_date}`).join('|');
+        const currentSignature = `${articlesSignature}_${categories.count}_${tags.count}`;
+        
+        if (initialSignature && active) {
+          if (currentSignature !== initialSignature) {
+            setUpdateReason('content');
+            setShow(true);
+            return currentSignature;
+          }
+        }
+        return currentSignature;
+      } catch (err) {
+        console.error('Error checking content updates:', err);
+      }
+    };
+
+    // Initialize content signature on load
+    const initSignature = async () => {
+      const sig = await checkContentUpdates();
+      if (sig && active) {
+        signature = sig;
+      }
+    };
+    initSignature();
+
+    // Check periodically every 60 seconds
+    const interval = setInterval(async () => {
+      if (signature) {
+        const nextSig = await checkContentUpdates(signature);
+        if (nextSig && active) {
+          signature = nextSig;
+        }
+      }
+    }, 60000);
+
+    // Also check when tab is refocused
+    const handleFocus = async () => {
+      if (signature) {
+        const nextSig = await checkContentUpdates(signature);
+        if (nextSig && active) {
+          signature = nextSig;
+        }
+      }
+    };
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      active = false;
+      clearInterval(interval);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, []);
+
   const handleRefresh = () => {
-    if (waitingWorker) {
+    if (updateReason === 'app' && waitingWorker) {
       waitingWorker.postMessage({ type: 'SKIP_WAITING' });
     } else {
-      // Fallback
       window.location.reload();
     }
   };
@@ -103,16 +171,18 @@ const UpdateNotification = () => {
             </div>
             <div className="flex-1 min-w-0">
               <h4 className="font-bold text-sm text-gray-900 dark:text-gray-100 mb-0.5">
-                Update Website Tersedia!
+                {updateReason === 'content' ? 'New Content Available!' : 'Website Update Available!'}
               </h4>
               <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-                Administrator baru saja melakukan pembaruan pada website. Silakan muat ulang halaman untuk mendapatkan versi terbaru.
+                {updateReason === 'content' 
+                  ? 'Articles, categories, or tags have just been updated. Please reload the page to see the latest updates.' 
+                  : 'The website has been updated to a newer version. Please reload the page to apply the updates.'}
               </p>
             </div>
             <button
               onClick={() => setShow(false)}
               className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors p-1 rounded-lg"
-              aria-label="Tutup"
+              aria-label="Close"
             >
               <X className="w-4 h-4" />
             </button>
@@ -122,14 +192,14 @@ const UpdateNotification = () => {
               onClick={() => setShow(false)}
               className="px-3.5 py-1.5 rounded-xl text-xs font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer"
             >
-              Nanti Saja
+              Maybe Later
             </button>
             <button
               onClick={handleRefresh}
               className="group flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-purple-600 hover:bg-purple-700 text-white shadow-md hover:shadow-purple-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
             >
               <RefreshCw className="w-3.5 h-3.5 group-hover:rotate-180 transition-transform duration-500" />
-              Muat Ulang
+              Reload
             </button>
           </div>
         </motion.div>
