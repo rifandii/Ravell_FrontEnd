@@ -28,8 +28,8 @@ const CategoryItem = ({ category, depth = 0 }: CategoryItemProps) => {
       <div 
         className={`flex items-center justify-between transition-all duration-200 rounded-xl border ${
           isChild 
-            ? 'bg-purple-500/5 dark:bg-purple-500/[0.02] border-purple-500/10 hover:border-purple-500/20 hover:bg-purple-500/10 dark:hover:bg-purple-500/[0.06] p-3.5 shadow-sm hover:shadow' 
-            : 'bg-purple-50/50 dark:bg-purple-950/15 border-purple-100/60 dark:border-purple-900/20 hover:bg-purple-100/50 dark:hover:bg-purple-950/30 hover:border-purple-200/80 dark:hover:border-purple-900/40 p-4 shadow-sm hover:shadow-md'
+            ? 'bg-purple-50/40 border-purple-200/40 dark:bg-purple-950/15 dark:border-purple-900/30 hover:bg-purple-50/80 hover:border-purple-300/60 dark:hover:bg-purple-950/30 dark:hover:border-purple-800/40 p-3.5 shadow-sm hover:shadow' 
+            : 'bg-purple-50 border-purple-200/80 dark:bg-purple-950/40 dark:border-purple-800/40 hover:bg-purple-100/80 hover:border-purple-300 dark:hover:bg-purple-950/60 dark:hover:border-purple-700/50 p-4 shadow-sm hover:shadow-md'
         }`}
       >
         <Link
