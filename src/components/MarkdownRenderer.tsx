@@ -72,14 +72,14 @@ export default function MarkdownRenderer({ content, onImageClick }: MarkdownRend
     },
     th({ children }) {
       return (
-        <th className="px-6 py-4 font-bold text-left text-purple-900 dark:text-purple-300" style={{ display: 'table-cell', verticalAlign: 'middle' }}>
+        <th className="px-6 py-4 font-bold text-left text-purple-900 dark:text-purple-300" style={{ display: 'table-cell', verticalAlign: 'middle', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}>
           {children}
         </th>
       );
     },
     td({ children }) {
       return (
-        <td className="px-6 py-4 text-gray-700 dark:text-gray-200 border-b border-gray-100 dark:border-purple-950/10" style={{ display: 'table-cell', verticalAlign: 'middle' }}>
+        <td className="px-6 py-4 text-gray-700 dark:text-gray-200 border-b border-gray-100 dark:border-purple-950/10" style={{ display: 'table-cell', verticalAlign: 'middle', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}>
           {children}
         </td>
       );
