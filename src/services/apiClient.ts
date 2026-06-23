@@ -104,3 +104,17 @@ export const getTagBySlug = async (slug: string): Promise<Tag | null> => {
     return null;
   }
 };
+
+export interface ContentSignature {
+  signature: string;
+}
+
+export const getContentSignature = async (): Promise<ContentSignature> => {
+  try {
+    const response = await apiClient.get<ContentSignature>(`/content/signature/`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching content signature:', error);
+    return { signature: '' };
+  }
+};
