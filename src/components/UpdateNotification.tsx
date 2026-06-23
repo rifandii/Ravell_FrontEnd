@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RefreshCw, Bell, X } from 'lucide-react';
-import { getLatestArticles, getPaginatedCategories, getPaginatedTags } from '../services/apiClient';
+import { getContentSignature } from '../services/apiClient';
 
 const UpdateNotification = () => {
   const [show, setShow] = useState(false);
@@ -87,15 +87,8 @@ const UpdateNotification = () => {
 
     const checkContentUpdates = async (initialSignature?: string) => {
       try {
-        const [articles, categories, tags] = await Promise.all([
-          getLatestArticles(),
-          getPaginatedCategories(),
-          getPaginatedTags()
-        ]);
-        
-        // Compute a unique signature based on top 5 latest articles, category count, and tag count
-        const articlesSignature = articles.map(a => `${a.id}-${a.updated_date}`).join('|');
-        const currentSignature = `${articlesSignature}_${categories.count}_${tags.count}`;
+        const response = await getContentSignature();
+        const currentSignature = response.signature;
         
         if (initialSignature && active) {
           if (currentSignature !== initialSignature) {
