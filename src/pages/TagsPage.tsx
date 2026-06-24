@@ -15,13 +15,9 @@ import {
   Fingerprint,
   Shield,
   Radar,
-  Activity,
   LineChart,
-  Cpu,
   ShieldAlert,
   ShieldCheck,
-  Terminal,
-  Database,
   Sliders,
   Flame,
   Binary
