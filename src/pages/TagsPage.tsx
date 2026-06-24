@@ -20,7 +20,14 @@ import {
   ShieldCheck,
   Sliders,
   Flame,
-  Binary
+  Binary,
+  Cloud,
+  Globe,
+  Workflow,
+  Cable,
+  Layers,
+  KeyRound,
+  Lock
 } from 'lucide-react';
 import SEO from '../components/SEO';
 
@@ -116,7 +123,99 @@ const getTagTheme = (tagName: string): TagTheme => {
     shadowHover: "hover:shadow-orange-500/10",
   };
 
-  // Mappings based on Tag Names
+  const slateTheme = {
+    icon: <Cable className="w-5 h-5" />,
+    iconBg: "bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700",
+    iconText: "text-slate-600 dark:text-slate-400",
+    cardHoverBorder: "hover:border-slate-400 dark:hover:border-slate-500",
+    shadowHover: "hover:shadow-slate-500/10",
+  };
+
+  const indigoTheme = {
+    icon: <Workflow className="w-5 h-5" />,
+    iconBg: "bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/50",
+    iconText: "text-indigo-600 dark:text-indigo-400",
+    cardHoverBorder: "hover:border-indigo-400 dark:hover:border-indigo-600",
+    shadowHover: "hover:shadow-indigo-500/10",
+  };
+
+  // 1. BRAND FIREWALLS
+  if (name.includes('palo alto') || name.includes('paloalto') || name.includes('pan-os') || name.includes('panos')) {
+    return {
+      ...orangeTheme,
+      icon: <ShieldCheck className="w-5 h-5 animate-pulse" />
+    };
+  }
+  if (name.includes('fortinet') || name.includes('fortigate') || name.includes('fortios')) {
+    return {
+      ...redTheme,
+      icon: <Shield className="w-5 h-5" />
+    };
+  }
+  if (name.includes('check point') || name.includes('checkpoint')) {
+    return {
+      ...roseTheme,
+      icon: <Lock className="w-5 h-5" />
+    };
+  }
+  if (name.includes('cisco asa') || name.includes('cisco ftd') || name.includes('cisco fmc') || name.includes('firepower')) {
+    return {
+      ...blueTheme,
+      icon: <ShieldAlert className="w-5 h-5" />
+    };
+  }
+
+  // 2. CLOUD PROVIDERS
+  if (name === 'aws' || name.includes('amazon web services')) {
+    return {
+      ...orangeTheme,
+      icon: <Cloud className="w-5 h-5" />
+    };
+  }
+  if (name === 'azure' || name.includes('microsoft azure')) {
+    return {
+      ...blueTheme,
+      icon: <Cloud className="w-5 h-5" />
+    };
+  }
+  if (name === 'gcp' || name.includes('google cloud') || name.includes('google cloud platform')) {
+    return {
+      ...greenTheme,
+      icon: <Cloud className="w-5 h-5" />
+    };
+  }
+
+  // 3. SDN NETWORKING
+  if (name.includes('sd-wan') || name === 'sdwan') {
+    return {
+      ...violetTheme,
+      icon: <Globe className="w-5 h-5" />
+    };
+  }
+  if (name === 'sda' || name.includes('software-defined access') || name.includes('sd-access')) {
+    return {
+      ...cyanTheme,
+      icon: <KeyRound className="w-5 h-5 animate-pulse" />
+    };
+  }
+  if (name === 'aci' || name.includes('application centric infrastructure')) {
+    return {
+      ...indigoTheme,
+      icon: <Layers className="w-5 h-5" />
+    };
+  }
+
+  // 4. TRADITIONAL/LEGACY NETWORKING
+  if (name.includes('traditional') || name.includes('legacy')) {
+    return slateTheme;
+  }
+
+  // 5. AUTOMATION & SCRIPTING
+  if (name.includes('ansible') || name.includes('automation') || name.includes('python') || name.includes('script') || name.includes('terraform') || name.includes('playbook') || name.includes('ci/cd') || name.includes('cicd')) {
+    return indigoTheme;
+  }
+
+  // 6. ORIGINAL MAPS
   if (name.includes('active directory') || name === 'ad') return cyanTheme;
   if (name.includes('cisco')) return blueTheme;
   if (name.includes('domain controller') || name === 'dc') return greenTheme;
@@ -128,7 +227,7 @@ const getTagTheme = (tagName: string): TagTheme => {
   if (name === 'ndr') return roseTheme;
   if (name === 'ngfw') return orangeTheme;
 
-  // Keyword-based fallbacks
+  // Keyword-based general fallbacks
   if (name.includes('security') || name.includes('secure') || name.includes('cyber') || name.includes('protect')) {
     return {
       icon: <Shield className="w-5 h-5" />,
@@ -145,7 +244,7 @@ const getTagTheme = (tagName: string): TagTheme => {
     return greenTheme;
   }
 
-  // Default Tag fallback (with improved style)
+  // Default Tag fallback
   return {
     icon: <TagIcon className="w-5 h-5" />,
     iconBg: "bg-purple-50 dark:bg-purple-900/30 border border-purple-100/50 dark:border-purple-800/50",
