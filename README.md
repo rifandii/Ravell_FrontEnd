@@ -108,7 +108,7 @@ Ravell_FrontEnd/
 │   │   ├── CopyButton.tsx         # Code block copy-to-clipboard button
 │   │   ├── SkeletonCard.tsx       # Skeleton loading placeholder card
 │   │   ├── PageTransition.tsx     # Page transition animation wrapper
-│   │   └── UpdateNotification.tsx # New content update notification banner
+│   │   └── UpdateNotification.tsx # Lightweight content polling via signature endpoint
 │   ├── context/
 │   │   └── GlobalContext.tsx       # Global state provider (categories, tags, etc.)
 │   ├── hooks/
@@ -124,7 +124,7 @@ Ravell_FrontEnd/
 │   │   ├── AboutPage.tsx          # About page
 │   │   └── NotFoundPage.tsx       # 404 error page with navigation fallbacks
 │   ├── services/
-│   │   └── apiClient.ts           # Axios API client with intelligent URL routing
+│   │   └── apiClient.ts           # Axios API client with intelligent URL routing & content signature
 │   ├── types/
 │   │   └── types.ts               # TypeScript interfaces (Article, Category, Tag, etc.)
 │   ├── App.tsx                    # Root application with routing configuration
@@ -169,6 +169,11 @@ Ravell_FrontEnd/
 - Open Graph and Twitter Card metadata for social sharing.
 - Semantic HTML5 structure with proper heading hierarchy.
 - RSS/Atom feed support via Vercel rewrites (proxied to backend feed endpoints).
+
+### ⚡ Performance & Egress Optimization
+- **Content Signature Polling**: `UpdateNotification` polls a single ~35 byte `/api/content/signature/` endpoint every 60 seconds instead of fetching 3 full API responses (~74 KB). Reduces Supabase egress by ~2,100x per poll cycle.
+- **Visibility-Aware**: Polling pauses when the browser tab is hidden and resumes on tab focus.
+- **Lazy Loading**: Code-split pages and components for optimal initial load.
 
 ---
 
@@ -379,7 +384,8 @@ The frontend consumes the following backend API endpoints:
 | `/api/tags/{slug}/` | GET | Single tag detail by slug |
 | `/api/archives/` | GET | Article archives grouped by year and month |
 | `/api/images/` | GET | Paginated image list |
+| `/api/content/signature/` | GET | Lightweight content change signature (~35 bytes) |
 
 ---
 
-*📁 README last updated: June 22, 2026*
+*📁 README last updated: June 24, 2026*
