@@ -94,21 +94,77 @@ const ArticleDetailPage = () => {
     // --- RENDER STATES ---
     if (loading) {
         return (
-            <div className="max-w-4xl mx-auto p-4 md:p-8">
-                <div className="space-y-4 mb-12 text-center">
-                    <Skeleton width={150} height={20} className="mb-4" />
-                    <Skeleton height={60} className="mb-4" />
-                    <div className="flex justify-center gap-4">
-                        <Skeleton width={100} />
-                        <Skeleton width={100} />
+            <div className="w-full pb-20 animate-in fade-in duration-500">
+                {/* Header Skeleton — mirrors actual article header */}
+                <header className="max-w-4xl mx-auto px-3 sm:px-4 md:px-8 pt-6 sm:pt-8 md:pt-12 mb-8 sm:mb-10 text-center">
+                    {/* Breadcrumbs */}
+                    <div className="flex justify-center mb-6">
+                        <Skeleton width={220} height={18} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
                     </div>
+
+                    {/* Tags */}
+                    <div className="flex flex-wrap justify-center gap-2 mb-6">
+                        {[80, 95, 70].map((w, i) => (
+                            <Skeleton key={i} width={w} height={28} borderRadius={9999} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                        ))}
+                    </div>
+
+                    {/* Title — responsive like real h1 */}
+                    <div className="mb-8 space-y-3">
+                        <Skeleton height={40} className="sm:hidden" baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                        <Skeleton height={40} width="75%" className="sm:hidden mx-auto" baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                        <Skeleton height={52} className="hidden sm:block md:hidden" baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                        <Skeleton height={52} width="60%" className="hidden sm:block md:hidden mx-auto" baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                        <Skeleton height={64} className="hidden md:block" baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                        <Skeleton height={64} width="55%" className="hidden md:block mx-auto" baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                    </div>
+
+                    {/* Metadata bar */}
+                    <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 border-y border-gray-100 dark:border-gray-800 py-4">
+                        <Skeleton width={110} height={20} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                        <Skeleton width={140} height={20} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                        <Skeleton width={90} height={20} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                    </div>
+                </header>
+
+                {/* Featured Image Skeleton */}
+                <div className="max-w-5xl mx-auto px-3 sm:px-4 md:px-8 mb-8 sm:mb-12 md:mb-16">
+                    <Skeleton 
+                        className="w-full aspect-video" 
+                        borderRadius={24} 
+                        baseColor="#d3d3d3" 
+                        highlightColor="#e9e9e9" 
+                    />
                 </div>
-                <Skeleton height={400} borderRadius={24} className="mb-12" />
-                <div className="space-y-6">
-                     <Skeleton count={3} />
-                     <Skeleton height={200} />
-                     <Skeleton count={10} />
-                </div>
+
+                {/* Body Content Skeleton */}
+                <main className="max-w-4xl mx-auto px-3 sm:px-4 md:px-8">
+                    <div className="space-y-6">
+                        {/* First paragraph block */}
+                        <Skeleton count={3} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                        <Skeleton width="85%" baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+
+                        {/* Section heading */}
+                        <Skeleton width={280} height={32} className="!mt-10" baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+
+                        {/* Second paragraph block */}
+                        <Skeleton count={4} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                        <Skeleton width="70%" baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+
+                        {/* Code block placeholder */}
+                        <Skeleton height={160} borderRadius={12} className="!mt-6" baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+
+                        {/* Third paragraph block */}
+                        <Skeleton count={3} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+
+                        {/* Another heading */}
+                        <Skeleton width={220} height={32} className="!mt-10" baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+
+                        {/* More content */}
+                        <Skeleton count={5} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                        <Skeleton width="60%" baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                    </div>
+                </main>
             </div>
         );
     }
