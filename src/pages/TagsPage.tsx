@@ -36,18 +36,24 @@ const TagsPage = () => {
   // --- LOADING STATE ---
   if (loading) {
     return (
-      <div className="w-full px-4 md:px-8 py-12">
-        <div className="flex flex-col items-center mb-12">
-           <Skeleton width={64} height={64} circle className="mb-4" />
-           <Skeleton width={200} height={40} />
+      <div className="w-full px-4 md:px-8 py-12 animate-in fade-in duration-500">
+        {/* Header Skeleton — mirrors actual header */}
+        <div className="max-w-2xl mx-auto text-center mb-12">
+          <div className="flex justify-center mb-6">
+            <Skeleton width={64} height={64} borderRadius={16} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+          </div>
+          <Skeleton width={180} height={36} className="mx-auto mb-3" baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+          <Skeleton width={420} height={20} className="mx-auto" baseColor="#d3d3d3" highlightColor="#e9e9e9" />
         </div>
+
+        {/* Tags Grid Skeleton */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
           {Array.from({ length: 8 }).map((_, index) => (
-            <div key={index} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 h-40 flex flex-col justify-between">
-                <Skeleton width={40} height={40} circle />
+            <div key={index} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col justify-between min-h-[140px]">
+                <Skeleton width={40} height={40} borderRadius={8} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
                 <div>
-                  <Skeleton width="60%" height={24} className="mb-2" />
-                  <Skeleton width="30%" height={16} />
+                  <Skeleton width="60%" height={24} className="mb-2" baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                  <Skeleton width="35%" height={14} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
                 </div>
             </div>
           ))}

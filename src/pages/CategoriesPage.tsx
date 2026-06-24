@@ -40,25 +40,60 @@ const CategoriesPage = () => {
   // --- LOADING STATE (Tree Pattern) ---
   if (loading) {
     return (
-      <div className="max-w-5xl mx-auto px-4 md:px-8 py-12">
-        <div className="text-center mb-12">
-           <Skeleton width={60} height={60} circle className="mb-4" />
-           <Skeleton width={200} height={32} className="mb-2" />
+      <div className="w-full px-4 md:px-8 py-12 animate-in fade-in duration-500">
+        {/* Header Skeleton — mirrors actual header */}
+        <div className="max-w-2xl mx-auto text-center mb-12">
+          <div className="flex justify-center mb-6">
+            <Skeleton width={64} height={64} borderRadius={16} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+          </div>
+          <Skeleton width={260} height={36} className="mx-auto mb-3" baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+          <Skeleton width={380} height={20} className="mx-auto" baseColor="#d3d3d3" highlightColor="#e9e9e9" />
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="mb-6 last:mb-0">
-              <div className="flex items-center gap-3 mb-2">
-                 <Skeleton width={24} height={24} />
-                 <Skeleton width="40%" height={24} />
-              </div>
-              {/* Imitasi sub-category dengan indentasi */}
-              <div className="pl-8 space-y-2 border-l-2 border-gray-100 dark:border-gray-700 ml-3">
-                 <Skeleton width="30%" height={20} />
-                 <Skeleton width="25%" height={20} />
+
+        {/* Directory Card Skeleton */}
+        <div className="max-w-5xl mx-auto">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl shadow-purple-900/5 border border-gray-200 dark:border-gray-700 overflow-hidden">
+            
+            {/* Toolbar Skeleton */}
+            <div className="px-6 py-4 bg-gray-50/50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-700 flex items-center gap-2">
+              <Skeleton width={16} height={16} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+              <Skeleton width={110} height={14} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+              <div className="ml-auto">
+                <Skeleton width={80} height={22} borderRadius={6} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
               </div>
             </div>
-          ))}
+
+            {/* Tree Items Skeleton */}
+            <div className="p-6 md:p-8 space-y-5">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i}>
+                  {/* Parent category */}
+                  <div className="flex items-center gap-3 mb-3">
+                    <Skeleton width={20} height={20} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                    <Skeleton width={`${30 + i * 5}%`} height={22} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                    <div className="ml-auto">
+                      <Skeleton width={24} height={18} borderRadius={6} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                    </div>
+                  </div>
+                  {/* Sub-categories with indentation */}
+                  {i <= 2 && (
+                    <div className="pl-8 space-y-2 border-l-2 border-gray-100 dark:border-gray-700 ml-[10px]">
+                      <div className="flex items-center gap-2">
+                        <Skeleton width={16} height={16} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                        <Skeleton width={`${20 + i * 3}%`} height={18} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                      </div>
+                      {i === 1 && (
+                        <div className="flex items-center gap-2">
+                          <Skeleton width={16} height={16} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                          <Skeleton width="18%" height={18} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     );
