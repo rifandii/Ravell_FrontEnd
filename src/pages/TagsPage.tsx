@@ -1,4 +1,5 @@
 // src/pages/TagsPage.tsx
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getPaginatedTags } from '../services/apiClient';
@@ -8,9 +9,155 @@ import {
   Hash, 
   FileText, 
   AlertCircle, 
-  Tag as TagIcon 
+  Tag as TagIcon,
+  Network,
+  Server,
+  Fingerprint,
+  Shield,
+  Radar,
+  Activity,
+  LineChart,
+  Cpu,
+  ShieldAlert,
+  ShieldCheck,
+  Terminal,
+  Database,
+  Sliders,
+  Flame,
+  Binary
 } from 'lucide-react';
 import SEO from '../components/SEO';
+
+interface TagTheme {
+  icon: React.ReactNode;
+  iconBg: string;
+  iconText: string;
+  cardHoverBorder: string;
+  shadowHover: string;
+}
+
+const getTagTheme = (tagName: string): TagTheme => {
+  const name = tagName.toLowerCase().trim();
+  
+  // Theme templates
+  const cyanTheme = {
+    icon: <Fingerprint className="w-5 h-5 animate-pulse" />,
+    iconBg: "bg-cyan-50 dark:bg-cyan-950/40 border border-cyan-100 dark:border-cyan-900/50",
+    iconText: "text-cyan-600 dark:text-cyan-400",
+    cardHoverBorder: "hover:border-cyan-400 dark:hover:border-cyan-600",
+    shadowHover: "hover:shadow-cyan-500/10",
+  };
+
+  const blueTheme = {
+    icon: <Network className="w-5 h-5" />,
+    iconBg: "bg-blue-50 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/50",
+    iconText: "text-blue-600 dark:text-blue-400",
+    cardHoverBorder: "hover:border-blue-400 dark:hover:border-blue-600",
+    shadowHover: "hover:shadow-blue-500/10",
+  };
+
+  const greenTheme = {
+    icon: <Server className="w-5 h-5" />,
+    iconBg: "bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900/50",
+    iconText: "text-emerald-600 dark:text-emerald-400",
+    cardHoverBorder: "hover:border-emerald-400 dark:hover:border-emerald-600",
+    shadowHover: "hover:shadow-emerald-500/10",
+  };
+
+  const purpleTheme = {
+    icon: <Radar className="w-5 h-5 animate-spin-slow" />,
+    iconBg: "bg-purple-50 dark:bg-purple-950/40 border border-purple-100 dark:border-purple-900/50",
+    iconText: "text-purple-600 dark:text-purple-400",
+    cardHoverBorder: "hover:border-purple-400 dark:hover:border-purple-600",
+    shadowHover: "hover:shadow-purple-500/10",
+  };
+
+  const amberTheme = {
+    icon: <Sliders className="w-5 h-5" />,
+    iconBg: "bg-amber-50 dark:bg-amber-950/40 border border-amber-100 dark:border-amber-900/50",
+    iconText: "text-amber-600 dark:text-amber-400",
+    cardHoverBorder: "hover:border-amber-400 dark:hover:border-amber-600",
+    shadowHover: "hover:shadow-amber-500/10",
+  };
+
+  const violetTheme = {
+    icon: <Binary className="w-5 h-5" />,
+    iconBg: "bg-violet-50 dark:bg-violet-950/40 border border-violet-100 dark:border-violet-900/50",
+    iconText: "text-violet-600 dark:text-violet-400",
+    cardHoverBorder: "hover:border-violet-400 dark:hover:border-violet-600",
+    shadowHover: "hover:shadow-violet-500/10",
+  };
+
+  const fuchsiaTheme = {
+    icon: <LineChart className="w-5 h-5" />,
+    iconBg: "bg-fuchsia-50 dark:bg-fuchsia-950/40 border border-fuchsia-100 dark:border-fuchsia-900/50",
+    iconText: "text-fuchsia-600 dark:text-fuchsia-400",
+    cardHoverBorder: "hover:border-fuchsia-400 dark:hover:border-fuchsia-600",
+    shadowHover: "hover:shadow-fuchsia-500/10",
+  };
+
+  const redTheme = {
+    icon: <Flame className="w-5 h-5" />,
+    iconBg: "bg-red-50 dark:bg-red-950/40 border border-red-100 dark:border-red-900/50",
+    iconText: "text-red-600 dark:text-red-400",
+    cardHoverBorder: "hover:border-red-400 dark:hover:border-red-600",
+    shadowHover: "hover:shadow-red-500/10",
+  };
+
+  const roseTheme = {
+    icon: <ShieldAlert className="w-5 h-5" />,
+    iconBg: "bg-rose-50 dark:bg-rose-950/40 border border-rose-100 dark:border-rose-900/50",
+    iconText: "text-rose-600 dark:text-rose-400",
+    cardHoverBorder: "hover:border-rose-400 dark:hover:border-rose-600",
+    shadowHover: "hover:shadow-rose-500/10",
+  };
+
+  const orangeTheme = {
+    icon: <ShieldCheck className="w-5 h-5" />,
+    iconBg: "bg-orange-50 dark:bg-orange-950/40 border border-orange-100 dark:border-orange-900/50",
+    iconText: "text-orange-600 dark:text-orange-400",
+    cardHoverBorder: "hover:border-orange-400 dark:hover:border-orange-600",
+    shadowHover: "hover:shadow-orange-500/10",
+  };
+
+  // Mappings based on Tag Names
+  if (name.includes('active directory') || name === 'ad') return cyanTheme;
+  if (name.includes('cisco')) return blueTheme;
+  if (name.includes('domain controller') || name === 'dc') return greenTheme;
+  if (name.includes('extrahop')) return purpleTheme;
+  if (name === 'eca') return amberTheme;
+  if (name === 'eda') return violetTheme;
+  if (name === 'exa') return fuchsiaTheme;
+  if (name.includes('firewall')) return redTheme;
+  if (name === 'ndr') return roseTheme;
+  if (name === 'ngfw') return orangeTheme;
+
+  // Keyword-based fallbacks
+  if (name.includes('security') || name.includes('secure') || name.includes('cyber') || name.includes('protect')) {
+    return {
+      icon: <Shield className="w-5 h-5" />,
+      iconBg: "bg-rose-50 dark:bg-rose-950/40 border border-rose-100 dark:border-rose-900/50",
+      iconText: "text-rose-600 dark:text-rose-400",
+      cardHoverBorder: "hover:border-rose-400 dark:hover:border-rose-600",
+      shadowHover: "hover:shadow-rose-500/10",
+    };
+  }
+  if (name.includes('network') || name.includes('route') || name.includes('switch') || name.includes('ip') || name.includes('vpn')) {
+    return blueTheme;
+  }
+  if (name.includes('server') || name.includes('cloud') || name.includes('database') || name.includes('sql') || name.includes('db')) {
+    return greenTheme;
+  }
+
+  // Default Tag fallback (with improved style)
+  return {
+    icon: <TagIcon className="w-5 h-5" />,
+    iconBg: "bg-purple-50 dark:bg-purple-900/30 border border-purple-100/50 dark:border-purple-800/50",
+    iconText: "text-purple-600 dark:text-purple-400",
+    cardHoverBorder: "hover:border-purple-400 dark:hover:border-purple-600",
+    shadowHover: "hover:shadow-purple-500/10",
+  };
+};
 
 const TagsPage = () => {
   const [tags, setTags] = useState<Tag[]>([]);
@@ -100,41 +247,44 @@ const TagsPage = () => {
       <div className="max-w-7xl mx-auto">
         {tags.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {tags.map(tag => (
-              <Link
-                key={tag.id}
-                to={`/articles?tags__slug=${tag.slug}&tag_name=${tag.name}`}
-                className="group relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:shadow-purple-500/10 hover:border-purple-300 dark:hover:border-purple-700 transition-all duration-300 transform hover:-translate-y-1"
-              >
-                {/* Background Decoration (# Watermark) */}
-                <div className="absolute -right-6 -top-6 text-9xl font-black text-gray-50 dark:text-gray-700/20 opacity-50 group-hover:scale-110 transition-transform duration-500 pointer-events-none select-none font-sans">
-                  #
-                </div>
-
-                <div className="relative z-10 flex flex-col h-full justify-between min-h-[100px]">
-                  {/* Top: Icon */}
-                  <div className="mb-4">
-                    <div className="w-10 h-10 rounded-lg bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform duration-300">
-                      <TagIcon className="w-5 h-5" />
-                    </div>
+            {tags.map(tag => {
+              const theme = getTagTheme(tag.name);
+              return (
+                <Link
+                  key={tag.id}
+                  to={`/articles?tags__slug=${tag.slug}&tag_name=${tag.name}`}
+                  className={`group relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-xl ${theme.shadowHover} ${theme.cardHoverBorder} transition-all duration-300 transform hover:-translate-y-1`}
+                >
+                  {/* Background Decoration (# Watermark) */}
+                  <div className="absolute -right-6 -top-6 text-9xl font-black text-gray-50 dark:text-gray-700/20 opacity-50 group-hover:scale-110 transition-transform duration-500 pointer-events-none select-none font-sans">
+                    #
                   </div>
 
-                  {/* Bottom: Content */}
-                  <div>
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
-                      {tag.name}
-                    </h2>
-                    
-                    <div className="flex items-center gap-1.5 text-xs font-medium text-gray-500 dark:text-gray-400">
-                      <FileText className="w-3.5 h-3.5" />
-                      <span>
-                        {tag.post_count} {tag.post_count === 1 ? 'article' : 'articles'}
-                      </span>
+                  <div className="relative z-10 flex flex-col h-full justify-between min-h-[100px]">
+                    {/* Top: Icon */}
+                    <div className="mb-4">
+                      <div className={`w-10 h-10 rounded-lg ${theme.iconBg} ${theme.iconText} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                        {theme.icon}
+                      </div>
+                    </div>
+
+                    {/* Bottom: Content */}
+                    <div>
+                      <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                        {tag.name}
+                      </h2>
+                      
+                      <div className="flex items-center gap-1.5 text-xs font-medium text-gray-500 dark:text-gray-400">
+                        <FileText className="w-3.5 h-3.5" />
+                        <span>
+                          {tag.post_count} {tag.post_count === 1 ? 'article' : 'articles'}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         ) : (
           /* Empty State */
