@@ -47,28 +47,63 @@ const ArchivesPage = () => {
     fetchArchives();
   }, []);
 
-  // --- LOADING STATE (Timeline Skeleton) ---
   if (loading) {
     return (
-      <div className="w-full px-4 md:px-8 py-12">
-        <div className="flex flex-col items-center mb-12">
-           <Skeleton width={64} height={64} circle className="mb-4" />
-           <Skeleton width={250} height={40} />
+      <div className="w-full px-4 md:px-8 py-12 animate-in fade-in duration-500">
+        {/* Header Skeleton — mirrors actual header */}
+        <div className="max-w-2xl mx-auto text-center mb-16">
+          <div className="flex justify-center mb-6">
+            <Skeleton width={64} height={64} borderRadius={16} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+          </div>
+          <Skeleton width={220} height={36} className="mx-auto mb-3" baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+          <Skeleton width={380} height={20} className="mx-auto" baseColor="#d3d3d3" highlightColor="#e9e9e9" />
         </div>
-        <div className="max-w-3xl mx-auto pl-4 md:pl-8 border-l-2 border-gray-100 dark:border-gray-800 space-y-12">
-           {[1, 2].map((i) => (
-             <div key={i} className="relative">
-               <Skeleton width={80} height={32} className="mb-6" borderRadius={20} />
-               <div className="space-y-4">
-                 {[1, 2, 3].map((j) => (
-                   <div key={j} className="flex items-center gap-4">
-                      <div className="w-4 h-0.5 bg-gray-200 dark:bg-gray-800"></div>
-                      <Skeleton width="100%" height={60} className="flex-1" />
-                   </div>
-                 ))}
-               </div>
-             </div>
-           ))}
+
+        {/* Timeline content skeleton */}
+        <div className="max-w-3xl mx-auto relative">
+          {/* Main Spine Line */}
+          <div className="absolute left-4 top-4 bottom-0 w-0.5 bg-gray-100 dark:bg-gray-800"></div>
+
+          <div className="space-y-12">
+            {[1, 2].map((i) => (
+              <div key={i} className="relative">
+                {/* Year Marker Skeleton */}
+                <div className="relative flex items-center mb-6">
+                  <div className="absolute left-[11px] w-3 h-3 bg-purple-600/30 rounded-full ring-4 ring-white dark:ring-gray-950 z-10"></div>
+                  <div className="ml-12 flex items-center gap-3">
+                    <Skeleton width={70} height={28} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                    <Skeleton width={65} height={20} borderRadius={12} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                  </div>
+                </div>
+
+                {/* Months Skeleton List */}
+                <div className="space-y-4 ml-12">
+                  {[1, 2].map((j) => (
+                    <div
+                      key={j}
+                      className="relative flex items-center bg-white dark:bg-gray-900 p-4 rounded-xl border border-gray-150 dark:border-gray-800"
+                    >
+                      {/* Horizontal Connector Line */}
+                      <div className="absolute -left-8 top-1/2 -translate-y-1/2 w-8 h-0.5 bg-gray-100 dark:bg-gray-800"></div>
+                      <div className="absolute -left-8 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+
+                      {/* Icon box placeholder */}
+                      <Skeleton width={40} height={40} borderRadius={8} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+
+                      {/* Text details */}
+                      <div className="ml-4 flex-grow">
+                        <Skeleton width="120px" height={18} className="mb-2" baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                        <Skeleton width="80px" height={14} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                      </div>
+
+                      {/* Chevron placeholder */}
+                      <Skeleton width={16} height={16} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
