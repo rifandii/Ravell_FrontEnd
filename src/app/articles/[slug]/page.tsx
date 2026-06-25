@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import dayjs from 'dayjs';
 import MarkdownRenderer from '../../../components/MarkdownRenderer';
-import Breadcrumbs from '../../../components/Breadcrumbs';
-import FurtherReading from '../../../components/FurtherReading';
+import Breadcrumbs from './BreadcrumbsNext';
+import FurtherReading from './FurtherReadingNext';
 import ArticleDetailClient from './ArticleDetailClient';
 import { Calendar, User, Clock, Hash } from 'lucide-react';
 import type { Article } from '../../../types/types';
@@ -14,7 +14,8 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell
 // 1. Helper function untuk mengambil data artikel (di-cache otomatis saat build time)
 async function getArticle(slug: string): Promise<Article | null> {
   try {
-    const res = await fetch(`${API_BASE_URL}/api/articles/${slug}/`, {
+    const url = `${API_BASE_URL}/api/articles/${slug}/`;
+    const res = await fetch(url, {
       next: { revalidate: 3600 }, // Opsional: Revalidasi cache setiap jam
     });
     if (!res.ok) return null;
@@ -43,8 +44,9 @@ export async function generateStaticParams() {
 }
 
 // 3. Metadata API untuk SEO & Social Share (Menggantikan react-helmet-async)
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const article = await getArticle(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const article = await getArticle(slug);
   if (!article) {
     return {
       title: 'Article Not Found | Ravell Tech',
@@ -77,8 +79,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 // 4. Server Component Render Page
-export default async function Page({ params }: { params: { slug: string } }) {
-  const article = await getArticle(params.slug);
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const article = await getArticle(slug);
   if (!article) {
     notFound(); // Menampilkan halaman 404 jika artikel tidak ada
   }

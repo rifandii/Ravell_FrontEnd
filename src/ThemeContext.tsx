@@ -1,3 +1,5 @@
+"use client";
+
 // src/ThemeContext.tsx
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useState, useContext, useEffect } from 'react';

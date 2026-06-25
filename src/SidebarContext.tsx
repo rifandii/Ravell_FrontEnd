@@ -1,3 +1,5 @@
+"use client";
+
 // src/SidebarContext.tsx
 /* eslint-disable react-refresh/only-export-components */
 
