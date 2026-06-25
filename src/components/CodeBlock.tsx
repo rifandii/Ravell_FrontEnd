@@ -77,7 +77,7 @@ const CodeBlock = ({ codeText, language }: CodeBlockProps) => {
   const isDefaultLang = ['text', 'plaintext'].includes(language.toLowerCase());
 
   return (
-    <div className="my-6 rounded-2xl overflow-hidden border border-gray-200 dark:border-purple-900/30 bg-[#07050e] dark:bg-[#07050e]/95 backdrop-blur shadow-xl dark:shadow-purple-950/15 relative group font-mono text-sm">
+    <div className="not-prose my-6 rounded-2xl overflow-hidden border border-gray-200 dark:border-purple-900/30 bg-[#07050e] dark:bg-[#07050e]/95 backdrop-blur shadow-xl dark:shadow-purple-950/15 relative group font-mono text-sm">
       {/* Header Toolbar */}
       <div className="flex items-center justify-between px-4 h-11 bg-gray-50/80 dark:bg-[#120e22]/90 border-b border-gray-200 dark:border-purple-950/50 select-none">
         <div className="flex items-center gap-3">
