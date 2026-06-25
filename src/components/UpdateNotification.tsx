@@ -11,7 +11,8 @@ const UpdateNotification = () => {
   // Effect 1: Service Worker (App Update) Listener
   useEffect(() => {
     // For testing/mocking in development environment
-    if (!import.meta.env.PROD) {
+    const isDev = (typeof import.meta !== 'undefined' && import.meta.env && !import.meta.env.PROD) || (typeof process !== 'undefined' && process.env && process.env.NODE_ENV !== 'production');
+    if (isDev) {
       (window as any).__triggerUpdateNotification = () => {
         setUpdateReason('app');
         setShow(true);

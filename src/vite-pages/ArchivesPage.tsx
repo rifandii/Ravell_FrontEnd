@@ -33,7 +33,9 @@ const ArchivesPage = () => {
   useEffect(() => {
     const fetchArchives = async () => {
       try {
-        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://api.ravell.tech';
+        const apiBaseUrl = (typeof import.meta !== 'undefined' && import.meta.env)
+          ? (import.meta.env.VITE_API_BASE_URL || 'https://api.ravell.tech')
+          : (typeof process !== 'undefined' && process.env ? (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech') : 'https://api.ravell.tech');
         const response = await axios.get(`${apiBaseUrl}/api/archives/`);
         setArchives(response.data);
       } catch (err) {

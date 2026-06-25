@@ -92,7 +92,9 @@ export default function MarkdownRenderer({ content, onImageClick }: MarkdownRend
     // Custom Images rendering with zoom support
     img({ ...props }: any) { 
       const isRelative = props.src && props.src.startsWith('/');
-      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://api.ravell.tech';
+      const apiBaseUrl = (typeof import.meta !== 'undefined' && import.meta.env)
+        ? (import.meta.env.VITE_API_BASE_URL || 'https://api.ravell.tech')
+        : (typeof process !== 'undefined' && process.env ? (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech') : 'https://api.ravell.tech');
       const fullSrc = isRelative ? `${apiBaseUrl}${props.src}` : props.src;
       return (
         <figure className="my-8">

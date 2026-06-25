@@ -14,6 +14,9 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === 'undefined') {
+      return 'light'; // Default theme for SSR
+    }
     // Ambil preferensi dari localStorage atau deteksi preferensi sistem
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
@@ -27,10 +30,13 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     // Tambahkan atau hapus class 'dark' di elemen <html>
     const root = window.document.documentElement;
-    root.classList.remove(theme === 'light' ? 'dark' : 'light');
-    root.classList.add(theme);
+    if (root && root.classList) {
+      root.classList.remove(theme === 'light' ? 'dark' : 'light');
+      root.classList.add(theme);
+    }
     // Simpan preferensi tema ke localStorage
     localStorage.setItem('theme', theme);
   }, [theme]);
