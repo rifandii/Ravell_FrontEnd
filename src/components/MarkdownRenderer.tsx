@@ -13,6 +13,10 @@ interface MarkdownRendererProps {
 
 export default function MarkdownRenderer({ content, onImageClick }: MarkdownRendererProps) {
   const components: Components = {
+    // Override standard pre container to prevent double boxes
+    pre({ children }) {
+      return <>{children}</>;
+    },
     // Override standard code blocks
     code({ className, children, ...props }) {
       const match = /language-([^\s]+)/.exec(className || '');
