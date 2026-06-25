@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import { SidebarProvider } from '../SidebarContext';
 import { ThemeProvider } from '../ThemeContext';
+import { GlobalProvider } from '../context/GlobalContext';
+import LayoutClient from './LayoutClient';
 import '../index.css';
 
 export const metadata: Metadata = {
   title: 'Ravell Tech',
-  description: 'My IT Blog',
+  description: 'Your Hub for Networking & Security Insights',
 };
 
 export default function RootLayout({
@@ -14,13 +16,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans selection:bg-purple-500/30">
+    <html lang="en" suppressHydrationWarning>
+      <body className="antialiased">
         <ThemeProvider>
           <SidebarProvider>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-              {children}
-            </div>
+            <GlobalProvider>
+              <LayoutClient>
+                {children}
+              </LayoutClient>
+            </GlobalProvider>
           </SidebarProvider>
         </ThemeProvider>
       </body>

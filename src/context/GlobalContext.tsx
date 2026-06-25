@@ -1,4 +1,6 @@
 
+"use client";
+
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { getPaginatedTags, getLatestArticles } from '../services/apiClient';
