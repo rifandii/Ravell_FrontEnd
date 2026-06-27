@@ -1,391 +1,301 @@
-# 🌐 Ravell Networks — Frontend
+# Ravell Networks - Frontend
 
-The frontend application for the **Ravell Networks** tech blog and knowledge base. A high-performance single-page application (SPA) built with React and Vite, designed for professionals in **Network Engineering** and **Cybersecurity**.
+Frontend for the Ravell Networks technical blog and knowledge base. The public
+site serves networking, infrastructure, cloud, cybersecurity, firewall, SDN, and
+automation content from the Ravell backend API.
 
-**Production**: [https://ravell.tech](https://ravell.tech)
-**Development**: [https://dev.ravell.tech](https://dev.ravell.tech)
+Last reviewed: 2026-06-27
 
----
+## Live Environments
 
-## 📋 Table of Contents
+| Environment | Branch | URL | Backend API |
+| --- | --- | --- | --- |
+| Production | `main` | `https://ravell.tech` | `https://api.ravell.tech` |
+| Development / Preview | `development` | `https://dev.ravell.tech` | `https://api-dev.ravell.tech` |
 
-1. [Architecture Overview](#-architecture-overview)
-2. [Technology Stack](#-technology-stack)
-3. [Project Structure](#-project-structure)
-4. [Key Features](#-key-features)
-5. [Environment Configuration](#-environment-configuration)
-6. [Local Development Setup](#-local-development-setup)
-7. [Deployment (Vercel)](#-deployment-vercel)
-8. [Dual-Environment Workflow](#-dual-environment-workflow)
-9. [Cloudflare & Security](#-cloudflare--security)
-10. [Related Repositories](#-related-repositories)
+The Vercel project is `ravell-networks-projects/ravell-front-end`.
 
----
+## Current Runtime Status
 
-## 🏛️ Architecture Overview
+This repository currently contains two frontend tracks:
 
+- Active runtime: React 19 + Vite 7 SPA. The package scripts still run Vite:
+  `npm run dev`, `npm run build`, `npm run preview`, and `npm run lint`.
+- Migration track: Next.js App Router / SSG files under `src/app` plus
+  `src/components/next`. These files are present on the `development` branch
+  and prepare the site for a possible static-generation migration. They are not
+  the active production runtime until the build scripts and Vercel project are
+  intentionally switched to Next.js.
+
+Keep this distinction clear when reviewing branches:
+
+- `main` is the production branch.
+- `development` includes newer Next.js migration work and should be verified on
+  the preview environment before merging.
+
+## Architecture
+
+```text
+Browser
+  |
+  | HTTPS
+  v
+Cloudflare
+  |
+  | Frontend routes
+  v
+Vercel CDN / Build Output
+  |
+  | API calls through VITE_API_BASE_URL or NEXT_PUBLIC_API_BASE_URL
+  v
+Tencent Cloud VM
+  |
+  v
+Nginx -> Gunicorn -> Django Ninja API
 ```
-╔══════════════════════════════════════════════════════════════════╗
-║                         CLIENT / USER                           ║
-║                    (Browser / Mobile App)                        ║
-╚══════════════════════════════╦═══════════════════════════════════╝
-                               ║
-                               ▼ [HTTPS Request via Cloudflare]
-╔══════════════════════════════════════════════════════════════════╗
-║                    CLOUDFLARE EDGE SERVERS                       ║
-║        SSL/TLS (Full Strict), DDoS & Bot Mitigation, WAF        ║
-╚══════════════════════════════╦═══════════════════════════════════╝
-                               ║
-             ┌─────────────────┴─────────────────┐
-             ▼ [Route Frontend]                  ▼ [Route Backend API]
-╔═════════════════════════════╗     ╔═════════════════════════════╗
-║      VERCEL HOSTING         ║     ║   TENCENT CLOUD LIGHTHOUSE  ║
-║   https://ravell.tech       ║     ║   https://api.ravell.tech   ║
-║   https://dev.ravell.tech   ║     ║ https://api-dev.ravell.tech ║
-║                             ║     ║                             ║
-║  React 19 + Vite 7 SPA     ║     ║  Nginx → Gunicorn → Django  ║
-║  Tailwind CSS v4            ║     ║  Django Ninja REST API      ║
-║  React Router v7            ║     ║                             ║
-╚═════════════════════════════╝     ╚══════════════╦══════════════╝
-                                                   ║
-                                   ┌───────────────┴───────────────┐
-                                   ▼                               ▼
-                          Supabase PostgreSQL            Supabase Storage
-                          (Database & Indexing)          (S3-Compatible)
-```
 
----
+## Technology Stack
 
-## 💻 Technology Stack
+| Area | Technology |
+| --- | --- |
+| UI runtime | React 19 |
+| Active build tool | Vite 7 |
+| Migration target | Next.js 16 App Router / SSG |
+| Language | TypeScript 5.8 |
+| Styling | Tailwind CSS 4 |
+| Routing | React Router DOM 7 for Vite SPA; Next App Router files for migration |
+| Data fetching | Axios, TanStack React Query provider |
+| Markdown | `react-markdown`, `remark-gfm` |
+| Code highlighting | `react-syntax-highlighter` Prism |
+| Animation | Framer Motion |
+| Icons | Lucide React, Heroicons |
+| SEO | `react-helmet-async` for Vite; Next metadata API in migration files |
+| Analytics/performance | Google Analytics page tracking hook, Vercel Speed Insights |
+| PWA/static assets | `manifest.json`, `sw.js`, maskable icons, PWA icons |
 
-| Layer | Technology | Version |
-|---|---|---|
-| **Framework** | React | 19.1 |
-| **Build Tool** | Vite | 7.0 |
-| **Language** | TypeScript | 5.8 |
-| **Styling** | Tailwind CSS | 4.1 |
-| **Icons** | Lucide React | 0.544 |
-| **Routing** | React Router DOM | 7.7 |
-| **HTTP Client** | Axios | 1.11 |
-| **Animations** | Framer Motion | 12.23 |
-| **SEO / Meta** | react-helmet-async | 2.0 |
-| **Markdown** | react-markdown + remark-gfm | 10.1 / 4.0 |
-| **Syntax Highlighting** | react-syntax-highlighter | 15.6 |
-| **Date Formatting** | Day.js | 1.11 |
-| **Loading States** | react-loading-skeleton | 3.5 |
-| **Performance** | @vercel/speed-insights | 1.3 |
+## Feature Overview
 
----
+### Active Vite SPA
 
-## 📂 Project Structure
+- Lazy-loaded page routes for home, article list, article detail, categories,
+  tags, archives, about, and 404.
+- Persistent dark/light theme via `ThemeContext`.
+- Sidebar state via `SidebarContext`.
+- Left navigation sidebar and context-aware right sidebar.
+- Article list filtering by category, tag, search, year, and month.
+- Tag/category filter validation against the API, with corrected display names
+  pushed back into the URL when needed.
+- Server-driven pagination compatible with the backend's DRF-style pagination
+  envelope.
+- Article detail pages with:
+  - SEO metadata.
+  - Breadcrumbs.
+  - tags.
+  - dynamic reading-time estimate.
+  - featured image lightbox.
+  - generated table-of-contents headings from markdown `h2` and `h3`.
+  - previous/next article navigation.
+  - random "you might also like" article recommendations.
+- GitHub-flavored markdown rendering with tables, blockquotes, headings, and
+  image captions.
+- Premium code block component with:
+  - syntax highlighting.
+  - line numbers.
+  - copy-to-clipboard.
+  - external raw-code window.
+  - optional hover line highlighting.
+- Skeleton loading states for page and article layouts.
+- Content update notification using the lightweight
+  `/api/content/signature/` endpoint.
+- Service worker update notification and refresh flow.
+- Page-view tracking hook for Google Analytics.
+- Vercel Speed Insights.
 
-```
+### Next.js Migration Track
+
+The `src/app` tree includes an App Router version of the site:
+
+- root layout with theme/sidebar/global providers.
+- home, articles, article detail, categories, tags, archives, and about pages.
+- article detail SSG helpers:
+  - `generateStaticParams`.
+  - `generateMetadata`.
+  - server-side article fetching with revalidation.
+- client helper components for article interactions.
+- Next-specific sidebar, header, card, pagination, and category components under
+  `src/components/next`.
+
+This track should be treated as migration work until the deployment pipeline is
+changed from Vite to Next.js.
+
+## Project Structure
+
+```text
 Ravell_FrontEnd/
-├── public/                        # Static assets (favicon, manifest, etc.)
-├── src/
-│   ├── assets/                    # Images, logos, and media assets
-│   ├── components/                # Reusable UI components
-│   │   ├── Header.tsx             # Main navigation header with theme toggle
-│   │   ├── Sidebar.tsx            # Left sidebar with categories, tags, archives
-│   │   ├── RightSidebar.tsx       # Right sidebar (table of contents / archives)
-│   │   ├── Footer.tsx             # Site footer with social links
-│   │   ├── Layout.tsx             # Holy Grail three-column layout wrapper
-│   │   ├── ArticleCard.tsx        # Article card for listing pages
-│   │   ├── ArticleCardHome.tsx    # Featured article card for homepage
-│   │   ├── MarkdownRenderer.tsx   # Markdown-to-HTML renderer with syntax highlighting
-│   │   ├── ImageModal.tsx         # Lightbox overlay for image zoom
-│   │   ├── FurtherReading.tsx     # Related articles recommendation section
-│   │   ├── Breadcrumbs.tsx        # Breadcrumb navigation component
-│   │   ├── Pagination.tsx         # Paginated navigation controls
-│   │   ├── TableOfContents.tsx    # Auto-generated heading-based table of contents
-│   │   ├── ReadingProgressBar.tsx # Dynamic scroll-based reading progress indicator
-│   │   ├── ScrollToTopButton.tsx  # Scroll-to-top floating action button
-│   │   ├── SEO.tsx                # SEO head tag manager component
-│   │   ├── SEOManager.tsx         # Open Graph & Twitter Card metadata manager
-│   │   ├── ThemeToggle.tsx        # Dark/Light mode toggle switch
-│   │   ├── CategoryItem.tsx       # Individual category display with hierarchy
-│   │   ├── ArchiveMonthItem.tsx   # Archive timeline month item
-│   │   ├── CopyButton.tsx         # Code block copy-to-clipboard button
-│   │   ├── SkeletonCard.tsx       # Skeleton loading placeholder card
-│   │   ├── PageTransition.tsx     # Page transition animation wrapper
-│   │   └── UpdateNotification.tsx # Lightweight content polling via signature endpoint
-│   ├── context/
-│   │   └── GlobalContext.tsx       # Global state provider (categories, tags, etc.)
-│   ├── hooks/
-│   │   ├── useActiveHeading.ts    # Hook for tracking active heading in viewport
-│   │   └── usePageTracking.ts     # Hook for page view analytics
-│   ├── pages/
-│   │   ├── HomePage.tsx           # Landing page with featured articles
-│   │   ├── ArticleListPage.tsx    # Paginated article listing with filters
-│   │   ├── ArticleDetailPage.tsx  # Full article reader with markdown rendering
-│   │   ├── CategoriesPage.tsx     # Category listing page (hierarchical)
-│   │   ├── TagsPage.tsx           # Tag cloud listing page
-│   │   ├── ArchivesPage.tsx       # Chronological archives page
-│   │   ├── AboutPage.tsx          # About page
-│   │   └── NotFoundPage.tsx       # 404 error page with navigation fallbacks
-│   ├── services/
-│   │   └── apiClient.ts           # Axios API client with intelligent URL routing & content signature
-│   ├── types/
-│   │   └── types.ts               # TypeScript interfaces (Article, Category, Tag, etc.)
-│   ├── App.tsx                    # Root application with routing configuration
-│   ├── SidebarContext.tsx         # Sidebar toggle state context provider
-│   ├── ThemeContext.tsx           # Theme (dark/light) persistence context
-│   ├── main.tsx                   # Application entry point
-│   └── index.css                  # Global Tailwind CSS imports and custom styles
-├── .env.development               # Development environment variables (local)
-├── vercel.json                    # Vercel deployment configuration (rewrites, headers, CSP)
-├── vite.config.ts                 # Vite build configuration
-├── tsconfig.json                  # TypeScript configuration
-├── package.json                   # Dependencies and scripts
-└── index.html                     # HTML entry point
+|-- public/
+|   |-- manifest.json
+|   |-- sw.js
+|   |-- robots.txt
+|   |-- sitemap.xml
+|   |-- pwa-192.png
+|   |-- pwa-512.png
+|   |-- maskable-icon.png
+|   `-- logo/profile assets
+|-- src/
+|   |-- App.tsx                     # Active Vite SPA router
+|   |-- main.tsx                    # Vite SPA entry point
+|   |-- index.css                   # Tailwind 4 global styles
+|   |-- vite-pages/                 # Active SPA pages
+|   |-- app/                        # Next.js App Router migration track
+|   |-- components/                 # Shared SPA UI components
+|   |-- components/next/            # Next migration components
+|   |-- context/GlobalContext.tsx   # Global data provider for Next track
+|   |-- hooks/                      # Page tracking and active heading hooks
+|   |-- services/apiClient.ts       # API client and endpoint wrappers
+|   |-- types/types.ts              # Shared TypeScript API shapes
+|   |-- SidebarContext.tsx
+|   `-- ThemeContext.tsx
+|-- vercel.json                    # Rewrites and security headers
+|-- vite.config.ts                 # Active Vite build config
+|-- postcss.config.mjs             # Tailwind/PostCSS support
+|-- package.json
+|-- package-lock.json
+|-- pnpm-lock.yaml
+`-- pnpm-workspace.yaml
 ```
 
----
+## API Endpoints Consumed
 
-## ✨ Key Features
+| Endpoint | Purpose |
+| --- | --- |
+| `GET /api/articles/` | Paginated article listing with filters |
+| `GET /api/articles/{slug}/` | Article detail |
+| `GET /api/articles/latest/` | Latest articles for home/sidebar |
+| `GET /api/articles/random_articles/` | Further-reading recommendations |
+| `GET /api/categories/` | Hierarchical categories |
+| `GET /api/categories/{slug}/` | Category validation/detail |
+| `GET /api/tags/` | Tags and tag counts |
+| `GET /api/tags/{slug}/` | Tag validation/detail |
+| `GET /api/archives/` | Year/month archive navigation |
+| `GET /api/images/` | Image list |
+| `GET /api/content/signature/` | Lightweight content-change polling |
 
-### 🎨 UI/UX
-- **Holy Grail Layout**: Three-column responsive grid with sticky left menu, clean reading viewport, and context-aware right sidebar (table of contents / archive timeline).
-- **Smart Theme Engine**: Dark/Light mode with `localStorage` persistence and automatic `prefers-color-scheme` system detection.
-- **Micro-animations**: Smooth fade-in, slide-in page transitions, and a dynamic reading progress indicator bar (powered by Framer Motion).
-- **Image Lightboxes**: Click-to-zoom modal overlays for detailed diagrams and technical flowcharts.
-- **Responsive Design**: Fully optimized layouts for desktop, tablet, and mobile viewports.
+## Environment Variables
 
-### 🔗 Navigation & Routing
-- **Auto-Correction & Slug Validation**: Validates `tag_name` and `category_name` URL parameters directly against the API. Automatically corrects altered display names in the address bar.
-- **404 Fallback**: Graceful "Content Unavailable" screen with navigation fallbacks (Go Back, Home, Browse Articles) when a slug does not exist.
-- **Breadcrumbs**: Contextual breadcrumb navigation on every page.
-- **Pagination**: Server-driven paginated article listing with `page` and `page_size` support.
+### Vite runtime
 
-### 📰 Content
-- **Markdown Rendering**: Full GitHub-flavored markdown support with syntax-highlighted code blocks, tables, task lists, and auto-linked headings.
-- **Table of Contents**: Auto-generated from article headings with viewport-aware active heading tracking.
-- **Further Reading**: Random article recommendations (excluding current article) displayed at the end of each article.
-- **Archive Timeline**: Chronological browsing by year and month.
-- **Hierarchical Categories**: Nested parent-child category display mirroring backend structure.
+| Variable | Purpose |
+| --- | --- |
+| `VITE_API_BASE_URL` | Backend base URL without `/api`, for example `https://api.ravell.tech` |
 
-### 🔍 SEO
-- Unique `<title>` tags and meta descriptions per page via `react-helmet-async`.
-- Open Graph and Twitter Card metadata for social sharing.
-- Semantic HTML5 structure with proper heading hierarchy.
-- RSS/Atom feed support via Vercel rewrites (proxied to backend feed endpoints).
+### Next.js migration track
 
-### ⚡ Performance & Egress Optimization
-- **Content Signature Polling**: `UpdateNotification` polls a single ~35 byte `/api/content/signature/` endpoint every 60 seconds instead of fetching 3 full API responses (~74 KB). Reduces Supabase egress by ~2,100x per poll cycle.
-- **Visibility-Aware**: Polling pauses when the browser tab is hidden and resumes on tab focus.
-- **Lazy Loading**: Code-split pages and components for optimal initial load.
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_API_BASE_URL` | Backend base URL without `/api`, used by App Router files |
 
----
+### Vercel configuration
 
-## ⚙️ Environment Configuration
+| Environment | Branch | Expected API base URL |
+| --- | --- | --- |
+| Production | `main` | `https://api.ravell.tech` |
+| Preview | `development` | `https://api-dev.ravell.tech` |
 
-The frontend uses Vite's `import.meta.env` for environment variables. These are **compile-time** values, meaning they are embedded into the JavaScript bundle during the build process.
+Do not commit `.env`, `.env.local`, `.env.*`, or `.vercel/`. They are
+gitignored and may contain local or Vercel-generated values.
 
-### Environment Variables
+## Local Development
 
-| Variable | Description | Example Value |
-|---|---|---|
-| `VITE_API_BASE_URL` | Base URL of the backend API (without `/api` suffix) | `https://api.ravell.tech` |
+Prerequisites:
 
-### Local Files
+- Node.js 20+ recommended. The Vercel project currently uses Node 24.x.
+- npm is the active package manager in scripts. pnpm lock/workspace files are
+  present for migration/tooling compatibility.
 
-| File | Purpose | Used When |
-|---|---|---|
-| `.env.development` | Local development overrides | `npm run dev` |
-| `.env.production` | Production build values | `npm run build` |
-| `.env.local` | Local-only overrides (gitignored) | Any mode |
+Setup:
 
-### Vercel Environment Variables
-
-> ⚠️ **IMPORTANT**: Since Vite variables are build-time, the values set in **Vercel Dashboard → Settings → Environment Variables** take priority over local `.env` files during deployment.
-
-| Environment | Branch | `VITE_API_BASE_URL` Value |
-|---|---|---|
-| **Production** | `main` | `https://api.ravell.tech` |
-| **Preview / Development** | `development` | `https://api-dev.ravell.tech` |
-
----
-
-## 🚀 Local Development Setup
-
-### Prerequisites
-- Node.js 18+ (LTS recommended)
-- npm or pnpm
-
-### Steps
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/rifandii/Ravell_FrontEnd.git
-   cd Ravell_FrontEnd
-   ```
-
-2. **Switch to the desired branch**:
-   ```bash
-   # For production codebase
-   git checkout main
-
-   # For development codebase
-   git checkout development
-   ```
-
-3. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-
-4. **Configure environment** (optional — `.env.development` already provided):
-   Create `.env.local` if you need custom overrides:
-   ```env
-   VITE_API_BASE_URL=https://api.ravell.tech
-   ```
-
-5. **Start the development server**:
-   ```bash
-   npm run dev
-   ```
-   The app will be available at `http://localhost:5173`.
-
-### Available Scripts
-
-| Command | Description |
-|---|---|
-| `npm run dev` | Start Vite dev server with HMR |
-| `npm run build` | TypeScript check + Vite production build |
-| `npm run preview` | Preview production build locally |
-| `npm run lint` | Run ESLint on the codebase |
-
----
-
-## 🌍 Deployment (Vercel)
-
-The frontend is deployed on **Vercel** with automatic deployments triggered by GitHub pushes.
-
-### Deployment Flow
-```
-Git Push → GitHub → Vercel Build Hook → Vite Build → CDN Deploy
+```bash
+git clone git@github.com:rifandii/Ravell_FrontEnd.git
+cd Ravell_FrontEnd
+git checkout development
+npm install
 ```
 
-| Branch | Vercel Environment | Domain |
-|---|---|---|
-| `main` | Production | `https://ravell.tech` |
-| `development` | Preview | `https://dev.ravell.tech` |
+Create a local override only when needed:
 
-### Vercel Configuration (`vercel.json`)
+```env
+VITE_API_BASE_URL=http://127.0.0.1:8000
+```
 
-The `vercel.json` file configures:
+Run the active Vite SPA:
 
-1. **Rewrites**:
-   - `/feed.xml`, `/rss.xml` → proxied to `https://api.ravell.tech/feed/rss/`
-   - `/atom.xml` → proxied to `https://api.ravell.tech/feed/atom/`
-   - `/(*)` → `index.html` (SPA client-side routing fallback)
+```bash
+npm run dev
+```
 
-2. **Security Headers** (applied to all routes):
-   - `X-Frame-Options: DENY`
-   - `X-Content-Type-Options: nosniff`
-   - `X-XSS-Protection: 1; mode=block`
-   - `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload`
-   - `Cross-Origin-Opener-Policy: same-origin`
-   - `Cross-Origin-Embedder-Policy: credentialless`
-   - `Cross-Origin-Resource-Policy: same-origin`
-   - `Referrer-Policy: strict-origin-when-cross-origin`
-   - `Permissions-Policy` (camera, microphone, geolocation, payment disabled)
+Build and preview:
 
-3. **Content Security Policy (CSP)**:
-   - `connect-src`: Allows `api.ravell.tech`, `api-dev.ravell.tech`, Supabase, Google Analytics, Cloudflare
-   - `script-src`: Allows Google Tag Manager, Cloudflare Insights
-   - `img-src`: Allows Supabase Storage, Google Analytics
-   - `font-src`: Allows Google Fonts
+```bash
+npm run build
+npm run preview
+```
 
-4. **Service Worker Cache Control**:
-   - `/sw.js` served with `no-cache, no-store, must-revalidate`
+Lint:
 
-### Vercel Authentication (Deployment Protection)
-The `development` branch deployment (`dev.ravell.tech`) is protected by **Vercel Authentication**. Only users logged into the associated Vercel account can access the preview deployment. This is intentional to restrict development access.
+```bash
+npm run lint
+```
 
----
+## Vercel Deployment
 
-## 🛠️ Dual-Environment Workflow
+Vercel is connected to the GitHub repository and deploys by branch:
 
-| Parameter | Production (Main) | Development (Dev) |
-|---|---|---|
-| **Git Branch** | `main` | `development` |
-| **Frontend URL** | `https://ravell.tech` | `https://dev.ravell.tech` |
-| **Backend API URL** | `https://api.ravell.tech` | `https://api-dev.ravell.tech` |
-| **Backend Admin** | `https://api.ravell.tech/ravell-manage` | `https://api-dev.ravell.tech/ravell-manage` |
-| **Access Control** | Public | Vercel Authentication |
-| **Database** | Supabase (Shared) | Supabase (Shared) |
+- push to `main`: production deployment at `https://ravell.tech`.
+- push to `development`: preview/development deployment at
+  `https://dev.ravell.tech`.
 
-> ⚠️ **Shared Database**: Both environments share the same Supabase PostgreSQL database. Articles, categories, tags, and media uploaded via the development admin panel will immediately reflect on the production website. This ensures content consistency across environments.
+The local checkout is linked to:
 
-### Git Branching Workflow
+```text
+ravell-networks-projects/ravell-front-end
+```
 
-1. All new features, style adjustments, or bug fixes **must be committed to the `development` branch first**.
-2. Verify changes on the development frontend (`https://dev.ravell.tech`) and backend (`https://api-dev.ravell.tech`).
-3. Only with explicit approval, merge `development` into `main` via Pull Request.
-4. Vercel automatically redeploys both environments on push.
+Useful CLI checks:
 
----
+```bash
+npx vercel@latest whoami
+npx vercel@latest project ls
+npx vercel@latest env ls
+```
 
-## 🛡️ Cloudflare & Security
+`vercel.json` configures:
 
-Cloudflare acts as the edge security proxy for all `ravell.tech` domains.
+- RSS/Atom feed rewrites to the production backend feed endpoints.
+- SPA fallback rewrite to `/index.html`.
+- `sw.js` cache-control.
+- security headers including HSTS, frame denial, content-type nosniff,
+  permissions policy, COOP/COEP/CORP, and CSP.
 
-### DNS Records (Frontend)
+## Branch Workflow
 
-| Type | Name | Target | Proxy |
-|---|---|---|---|
-| CNAME | `ravell.tech` | `cname.vercel-dns.com` | Proxied ☁️ |
-| CNAME | `dev.ravell.tech` | `cname.vercel-dns.com` | Proxied ☁️ |
+1. Build features on `development`.
+2. Verify the preview frontend at `https://dev.ravell.tech`.
+3. Verify API compatibility against `https://api-dev.ravell.tech`.
+4. Open or merge a PR from `development` to `main` only after approval.
+5. Confirm production at `https://ravell.tech` after Vercel completes the build.
 
-### Security Configuration
+## Maintenance Notes
 
-| Setting | Value | Purpose |
-|---|---|---|
-| SSL/TLS Encryption | Full (Strict) | End-to-end TLS encryption |
-| Always Use HTTPS | ON | Force HTTPS redirect |
-| Minimum TLS Version | TLS 1.2 | Block outdated protocols |
-| Brotli Compression | ON | Enhanced compression |
-| Early Hints | ON | Faster resource loading |
-| Email Obfuscation | ON | Prevent email scraping |
-| Hotlink Protection | ON | Block external media embedding |
+- Keep `VITE_API_BASE_URL` in Vercel aligned with the branch environment.
+- When changing backend response shapes, update `src/types/types.ts` and the
+  affected page/component data mapping.
+- If the Next.js migration becomes the production path, update `package.json`
+  scripts, Vercel build settings, and this README's "Current Runtime Status".
+- The backend can trigger Vercel deploy hooks when articles, categories, or tags
+  change, if `VERCEL_DEPLOY_HOOK_URL` is configured server-side.
 
-### Custom WAF Rules
+## Related Repository
 
-| Rule Name | Action | Purpose |
-|---|---|---|
-| Protect API Origin | Block | Block direct public API access without valid Origin/Referer |
-| Block API Docs Public | Block | Block public access to `/api/docs` endpoint |
-| Allow CORS Preflight & Dev | Skip | Allow `OPTIONS` requests and trusted origins (`localhost`, `dev.ravell.tech`, `*.vercel.app`) |
-
----
-
-## 📦 Related Repositories
-
-| Repository | Description | URL |
-|---|---|---|
-| **Ravell_BackEnd** | Django + Django Ninja REST API backend | [github.com/rifandii/Ravell_BackEnd](https://github.com/rifandii/Ravell_BackEnd) |
-
----
-
-## 📊 API Endpoints Consumed
-
-The frontend consumes the following backend API endpoints:
-
-| Endpoint | Method | Description |
-|---|---|---|
-| `/api/articles/` | GET | Paginated article list with filters (category, tag, search, year, month) |
-| `/api/articles/{slug}/` | GET | Single article detail by slug |
-| `/api/articles/latest/` | GET | Latest 5 published articles |
-| `/api/articles/random_articles/` | GET | 3 random article recommendations |
-| `/api/categories/` | GET | Paginated category list (hierarchical) |
-| `/api/categories/{slug}/` | GET | Single category detail by slug |
-| `/api/tags/` | GET | Paginated tag list |
-| `/api/tags/{slug}/` | GET | Single tag detail by slug |
-| `/api/archives/` | GET | Article archives grouped by year and month |
-| `/api/images/` | GET | Paginated image list |
-| `/api/content/signature/` | GET | Lightweight content change signature (~35 bytes) |
-
----
-
-*📁 README last updated: June 24, 2026*
+| Repository | Description |
+| --- | --- |
+| `rifandii/Ravell_BackEnd` | Django + Django Ninja backend API |
