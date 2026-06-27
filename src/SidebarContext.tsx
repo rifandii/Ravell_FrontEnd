@@ -1,11 +1,9 @@
 "use client";
 
 // src/SidebarContext.tsx
-/* eslint-disable react-refresh/only-export-components */
-
 import { createContext, useState, useContext } from 'react';
 import type { ReactNode } from 'react';
-import type { Heading } from './types/types';;
+import type { Heading } from './types/types';
 
 interface SidebarContextType {
   headings: Heading[];

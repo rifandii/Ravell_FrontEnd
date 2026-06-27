@@ -90,24 +90,26 @@ export default function MarkdownRenderer({ content, onImageClick }: MarkdownRend
     },
 
     // Custom Images rendering with zoom support
-    img({ ...props }: any) { 
-      const isRelative = props.src && props.src.startsWith('/');
+    img(props) {
+      const src = typeof props.src === 'string' ? props.src : undefined;
+      const alt = typeof props.alt === 'string' ? props.alt : undefined;
+      const isRelative = src?.startsWith('/') ?? false;
       const apiBaseUrl = (typeof import.meta !== 'undefined' && import.meta.env)
         ? (import.meta.env.VITE_API_BASE_URL || 'https://api.ravell.tech')
         : (typeof process !== 'undefined' && process.env ? (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech') : 'https://api.ravell.tech');
-      const fullSrc = isRelative ? `${apiBaseUrl}${props.src}` : props.src;
+      const fullSrc = src && isRelative ? `${apiBaseUrl}${src}` : src;
       return (
         <figure className="my-8">
           <img
             {...props}
             src={fullSrc}
             className="w-full h-auto rounded-lg shadow-md cursor-zoom-in hover:shadow-xl transition-shadow duration-300 border border-gray-100 dark:border-gray-800"
-            onClick={() => onImageClick && onImageClick(fullSrc)}
+            onClick={() => fullSrc && onImageClick?.(fullSrc)}
             loading="lazy"
           />
-          {props.alt && (
+          {alt && (
             <figcaption className="text-center text-sm text-gray-500 dark:text-gray-400 mt-2 italic">
-              {props.alt}
+              {alt}
             </figcaption>
           )}
         </figure>

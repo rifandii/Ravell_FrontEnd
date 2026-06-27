@@ -2,7 +2,8 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { getPaginatedArticles, getTagBySlug, getCategoryBySlug } from '../services/apiClient';
-import type { Article } from '../types/types';
+import type { PaginatedResponse } from '../services/apiClient';
+import type { Article, Category, Tag } from '../types/types';
 import ArticleCard from '../components/ArticleCard';
 import Pagination from '../components/Pagination';
 import SkeletonCard from '../components/SkeletonCard'; // Pastikan skeleton ini tingginya sesuai
@@ -111,7 +112,7 @@ const ArticleListPage = () => {
 
       try {
         // Parallel validation & fetching
-        const promises: [Promise<any>, Promise<any> | null, Promise<any> | null] = [
+        const promises: [Promise<PaginatedResponse<Article>>, Promise<Tag | null> | null, Promise<Category | null> | null] = [
           getPaginatedArticles(`/articles/?${query}`),
           tagSlug ? getTagBySlug(tagSlug) : null,
           categorySlug ? getCategoryBySlug(categorySlug) : null,

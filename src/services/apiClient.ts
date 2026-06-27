@@ -19,7 +19,7 @@ const apiClient = axios.create({
 });
 
 // Antarmuka respons paginasi
-interface PaginatedResponse<T> {
+export interface PaginatedResponse<T> {
   count: number;
   next: string | null;
   previous: string | null;
@@ -37,7 +37,7 @@ export const getPaginatedArticles = async (urlOrPath: string): Promise<Paginated
        const response = await axios.get(urlOrPath);
        return response.data;
     }
-    
+
     // Jika path relatif, gunakan apiClient (otomatis pasang API_BASE_URL)
     const response = await apiClient.get(urlOrPath);
     return response.data;
@@ -120,4 +120,4 @@ export const getContentSignature = async (): Promise<ContentSignature> => {
     console.error('Error fetching content signature:', error);
     return { signature: '' };
   }
-};
+};

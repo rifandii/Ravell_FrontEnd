@@ -50,10 +50,6 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// [PERBAIKAN 3]
-// Jika ESLint masih protes soal "fast refresh", tambahkan baris disable ini.
-// Hook kustom sering kali memicu false positive pada aturan ini jika diekspor bersama komponen.
-// eslint-disable-next-line react-refresh/only-export-components
 export const useGlobalData = () => {
   const context = useContext(GlobalContext);
   if (context === undefined) {

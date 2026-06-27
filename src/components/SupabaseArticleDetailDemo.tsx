@@ -48,8 +48,9 @@ export default function SupabaseArticleDetailDemo() {
         } else {
           throw new Error("Post not found");
         }
-      } catch (err: any) {
-        setError(err.message || "Failed to load post from Supabase");
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Failed to load post from Supabase";
+        setError(message || "Failed to load post from Supabase");
       } finally {
         setIsLoading(false);
       }

@@ -4,7 +4,8 @@ import { useEffect, useState, useMemo } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { getPaginatedArticles, getTagBySlug, getCategoryBySlug } from '../../services/apiClient';
-import type { Article } from '../../types/types';
+import type { PaginatedResponse } from '../../services/apiClient';
+import type { Article, Category, Tag } from '../../types/types';
 import ArticleCardNext from '../../components/next/ArticleCardNext';
 import PaginationNext from '../../components/next/PaginationNext';
 import SkeletonCard from '../../components/SkeletonCard';
@@ -107,7 +108,7 @@ export default function ArticleListClient() {
       const categorySlug = searchParams.get('categories__slug');
 
       try {
-        const promises: [Promise<any>, Promise<any> | null, Promise<any> | null] = [
+        const promises: [Promise<PaginatedResponse<Article>>, Promise<Tag | null> | null, Promise<Category | null> | null] = [
           getPaginatedArticles(`/articles/?${query}`),
           tagSlug ? getTagBySlug(tagSlug) : null,
           categorySlug ? getCategoryBySlug(categorySlug) : null,

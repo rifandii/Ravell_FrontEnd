@@ -3,6 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { RefreshCw, Bell, X } from 'lucide-react';
 import { getContentSignature } from '../services/apiClient';
 
+declare global {
+  interface Window {
+    __triggerUpdateNotification?: () => void;
+    __triggerContentNotification?: () => void;
+  }
+}
+
 const UpdateNotification = () => {
   const [show, setShow] = useState(false);
   const [updateReason, setUpdateReason] = useState<'app' | 'content' | null>(null);
@@ -13,11 +20,11 @@ const UpdateNotification = () => {
     // For testing/mocking in development environment
     const isDev = (typeof import.meta !== 'undefined' && import.meta.env && !import.meta.env.PROD) || (typeof process !== 'undefined' && process.env && process.env.NODE_ENV !== 'production');
     if (isDev) {
-      (window as any).__triggerUpdateNotification = () => {
+      window.__triggerUpdateNotification = () => {
         setUpdateReason('app');
         setShow(true);
       };
-      (window as any).__triggerContentNotification = () => {
+      window.__triggerContentNotification = () => {
         setUpdateReason('content');
         setShow(true);
       };
