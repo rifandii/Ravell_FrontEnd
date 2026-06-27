@@ -98,13 +98,17 @@ export default function MarkdownRenderer({ content, onImageClick }: MarkdownRend
         ? (import.meta.env.VITE_API_BASE_URL || 'https://api.ravell.tech')
         : (typeof process !== 'undefined' && process.env ? (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech') : 'https://api.ravell.tech');
       const fullSrc = src && isRelative ? `${apiBaseUrl}${src}` : src;
+      const imageClickProps = onImageClick && fullSrc
+        ? { onClick: () => onImageClick(fullSrc) }
+        : {};
+
       return (
         <figure className="my-8">
           <img
             {...props}
+            {...imageClickProps}
             src={fullSrc}
             className="w-full h-auto rounded-lg shadow-md cursor-zoom-in hover:shadow-xl transition-shadow duration-300 border border-gray-100 dark:border-gray-800"
-            onClick={() => fullSrc && onImageClick?.(fullSrc)}
             loading="lazy"
           />
           {alt && (
