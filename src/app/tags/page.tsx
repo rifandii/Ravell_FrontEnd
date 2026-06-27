@@ -1,14 +1,11 @@
-// src/pages/TagsPage.tsx
-import React from 'react';
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { getPaginatedTags } from '../services/apiClient';
-import type { Tag } from '../types/types';
-import Skeleton from 'react-loading-skeleton';
-import { 
-  Hash, 
-  FileText, 
-  AlertCircle, 
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { getPaginatedTags } from '../../services/apiClient';
+import type { Tag } from '../../types/types';
+import {
+  Hash,
+  FileText,
+  AlertCircle,
   Tag as TagIcon,
   Network,
   Server,
@@ -29,7 +26,6 @@ import {
   KeyRound,
   Lock
 } from 'lucide-react';
-import SEO from '../components/SEO';
 
 interface TagTheme {
   icon: React.ReactNode;
@@ -41,8 +37,7 @@ interface TagTheme {
 
 const getTagTheme = (tagName: string): TagTheme => {
   const name = tagName.toLowerCase().trim();
-  
-  // Theme templates
+
   const cyanTheme = {
     icon: <Fingerprint className="w-5 h-5 animate-pulse" />,
     iconBg: "bg-cyan-50 dark:bg-cyan-950/40 border border-cyan-100 dark:border-cyan-900/50",
@@ -68,8 +63,8 @@ const getTagTheme = (tagName: string): TagTheme => {
   };
 
   const purpleTheme = {
-    icon: <Radar className="w-5 h-5 animate-spin-slow" />,
-    iconBg: "bg-purple-50 dark:bg-purple-950/40 border border-purple-100 dark:border-purple-900/50",
+    icon: <Radar className="w-5 h-5" />,
+    iconBg: "bg-purple-50 dark:bg-purple-900/40 border border-purple-100 dark:border-purple-900/50",
     iconText: "text-purple-600 dark:text-purple-400",
     cardHoverBorder: "hover:border-purple-400 dark:hover:border-purple-600",
     shadowHover: "hover:shadow-purple-500/10",
@@ -139,7 +134,6 @@ const getTagTheme = (tagName: string): TagTheme => {
     shadowHover: "hover:shadow-indigo-500/10",
   };
 
-  // 1. BRAND FIREWALLS
   if (name.includes('palo alto') || name.includes('paloalto') || name.includes('pan-os') || name.includes('panos')) {
     return {
       ...orangeTheme,
@@ -165,7 +159,6 @@ const getTagTheme = (tagName: string): TagTheme => {
     };
   }
 
-  // 2. CLOUD PROVIDERS
   if (name === 'aws' || name.includes('amazon web services')) {
     return {
       ...orangeTheme,
@@ -185,7 +178,6 @@ const getTagTheme = (tagName: string): TagTheme => {
     };
   }
 
-  // 3. SDN NETWORKING
   if (name.includes('sd-wan') || name === 'sdwan') {
     return {
       ...violetTheme,
@@ -205,17 +197,14 @@ const getTagTheme = (tagName: string): TagTheme => {
     };
   }
 
-  // 4. TRADITIONAL/LEGACY NETWORKING
   if (name.includes('traditional') || name.includes('legacy')) {
     return slateTheme;
   }
 
-  // 5. AUTOMATION & SCRIPTING
   if (name.includes('ansible') || name.includes('automation') || name.includes('python') || name.includes('script') || name.includes('terraform') || name.includes('playbook') || name.includes('ci/cd') || name.includes('cicd')) {
     return indigoTheme;
   }
 
-  // 6. ORIGINAL MAPS
   if (name.includes('active directory') || name === 'ad') return cyanTheme;
   if (name.includes('cisco')) return blueTheme;
   if (name.includes('domain controller') || name === 'dc') return greenTheme;
@@ -227,7 +216,6 @@ const getTagTheme = (tagName: string): TagTheme => {
   if (name === 'ndr') return roseTheme;
   if (name === 'ngfw') return orangeTheme;
 
-  // Keyword-based general fallbacks
   if (name.includes('security') || name.includes('secure') || name.includes('cyber') || name.includes('protect')) {
     return {
       icon: <Shield className="w-5 h-5" />,
@@ -244,7 +232,6 @@ const getTagTheme = (tagName: string): TagTheme => {
     return greenTheme;
   }
 
-  // Default Tag fallback
   return {
     icon: <TagIcon className="w-5 h-5" />,
     iconBg: "bg-purple-50 dark:bg-purple-900/30 border border-purple-100/50 dark:border-purple-800/50",
@@ -254,57 +241,30 @@ const getTagTheme = (tagName: string): TagTheme => {
   };
 };
 
-const TagsPage = () => {
-  const [tags, setTags] = useState<Tag[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export const metadata: Metadata = {
+  title: 'Tags | Ravell Tech',
+  description: 'Browse articles by specific keywords and technical concepts.',
+};
 
-  useEffect(() => {
-    const fetchTags = async () => {
-      setLoading(true);
-      try {
-        const data = await getPaginatedTags();
-        setTags(data.results);
-      } catch (err) {
-        setError('Unable to load topic tags.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
+async function getTagsData() {
+  try {
+    const data = await getPaginatedTags();
+    return {
+      tags: (data.results || []) as Tag[],
+      error: null
     };
-    fetchTags();
-  }, []);
-
-  // --- LOADING STATE ---
-  if (loading) {
-    return (
-      <div className="w-full px-4 md:px-8 py-12 animate-in fade-in duration-500">
-        {/* Header Skeleton — mirrors actual header */}
-        <div className="max-w-2xl mx-auto text-center mb-12">
-          <div className="flex justify-center mb-6">
-            <Skeleton width={64} height={64} borderRadius={16} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
-          </div>
-          <Skeleton width={180} height={36} className="mx-auto mb-3" baseColor="#d3d3d3" highlightColor="#e9e9e9" />
-          <Skeleton width={420} height={20} className="mx-auto" baseColor="#d3d3d3" highlightColor="#e9e9e9" />
-        </div>
-
-        {/* Tags Grid Skeleton */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
-          {Array.from({ length: 8 }).map((_, index) => (
-            <div key={index} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col justify-between min-h-[140px]">
-                <Skeleton width={40} height={40} borderRadius={8} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
-                <div>
-                  <Skeleton width="60%" height={24} className="mb-2" baseColor="#d3d3d3" highlightColor="#e9e9e9" />
-                  <Skeleton width="35%" height={14} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
-                </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
+  } catch (err) {
+    console.error('Error fetching tags page data:', err);
+    return {
+      tags: [],
+      error: 'Unable to load topic tags. Please try again later.'
+    };
   }
+}
 
-  // --- ERROR STATE ---
+export default async function TagsPage() {
+  const { tags, error } = await getTagsData();
+
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] px-4 text-center">
@@ -319,17 +279,11 @@ const TagsPage = () => {
 
   return (
     <div className="w-full px-4 md:px-8 py-12 animate-in fade-in duration-500">
-      <SEO 
-        title="Tags" 
-        description="Browse articles by specific keywords and technical concepts."
-      />
-      
-      {/* --- HEADER SECTION --- */}
       <div className="max-w-2xl mx-auto text-center mb-12">
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 mb-6 shadow-sm hover:rotate-12 transition-transform duration-300">
           <Hash className="w-8 h-8" />
         </div>
-        
+
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3 tracking-tight">
           All Topics
         </h1>
@@ -338,7 +292,6 @@ const TagsPage = () => {
         </p>
       </div>
 
-      {/* --- TAGS GRID --- */}
       <div className="max-w-7xl mx-auto">
         {tags.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -347,28 +300,25 @@ const TagsPage = () => {
               return (
                 <Link
                   key={tag.id}
-                  to={`/articles?tags__slug=${tag.slug}&tag_name=${tag.name}`}
+                  href={`/articles?tags__slug=${tag.slug}&tag_name=${tag.name}`}
                   className={`group relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-xl ${theme.shadowHover} ${theme.cardHoverBorder} transition-all duration-300 transform hover:-translate-y-1`}
                 >
-                  {/* Background Decoration (# Watermark) */}
-                  <div className="absolute -right-6 -top-6 text-9xl font-black text-gray-50 dark:text-gray-700/20 opacity-50 group-hover:scale-110 transition-transform duration-500 pointer-events-none select-none font-sans">
+                  <div className="absolute -right-6 -top-6 text-9xl font-black text-gray-55/15 dark:text-gray-700/20 opacity-50 group-hover:scale-110 transition-transform duration-500 pointer-events-none select-none font-sans">
                     #
                   </div>
 
                   <div className="relative z-10 flex flex-col h-full justify-between min-h-[100px]">
-                    {/* Top: Icon */}
                     <div className="mb-4">
                       <div className={`w-10 h-10 rounded-lg ${theme.iconBg} ${theme.iconText} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
                         {theme.icon}
                       </div>
                     </div>
 
-                    {/* Bottom: Content */}
                     <div>
                       <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
                         {tag.name}
                       </h2>
-                      
+
                       <div className="flex items-center gap-1.5 text-xs font-medium text-gray-500 dark:text-gray-400">
                         <FileText className="w-3.5 h-3.5" />
                         <span>
@@ -382,7 +332,6 @@ const TagsPage = () => {
             })}
           </div>
         ) : (
-          /* Empty State */
           <div className="text-center py-16 bg-gray-50 dark:bg-gray-800 rounded-3xl border border-dashed border-gray-300 dark:border-gray-700">
             <Hash className="w-12 h-12 text-gray-300 mx-auto mb-3" />
             <p className="text-gray-500 dark:text-gray-400">No tags found.</p>
@@ -391,6 +340,4 @@ const TagsPage = () => {
       </div>
     </div>
   );
-};
-
-export default TagsPage;
+}

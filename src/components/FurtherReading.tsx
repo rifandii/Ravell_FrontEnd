@@ -1,12 +1,14 @@
+"use client";
+
 // src/components/FurtherReading.tsx
 import { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { 
-  ArrowLeft, 
-  ArrowRight, 
-  Sparkles, 
+import {
+  ArrowLeft,
+  ArrowRight,
+  Sparkles,
   BookOpen,
   Calendar
 } from 'lucide-react';
@@ -31,12 +33,15 @@ interface FurtherReadingProps {
     nextArticle: NavArticle | null;
 }
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.ravell.tech';
+// Safe environment variable resolution for both Vite and Next.js
+const BASE_URL = (typeof import.meta !== 'undefined' && import.meta.env)
+  ? (import.meta.env.VITE_API_BASE_URL || 'https://api.ravell.tech')
+  : (typeof process !== 'undefined' && process.env ? (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech') : 'https://api.ravell.tech');
 const API_BASE_URL = `${BASE_URL}/api`;
 
 const FurtherReading = ({ currentArticleSlug, previousArticle, nextArticle }: FurtherReadingProps) => {
     const [randomArticles, setRandomArticles] = useState<Article[]>([]);
-    
+
     useEffect(() => {
         const fetchRandom = async () => {
             try {
@@ -46,12 +51,12 @@ const FurtherReading = ({ currentArticleSlug, previousArticle, nextArticle }: Fu
                 console.error('Error fetching recommended articles:', err);
             }
         };
-        
+
         if (currentArticleSlug) {
             fetchRandom();
         }
     }, [currentArticleSlug]);
-    
+
     // Jangan render apa-apa jika tidak ada data navigasi sama sekali
     if (!randomArticles.length && !previousArticle && !nextArticle) {
         return null;
@@ -59,15 +64,15 @@ const FurtherReading = ({ currentArticleSlug, previousArticle, nextArticle }: Fu
 
     return (
         <section className="mt-20 pt-10 border-t border-gray-100 dark:border-gray-800">
-            
+
             {/* --- BAGIAN 1: LINEAR NAVIGATION (PREV/NEXT) --- */}
             <div className="mb-16">
                 <h3 className="sr-only">Post Navigation</h3> {/* Screen Reader Only */}
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Previous Article Card */}
                     {previousArticle ? (
-                        <Link 
+                        <Link
                             to={`/articles/${previousArticle.slug}`}
                             className="group flex flex-col p-4 sm:p-6 bg-white dark:bg-gray-900 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-purple-300 dark:hover:border-purple-700 hover:shadow-lg transition-all duration-300"
                         >
@@ -86,7 +91,7 @@ const FurtherReading = ({ currentArticleSlug, previousArticle, nextArticle }: Fu
 
                     {/* Next Article Card */}
                     {nextArticle ? (
-                        <Link 
+                        <Link
                             to={`/articles/${nextArticle.slug}`}
                             className="group flex flex-col items-end text-right p-4 sm:p-6 bg-white dark:bg-gray-900 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-purple-300 dark:hover:border-purple-700 hover:shadow-lg transition-all duration-300"
                         >
@@ -116,9 +121,9 @@ const FurtherReading = ({ currentArticleSlug, previousArticle, nextArticle }: Fu
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
                         {randomArticles.map((article) => (
-                            <Link 
-                                key={article.id} 
-                                to={`/articles/${article.slug}`} 
+                            <Link
+                                key={article.id}
+                                to={`/articles/${article.slug}`}
                                 className="group flex flex-col h-full bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5 hover:bg-white dark:hover:bg-gray-800 border border-transparent hover:border-gray-200 dark:hover:border-gray-700 hover:shadow-md transition-all duration-300"
                             >
                                 {/* Icon Decorative */}
@@ -131,7 +136,7 @@ const FurtherReading = ({ currentArticleSlug, previousArticle, nextArticle }: Fu
                                 <h4 className="text-base font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
                                     {article.title}
                                 </h4>
-                                
+
                                 <div className="mt-auto pt-4 flex items-center text-xs text-gray-500 dark:text-gray-400">
                                     <Calendar className="w-3 h-3 mr-1.5" />
                                     {dayjs(article.published_date).format('MMM D, YYYY')}

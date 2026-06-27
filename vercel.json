@@ -11,10 +11,6 @@
     {
       "source": "/atom.xml",
       "destination": "https://api.ravell.tech/feed/atom/"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
     }
   ],
   "headers": [
@@ -72,5 +68,7 @@
         }
       ]
     }
-  ]
-}
+  ],
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs"
+}

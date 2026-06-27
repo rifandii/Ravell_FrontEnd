@@ -1,3 +1,5 @@
+"use client";
+
 // src/components/CodeBlock.tsx
 import React, { useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -25,10 +27,10 @@ const CodeBlock = ({ codeText, language }: CodeBlockProps) => {
     const h = 700;
     const left = window.screen.width / 2 - w / 2;
     const top = window.screen.height / 2 - h / 2;
-    
+
     const newWin = window.open(
-      '', 
-      '_blank', 
+      '',
+      '_blank',
       `width=${w},height=${h},top=${top},left=${left},resizable=yes,scrollbars=yes,status=no,toolbar=no,menubar=no,location=no`
     );
 
@@ -88,7 +90,7 @@ const CodeBlock = ({ codeText, language }: CodeBlockProps) => {
             </span>
           )}
         </div>
-        
+
         {/* Toolbar Buttons */}
         <div className="flex items-center gap-2">
           {/* Copy Button */}
@@ -150,7 +152,7 @@ const CodeBlock = ({ codeText, language }: CodeBlockProps) => {
           </div>
         </div>
       </div>
-      
+
       {/* Code highlight layout with layout prevention */}
       <div className="overflow-x-auto">
         <SyntaxHighlighter
@@ -176,7 +178,7 @@ const CodeBlock = ({ codeText, language }: CodeBlockProps) => {
               cursor: isHoverHighlightEnabled ? 'pointer' : 'default',
               transition: 'background-color 0.15s ease, border-left-color 0.15s ease'
             };
-            
+
             if (isHoverHighlightEnabled && hoveredLine === lineNumber) {
               style.backgroundColor = 'rgba(139, 92, 246, 0.15)'; // purple-500/15
               style.borderLeft = '3px solid #8b5cf6';
@@ -195,11 +197,11 @@ const CodeBlock = ({ codeText, language }: CodeBlockProps) => {
               }
             };
           }}
-          customStyle={{ 
-            margin: 0, 
-            padding: '1.25rem 1.25rem 1.25rem 0.5rem', 
-            background: 'transparent', 
-            fontSize: '0.875rem', 
+          customStyle={{
+            margin: 0,
+            padding: '1.25rem 1.25rem 1.25rem 0.5rem',
+            background: 'transparent',
+            fontSize: '0.875rem',
             lineHeight: '1.7',
             fontFamily: 'Consolas, Monaco, monospace'
           }}

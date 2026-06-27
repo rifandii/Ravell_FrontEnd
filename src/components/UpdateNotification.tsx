@@ -3,6 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { RefreshCw, Bell, X } from 'lucide-react';
 import { getContentSignature } from '../services/apiClient';
 
+declare global {
+  interface Window {
+    __triggerUpdateNotification?: () => void;
+    __triggerContentNotification?: () => void;
+  }
+}
+
 const UpdateNotification = () => {
   const [show, setShow] = useState(false);
   const [updateReason, setUpdateReason] = useState<'app' | 'content' | null>(null);
@@ -11,12 +18,13 @@ const UpdateNotification = () => {
   // Effect 1: Service Worker (App Update) Listener
   useEffect(() => {
     // For testing/mocking in development environment
-    if (!import.meta.env.PROD) {
-      (window as any).__triggerUpdateNotification = () => {
+    const isDev = (typeof import.meta !== 'undefined' && import.meta.env && !import.meta.env.PROD) || (typeof process !== 'undefined' && process.env && process.env.NODE_ENV !== 'production');
+    if (isDev) {
+      window.__triggerUpdateNotification = () => {
         setUpdateReason('app');
         setShow(true);
       };
-      (window as any).__triggerContentNotification = () => {
+      window.__triggerContentNotification = () => {
         setUpdateReason('content');
         setShow(true);
       };
@@ -89,7 +97,7 @@ const UpdateNotification = () => {
       try {
         const response = await getContentSignature();
         const currentSignature = response.signature;
-        
+
         if (initialSignature && active) {
           if (currentSignature !== initialSignature) {
             setUpdateReason('content');
@@ -167,8 +175,8 @@ const UpdateNotification = () => {
                 {updateReason === 'content' ? 'New Content Available!' : 'Website Update Available!'}
               </h4>
               <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-                {updateReason === 'content' 
-                  ? 'Articles, categories, or tags have just been updated. Please reload the page to see the latest updates.' 
+                {updateReason === 'content'
+                  ? 'Articles, categories, or tags have just been updated. Please reload the page to see the latest updates.'
                   : 'The website has been updated to a newer version. Please reload the page to apply the updates.'}
               </p>
             </div>

@@ -24,7 +24,7 @@ const ArticleDetailPage = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [zoomedImageUrl, setZoomedImageUrl] = useState<string | null>(null);
-    
+
     const markdownContainerRef = useRef<HTMLDivElement>(null);
     const { setHeadings, setPageTitle } = useSidebar();
 
@@ -46,7 +46,7 @@ const ArticleDetailPage = () => {
                 const data = await getArticleBySlug(slug);
                 if (data) {
                     setArticle(data);
-                    setPageTitle(data.title); 
+                    setPageTitle(data.title);
                 } else {
                     setError('Article not found.');
                     setPageTitle('Article Not Found');
@@ -62,14 +62,14 @@ const ArticleDetailPage = () => {
 
         fetchArticle();
         return () => {
-            setHeadings([]); 
+            setHeadings([]);
             setPageTitle('');
         }
     }, [slug, setHeadings, setPageTitle]);
 
     // --- TOC Extraction Logic ---
     useEffect(() => {
-        if (markdownContainerRef.current && article) { 
+        if (markdownContainerRef.current && article) {
             setTimeout(() => {
                 if (!markdownContainerRef.current) return;
                 const hTags = markdownContainerRef.current.querySelectorAll('h2, h3');
@@ -77,7 +77,7 @@ const ArticleDetailPage = () => {
                 hTags.forEach(h => {
                     const text = h.textContent || '';
                     const id = h.id || slugify(text, { lower: true, strict: true });
-                    h.id = id; 
+                    h.id = id;
                     newHeadings.push({
                         id: id,
                         text: text,
@@ -129,11 +129,11 @@ const ArticleDetailPage = () => {
 
                 {/* Featured Image Skeleton */}
                 <div className="max-w-5xl mx-auto px-3 sm:px-4 md:px-8 mb-8 sm:mb-12 md:mb-16">
-                    <Skeleton 
-                        className="w-full aspect-video" 
-                        borderRadius={24} 
-                        baseColor="#d3d3d3" 
-                        highlightColor="#e9e9e9" 
+                    <Skeleton
+                        className="w-full aspect-video"
+                        borderRadius={24}
+                        baseColor="#d3d3d3"
+                        highlightColor="#e9e9e9"
                     />
                 </div>
 
@@ -177,8 +177,8 @@ const ArticleDetailPage = () => {
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white">Failed to Load Article</h3>
                 <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-md mb-6">{error || "We couldn't find the article you're looking for."}</p>
-                <button 
-                    onClick={() => window.history.back()} 
+                <button
+                    onClick={() => window.history.back()}
                     className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-medium transition-colors cursor-pointer"
                 >
                     Go Back
@@ -193,7 +193,7 @@ const ArticleDetailPage = () => {
 
     return (
         <div className="w-full pb-20 animate-in fade-in duration-500">
-            <SEO 
+            <SEO
                 title={article.title}
                 description={article.summary || `Read comprehensive guide about ${article.title}`}
                 type="article"
@@ -208,8 +208,8 @@ const ArticleDetailPage = () => {
 
                 <div className="flex flex-wrap justify-center gap-2 mb-6">
                     {article.tags.map(tag => (
-                        <Link 
-                            key={tag.id} 
+                        <Link
+                            key={tag.id}
                             to={`/articles?tags__slug=${tag.slug}&tag_name=${tag.name}`}
                             className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 border border-purple-100 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900/50 hover:text-purple-800 dark:hover:text-purple-200 hover:scale-105 hover:shadow-sm active:scale-95 transition-all duration-200 cursor-pointer"
                         >
@@ -257,28 +257,28 @@ const ArticleDetailPage = () => {
             )}
 
             <main className="max-w-4xl mx-auto px-3 sm:px-4 md:px-8">
-                <article 
+                <article
                     ref={markdownContainerRef}
                     className="
-                        prose prose-base md:prose-lg lg:prose-xl dark:prose-invert max-w-none 
+                        prose prose-base md:prose-lg lg:prose-xl dark:prose-invert max-w-none
                         prose-headings:font-bold prose-headings:tracking-tight
                         prose-a:text-purple-600 dark:prose-a:text-purple-400 prose-a:no-underline hover:prose-a:underline
                         prose-img:rounded-xl prose-img:shadow-lg
                         text-gray-700 dark:text-gray-300 leading-relaxed
                     "
                 >
-                    <MarkdownRenderer 
-                        content={article.markdown_content} 
+                    <MarkdownRenderer
+                        content={article.markdown_content}
                         onImageClick={(src) => setZoomedImageUrl(src)}
                     />
                 </article>
 
                 <div className="my-16 border-t border-gray-200 dark:border-gray-800"></div>
 
-                <FurtherReading 
+                <FurtherReading
                     currentArticleSlug={article.slug}
-                    previousArticle={article.previous_article} 
-                    nextArticle={article.next_article} 
+                    previousArticle={article.previous_article}
+                    nextArticle={article.next_article}
                 />
             </main>
 

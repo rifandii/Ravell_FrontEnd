@@ -36,7 +36,7 @@ export default function SupabaseArticleDetailDemo() {
 
         // Mock Supabase fetch delay and query simulation for this demo
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        
+
         if (slug === 'example-slug') {
           setPost({
             id: 1,
@@ -48,8 +48,9 @@ export default function SupabaseArticleDetailDemo() {
         } else {
           throw new Error("Post not found");
         }
-      } catch (err: any) {
-        setError(err.message || "Failed to load post from Supabase");
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Failed to load post from Supabase";
+        setError(message || "Failed to load post from Supabase");
       } finally {
         setIsLoading(false);
       }
@@ -81,7 +82,7 @@ export default function SupabaseArticleDetailDemo() {
   if (error || !post) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-6">
-        <SEOManager 
+        <SEOManager
           title="Content Unavailable"
           description="The article you are looking for does not exist or has been removed."
           canonicalUrl={window.location.href}
@@ -97,17 +98,17 @@ export default function SupabaseArticleDetailDemo() {
   return (
     <article className="max-w-3xl mx-auto p-6 md:p-12">
       {/* Inject strictly typed SEO metadata */}
-      <SEOManager 
+      <SEOManager
         title={post.title}
         description={post.excerpt}
         canonicalUrl={`https://ravell.tech/article/${post.slug}`}
         ogImageUrl={post.cover_image}
       />
-      
+
       <header className="mb-8">
-        <img 
-          src={post.cover_image} 
-          alt={post.title} 
+        <img
+          src={post.cover_image}
+          alt={post.title}
           className="w-full h-64 md:h-96 object-cover rounded-3xl shadow-md mb-6"
         />
         <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight">
@@ -120,8 +121,8 @@ export default function SupabaseArticleDetailDemo() {
           {post.excerpt}
         </p>
         <p>
-          This is a simulated article view integrating Supabase. Dynamic SEO, Open Graph, 
-          and Twitter Cards tags are dynamically generated inside the browser document head 
+          This is a simulated article view integrating Supabase. Dynamic SEO, Open Graph,
+          and Twitter Cards tags are dynamically generated inside the browser document head
           utilizing the react-helmet-async component.
         </p>
       </div>

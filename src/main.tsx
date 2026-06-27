@@ -15,8 +15,8 @@ createRoot(document.getElementById("root")!).render(
   </StrictMode>
 );
 
-// Register Service Worker in production
-if ("serviceWorker" in navigator && import.meta.env.PROD) {
+const isProd = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.PROD) || (typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 'production');
+if (typeof window !== 'undefined' && "serviceWorker" in navigator && isProd) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
       .register("/sw.js")

@@ -20,9 +20,9 @@ export default function MarkdownRenderer({ content, onImageClick }: MarkdownRend
     // Override standard code blocks
     code({ className, children, ...props }) {
       const match = /language-([^\s]+)/.exec(className || '');
-      const isBlockCode = (className && className.startsWith('language-')) || 
+      const isBlockCode = (className && className.startsWith('language-')) ||
                           (children && typeof children === 'string' && children.includes('\n'));
-      
+
       const codeText = String(children)
         .replace(/\n$/, '')
         .replace(/^`+|`+$/g, '');
@@ -90,22 +90,30 @@ export default function MarkdownRenderer({ content, onImageClick }: MarkdownRend
     },
 
     // Custom Images rendering with zoom support
-    img({ ...props }: any) { 
-      const isRelative = props.src && props.src.startsWith('/');
-      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://api.ravell.tech';
-      const fullSrc = isRelative ? `${apiBaseUrl}${props.src}` : props.src;
+    img(props) {
+      const src = typeof props.src === 'string' ? props.src : undefined;
+      const alt = typeof props.alt === 'string' ? props.alt : undefined;
+      const isRelative = src?.startsWith('/') ?? false;
+      const apiBaseUrl = (typeof import.meta !== 'undefined' && import.meta.env)
+        ? (import.meta.env.VITE_API_BASE_URL || 'https://api.ravell.tech')
+        : (typeof process !== 'undefined' && process.env ? (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech') : 'https://api.ravell.tech');
+      const fullSrc = src && isRelative ? `${apiBaseUrl}${src}` : src;
+      const imageClickProps = onImageClick && fullSrc
+        ? { onClick: () => onImageClick(fullSrc) }
+        : {};
+
       return (
         <figure className="my-8">
           <img
             {...props}
+            {...imageClickProps}
             src={fullSrc}
             className="w-full h-auto rounded-lg shadow-md cursor-zoom-in hover:shadow-xl transition-shadow duration-300 border border-gray-100 dark:border-gray-800"
-            onClick={() => onImageClick && onImageClick(fullSrc)}
             loading="lazy"
           />
-          {props.alt && (
+          {alt && (
             <figcaption className="text-center text-sm text-gray-500 dark:text-gray-400 mt-2 italic">
-              {props.alt}
+              {alt}
             </figcaption>
           )}
         </figure>
@@ -120,7 +128,7 @@ export default function MarkdownRenderer({ content, onImageClick }: MarkdownRend
         <h2 id={id} className="group flex items-center gap-2 text-2xl md:text-3xl font-bold mt-12 mb-6 text-gray-900 dark:text-white scroll-mt-24">
           {children}
           <a href={`#${id}`} className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-purple-500 transition-opacity" aria-label="Link to this section">
-            
+
           </a>
         </h2>
       );
@@ -160,8 +168,8 @@ export default function MarkdownRenderer({ content, onImageClick }: MarkdownRend
 
   return (
     <div className="prose dark:prose-invert max-w-none text-gray-700 dark:text-gray-300">
-      <ReactMarkdown 
-        remarkPlugins={[remarkGfm]} 
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
         components={components}
       >
         {content}

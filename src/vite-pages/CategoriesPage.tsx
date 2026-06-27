@@ -4,10 +4,10 @@ import { getPaginatedCategories, getPaginatedArticles } from '../services/apiCli
 import type { Category } from '../types/types';
 import CategoryItem from '../components/CategoryItem';
 import Skeleton from 'react-loading-skeleton';
-import { 
-  FolderTree, 
+import {
+  FolderTree,
   Layers,
-  AlertCircle 
+  AlertCircle
 } from 'lucide-react';
 import SEO from '../components/SEO';
 
@@ -25,7 +25,7 @@ const CategoriesPage = () => {
           getPaginatedCategories(),
           getPaginatedArticles('/articles/')
         ]);
-        setCategories(categoriesData.results); 
+        setCategories(categoriesData.results);
         setTotalArticles(articlesData.count);
       } catch (err) {
         setError('Unable to load category tree.');
@@ -53,7 +53,7 @@ const CategoriesPage = () => {
         {/* Directory Card Skeleton */}
         <div className="max-w-5xl mx-auto">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl shadow-purple-900/5 border border-gray-200 dark:border-gray-700 overflow-hidden">
-            
+
             {/* Toolbar Skeleton */}
             <div className="px-6 py-4 bg-gray-50/50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-700 flex items-center gap-2">
               <Skeleton width={16} height={16} baseColor="#d3d3d3" highlightColor="#e9e9e9" />
@@ -98,7 +98,7 @@ const CategoriesPage = () => {
       </div>
     );
   }
-  
+
   // --- ERROR STATE ---
   if (error) {
     return (
@@ -114,17 +114,17 @@ const CategoriesPage = () => {
 
   return (
     <div className="w-full px-4 md:px-8 py-12 animate-in fade-in duration-500">
-      <SEO 
-        title="Categories" 
+      <SEO
+        title="Categories"
         description="Explore our structured documentation by topic hierarchy."
       />
-      
+
       {/* --- HEADER SECTION --- */}
       <div className="max-w-2xl mx-auto text-center mb-12">
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 mb-6 shadow-sm hover:scale-110 transition-transform duration-300">
           <FolderTree className="w-8 h-8" />
         </div>
-        
+
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3 tracking-tight">
           Knowledge Index
         </h1>
@@ -137,7 +137,7 @@ const CategoriesPage = () => {
       <div className="max-w-5xl mx-auto">
         {categories.length > 0 ? (
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl shadow-purple-900/5 border border-gray-200 dark:border-gray-700 overflow-hidden">
-            
+
             {/* Card Header / Toolbar */}
             <div className="px-6 py-4 bg-gray-50/50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-700 flex items-center gap-2">
                <Layers className="w-4 h-4 text-gray-400" />

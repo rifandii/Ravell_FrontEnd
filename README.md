@@ -4,25 +4,27 @@ Production frontend for the Ravell Networks technical blog and knowledge base.
 The site serves networking, infrastructure, cloud, cybersecurity, firewall, SDN,
 and automation content from the Ravell backend API.
 
-Last reviewed: 2026-06-27
+Last reviewed: 2026-06-28
 
 ## Live Environments
 
-| Environment | Branch | URL | Backend API |
-| --- | --- | --- | --- |
-| Production | `main` | `https://ravell.tech` | `https://api.ravell.tech` |
-| Development / Preview | `development` | `https://dev.ravell.tech` | `https://api-dev.ravell.tech` |
+| Environment | Branch | URL | Backend API | Runtime |
+| --- | --- | --- | --- | --- |
+| Production | `main` | `https://ravell.tech` | `https://api.ravell.tech` | Next.js App Router / SSG |
+| Development / Preview | `development` | `https://dev.ravell.tech` | `https://api-dev.ravell.tech` | Next.js App Router / SSG |
 
 The Vercel project is `ravell-networks-projects/ravell-front-end`.
 
-## Current Branch Status
+## Current Runtime Status
 
-This `main` branch is the production frontend. It is a React 19 + Vite 7
-single-page application deployed on Vercel.
+The active production runtime is Next.js App Router with static generation:
 
-The `development` branch contains newer migration work for Next.js App Router
-and static generation. Do not assume the Next.js files are part of production
-until the deployment pipeline is intentionally switched from Vite to Next.js.
+- `npm run dev` starts `next dev`.
+- `npm run build` runs `next build`.
+- `npm run start` and `npm run preview` serve the built Next app.
+- Article detail pages are generated with SSG and revalidated hourly.
+- The previous Vite SPA remains in the repository for fallback/comparison via
+  `npm run dev:vite`, `npm run build:vite`, and `npm run preview:vite`.
 
 ## Architecture
 
@@ -35,9 +37,9 @@ Cloudflare
   |
   | Frontend routes
   v
-Vercel CDN / Vite build output
+Vercel CDN / Next.js build output
   |
-  | API calls through VITE_API_BASE_URL
+  | Server/client API calls through NEXT_PUBLIC_API_BASE_URL
   v
 Tencent Cloud VM
   |
@@ -49,43 +51,66 @@ Nginx -> Gunicorn -> Django Ninja API
 
 | Area | Technology |
 | --- | --- |
-| UI runtime | React 19 |
-| Build tool | Vite 7 |
+| Active runtime | Next.js 16 App Router |
+| Legacy fallback | React 19 + Vite 7 SPA |
 | Language | TypeScript 5.8 |
 | Styling | Tailwind CSS 4 |
-| Routing | React Router DOM 7 |
-| Data fetching | Axios, TanStack React Query provider |
+| Routing | Next App Router; React Router DOM 7 only for legacy Vite path |
+| Data fetching | Next `fetch`, Axios, TanStack React Query provider |
 | Markdown | `react-markdown`, `remark-gfm` |
 | Code highlighting | `react-syntax-highlighter` Prism |
 | Animation | Framer Motion |
 | Icons | Lucide React, Heroicons |
-| SEO | `react-helmet-async` |
+| SEO | Next metadata API; `react-helmet-async` only for legacy Vite path |
 | Analytics/performance | Google Analytics page tracking hook, Vercel Speed Insights |
 | PWA/static assets | `manifest.json`, `sw.js`, maskable icons, PWA icons |
 
-## Feature Overview
+## Next.js / SSG Scope
 
-- Lazy-loaded SPA routes for home, article list, article detail, categories,
-  tags, archives, about, and 404.
-- Persistent dark/light theme via `ThemeContext`.
-- Sidebar state via `SidebarContext`.
-- Left navigation sidebar and context-aware right sidebar.
-- Article list filtering by category, tag, search, year, and month.
-- Tag/category filter validation against the API.
-- Server-driven pagination compatible with the backend's DRF-style pagination
-  envelope.
-- Article detail pages with SEO metadata, breadcrumbs, tags, reading-time
-  estimate, featured image lightbox, table-of-contents headings, previous/next
-  article navigation, and random recommendations.
-- GitHub-flavored markdown rendering with tables, blockquotes, headings, image
-  captions, and custom code blocks.
-- Premium code block component with syntax highlighting, line numbers,
-  copy-to-clipboard, external raw-code window, and optional hover highlighting.
-- Skeleton loading states for page and article layouts.
-- Content update notification using `/api/content/signature/`.
-- Service worker update notification and refresh flow.
-- Page-view tracking hook for Google Analytics.
-- Vercel Speed Insights.
+Implemented in `src/app` and active on production:
+
+- Root layout with theme, sidebar, and global providers.
+- Static home page with ISR revalidation.
+- Static categories, tags, archives, and about pages.
+- Article detail route `/articles/[slug]` with:
+  - `generateStaticParams` for article slug pre-rendering.
+  - `generateMetadata` for per-article SEO and social metadata.
+  - hourly revalidation for article content.
+  - previous/next article navigation.
+  - markdown rendering and client-side table-of-contents/image interactions.
+- Client-side article list route `/articles` for dynamic filters, search,
+  category/tag validation, archive filters, and pagination.
+- Next-specific sidebar, header, cards, pagination, and recursive category UI
+  under `src/components/next`.
+
+Expected build output:
+
+```text
+/                         static, revalidate 1h
+/about                    static
+/archives                 static, revalidate 1h
+/articles                 static shell with client-side filtering
+/articles/[slug]          SSG using generateStaticParams, revalidate 1h
+/categories               static, revalidate 1h
+/tags                     static
+```
+
+## Legacy Vite SPA
+
+The former SPA remains available for comparison and rollback work:
+
+- `src/App.tsx` and `src/main.tsx` are the Vite entry points.
+- `src/vite-pages/` contains the SPA pages.
+- `src/components/` contains shared and legacy UI components.
+- `vite.config.ts` remains for legacy build commands only.
+
+Use these commands only when intentionally testing the old SPA:
+
+```bash
+npm run dev:vite
+npm run build:vite
+npm run preview:vite
+```
 
 ## Project Structure
 
@@ -101,20 +126,25 @@ Ravell_FrontEnd/
 |   |-- maskable-icon.png
 |   `-- logo/profile assets
 |-- src/
-|   |-- App.tsx
-|   |-- main.tsx
-|   |-- index.css
-|   |-- vite-pages/
-|   |-- components/
-|   |-- hooks/
-|   |-- services/apiClient.ts
-|   |-- types/types.ts
+|   |-- app/                        # Active Next.js App Router tree
+|   |-- components/next/            # Next-specific navigation/cards/pagination
+|   |-- components/                 # Shared and legacy SPA UI components
+|   |-- vite-pages/                 # Legacy SPA pages
+|   |-- context/GlobalContext.tsx   # Global data provider
+|   |-- hooks/                      # Page tracking and active heading hooks
+|   |-- services/apiClient.ts       # API client and endpoint wrappers
+|   |-- types/types.ts              # Shared TypeScript API shapes
 |   |-- SidebarContext.tsx
-|   `-- ThemeContext.tsx
-|-- vercel.json
-|-- vite.config.ts
+|   |-- ThemeContext.tsx
+|   |-- App.tsx                     # Legacy Vite SPA router
+|   `-- main.tsx                    # Legacy Vite SPA entry point
+|-- vercel.json                    # Next framework override, feed rewrites, headers
+|-- vite.config.ts                 # Legacy Vite build config
+|-- postcss.config.mjs             # Tailwind/PostCSS support
 |-- package.json
-`-- package-lock.json
+|-- package-lock.json
+|-- pnpm-lock.yaml
+`-- pnpm-workspace.yaml
 ```
 
 ## API Endpoints Consumed
@@ -135,16 +165,29 @@ Ravell_FrontEnd/
 
 ## Environment Variables
 
+### Next.js runtime
+
 | Variable | Purpose |
 | --- | --- |
-| `VITE_API_BASE_URL` | Backend base URL without `/api`, for example `https://api.ravell.tech` |
+| `NEXT_PUBLIC_API_BASE_URL` | Public backend base URL without `/api`, for example `https://api.ravell.tech` |
 
-Vercel environment mapping:
+### Legacy Vite runtime
+
+| Variable | Purpose |
+| --- | --- |
+| `VITE_API_BASE_URL` | Backend base URL without `/api`, for legacy Vite commands |
+
+### Vercel configuration
 
 | Environment | Branch | Expected API base URL |
 | --- | --- | --- |
 | Production | `main` | `https://api.ravell.tech` |
 | Preview | `development` | `https://api-dev.ravell.tech` |
+
+For production Next.js builds, configure
+`NEXT_PUBLIC_API_BASE_URL=https://api.ravell.tech` in the Vercel Production
+environment. For preview builds, configure
+`NEXT_PUBLIC_API_BASE_URL=https://api-dev.ravell.tech`.
 
 Do not commit `.env`, `.env.local`, `.env.*`, or `.vercel/`. They are
 gitignored and may contain local or Vercel-generated values.
@@ -154,7 +197,8 @@ gitignored and may contain local or Vercel-generated values.
 Prerequisites:
 
 - Node.js 20+ recommended. The Vercel project currently uses Node 24.x.
-- npm.
+- npm is the active package manager in scripts. pnpm lock/workspace files are
+  present for migration/tooling compatibility.
 
 Setup:
 
@@ -168,20 +212,20 @@ npm install
 Create a local override only when needed:
 
 ```env
-VITE_API_BASE_URL=http://127.0.0.1:8000
+NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000
 ```
 
-Run locally:
+Run the active Next.js app:
 
 ```bash
 npm run dev
 ```
 
-Build and preview:
+Build and serve locally:
 
 ```bash
 npm run build
-npm run preview
+npm run start
 ```
 
 Lint:
@@ -198,6 +242,12 @@ Vercel is connected to the GitHub repository and deploys by branch:
 - push to `development`: preview/development deployment at
   `https://dev.ravell.tech`.
 
+The local checkout is linked to:
+
+```text
+ravell-networks-projects/ravell-front-end
+```
+
 Useful CLI checks:
 
 ```bash
@@ -206,23 +256,40 @@ npx vercel@latest project ls
 npx vercel@latest env ls
 ```
 
-`vercel.json` configures RSS/Atom rewrites, SPA fallback, `sw.js`
-cache-control, and security headers.
+`vercel.json` configures:
+
+- Vercel framework override to `nextjs`.
+- RSS/Atom feed rewrites to backend feed endpoints.
+- `sw.js` cache-control.
+- security headers including HSTS, frame denial, content-type nosniff,
+  permissions policy, COOP/COEP/CORP, and CSP.
+
+The old SPA fallback rewrite to `/index.html` is intentionally removed because
+it conflicts with Next App Router routing.
+
+## Rollback
+
+The safest rollback options are:
+
+- Vercel rollback to the previous production deployment.
+- Git revert of the merge commit that promoted Next.js to `main`.
+- Git tag rollback point: `prod-frontend-pre-next-ssg-20260628`.
 
 ## Branch Workflow
 
 1. Build features on `development`.
 2. Verify the preview frontend at `https://dev.ravell.tech`.
 3. Verify API compatibility against `https://api-dev.ravell.tech`.
-4. Merge to `main` only after approval.
-5. Confirm production at `https://ravell.tech` after Vercel completes the build.
+4. Merge to `main` only after QA approval.
+5. Confirm production at `https://ravell.tech` after Vercel completes the
+   build.
 
 ## Maintenance Notes
 
-- Keep `VITE_API_BASE_URL` in Vercel aligned with the branch environment.
-- When changing backend response shapes, update `src/types/types.ts`.
-- If the Next.js migration becomes production, update `package.json` scripts,
-  Vercel build settings, and this README.
+- Keep `NEXT_PUBLIC_API_BASE_URL` aligned with the branch environment.
+- Keep `VITE_API_BASE_URL` only for legacy Vite testing.
+- When changing backend response shapes, update `src/types/types.ts` and the
+  affected page/component data mapping.
 - The backend can trigger Vercel deploy hooks when articles, categories, or tags
   change, if `VERCEL_DEPLOY_HOOK_URL` is configured server-side.
 

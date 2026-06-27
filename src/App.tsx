@@ -22,14 +22,14 @@ import ScrollToTopButton from "./components/ScrollToTopButton";
 import UpdateNotification from "./components/UpdateNotification";
 
 // Pages (Lazy Load)
-const HomePage = lazy(() => import("./pages/HomePage"));
-const ArticleListPage = lazy(() => import("./pages/ArticleListPage"));
-const ArticleDetailPage = lazy(() => import("./pages/ArticleDetailPage"));
-const CategoriesPage = lazy(() => import("./pages/CategoriesPage"));
-const TagsPage = lazy(() => import("./pages/TagsPage"));
-const ArchivesPage = lazy(() => import("./pages/ArchivesPage"));
-const AboutPage = lazy(() => import("./pages/AboutPage"));
-const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
+const HomePage = lazy(() => import("./vite-pages/HomePage"));
+const ArticleListPage = lazy(() => import("./vite-pages/ArticleListPage"));
+const ArticleDetailPage = lazy(() => import("./vite-pages/ArticleDetailPage"));
+const CategoriesPage = lazy(() => import("./vite-pages/CategoriesPage"));
+const TagsPage = lazy(() => import("./vite-pages/TagsPage"));
+const ArchivesPage = lazy(() => import("./vite-pages/ArchivesPage"));
+const AboutPage = lazy(() => import("./vite-pages/AboutPage"));
+const NotFoundPage = lazy(() => import("./vite-pages/NotFoundPage"));
 
 const queryClient = new QueryClient();
 

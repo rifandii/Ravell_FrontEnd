@@ -2,7 +2,10 @@
 import axios from 'axios';
 import type { Article, Category, Tag } from '../types/types';
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.ravell.tech';
+// Safe environment variable resolution for both Vite and Next.js
+const BASE_URL = (typeof import.meta !== 'undefined' && import.meta.env)
+  ? (import.meta.env.VITE_API_BASE_URL || 'https://api.ravell.tech')
+  : (typeof process !== 'undefined' && process.env ? (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech') : 'https://api.ravell.tech');
 const API_BASE_URL = `${BASE_URL}/api`;
 
 // [PERBAIKAN 1] Membuat Axios Instance
@@ -16,7 +19,7 @@ const apiClient = axios.create({
 });
 
 // Antarmuka respons paginasi
-interface PaginatedResponse<T> {
+export interface PaginatedResponse<T> {
   count: number;
   next: string | null;
   previous: string | null;
@@ -34,7 +37,7 @@ export const getPaginatedArticles = async (urlOrPath: string): Promise<Paginated
        const response = await axios.get(urlOrPath);
        return response.data;
     }
-    
+
     // Jika path relatif, gunakan apiClient (otomatis pasang API_BASE_URL)
     const response = await apiClient.get(urlOrPath);
     return response.data;
@@ -117,4 +120,4 @@ export const getContentSignature = async (): Promise<ContentSignature> => {
     console.error('Error fetching content signature:', error);
     return { signature: '' };
   }
-};
+};

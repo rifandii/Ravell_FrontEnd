@@ -129,9 +129,9 @@ const HomePage = () => {
 
   return (
     <div className="w-full animate-in fade-in duration-500">
-      <SEO 
-        title="Home" 
-        description="Your Hub for Networking & Security Insights. Dive into detailed articles, tutorials, and latest trends in networking and security." 
+      <SEO
+        title="Home"
+        description="Your Hub for Networking & Security Insights. Dive into detailed articles, tutorials, and latest trends in networking and security."
       />
 
       {/* --- FEATURED ARTICLES --- */}
