@@ -11,12 +11,13 @@ import type { Article } from '../../../types/types';
 declare const process: { env: { [key: string]: string | undefined } };
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech';
 
-// 1. Helper function untuk mengambil data artikel (di-cache otomatis saat build time)
+// This route owns article SSG: title, summary, metadata, and markdown body must
+// be present in the initial HTML for search crawlers and social link previews.
 async function getArticle(slug: string): Promise<Article | null> {
   try {
     const url = `${API_BASE_URL}/api/articles/${slug}/`;
     const res = await fetch(url, {
-      next: { revalidate: 3600 }, // Opsional: Revalidasi cache setiap jam
+      next: { revalidate: 3600 }, // Revalidate article HTML/data hourly after build.
     });
     if (!res.ok) return null;
     return await res.json();
@@ -26,13 +27,12 @@ async function getArticle(slug: string): Promise<Article | null> {
   }
 }
 
-// 2. Generate Static Params untuk SSG (Pencetakan HTML Statis saat build time)
+// Pre-render known article slugs during the Vercel build.
 export async function generateStaticParams() {
   try {
     const res = await fetch(`${API_BASE_URL}/api/articles/`);
     if (!res.ok) return [];
     const data = await res.json();
-    // Mengembalikan array objek slug untuk dicetak
     const articles = Array.isArray(data) ? data : data.results || [];
     return articles.map((article: { slug: string }) => ({
       slug: article.slug,
@@ -43,7 +43,8 @@ export async function generateStaticParams() {
   }
 }
 
-// 3. Metadata API untuk SEO & Social Share (Menggantikan react-helmet-async)
+// Generate per-article metadata server-side so Telegram/Open Graph previews
+// receive the same title and summary as the rendered article page.
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const article = await getArticle(slug);
@@ -78,21 +79,20 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-// 4. Server Component Render Page
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const article = await getArticle(slug);
   if (!article) {
-    notFound(); // Menampilkan halaman 404 jika artikel tidak ada
+    notFound();
   }
 
-  // Hitung durasi baca secara dinamis
+  // Reading time is derived at render time so backend content edits stay reflected after ISR.
   const wordCount = article.markdown_content.trim().split(/\s+/).length;
   const readingTime = Math.max(1, Math.ceil(wordCount / 200));
 
   return (
     <div className="w-full pb-20 animate-in fade-in duration-500">
-      {/* Client component helper untuk interaksi TOC (Table of Contents) & Lightbox */}
+      {/* Client-only helper keeps TOC extraction and image lightbox out of the server component. */}
       <ArticleDetailClient article={article} />
 
       <header className="max-w-4xl mx-auto px-3 sm:px-4 md:px-8 pt-6 sm:pt-8 md:pt-12 mb-8 sm:mb-10 text-center">

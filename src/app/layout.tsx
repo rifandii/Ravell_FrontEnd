@@ -10,6 +10,8 @@ export const metadata: Metadata = {
   description: 'Your Hub for Networking & Security Insights',
 };
 
+// Providers live at the root so static pages, client widgets, and legacy shared
+// components use the same theme, sidebar, and global navigation data.
 export default function RootLayout({
   children,
 }: {

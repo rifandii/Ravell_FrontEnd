@@ -83,7 +83,7 @@ const ArchivesPage = () => {
                   {[1, 2].map((j) => (
                     <div
                       key={j}
-                      className="relative flex items-center bg-white dark:bg-gray-900 p-4 rounded-xl border border-gray-150 dark:border-gray-800"
+                      className="relative flex items-center bg-white dark:bg-gray-900 p-4 rounded-xl border border-gray-100 dark:border-gray-800"
                     >
                       {/* Horizontal Connector Line */}
                       <div className="absolute -left-8 top-1/2 -translate-y-1/2 w-8 h-0.5 bg-gray-100 dark:bg-gray-800"></div>

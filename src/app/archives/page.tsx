@@ -30,6 +30,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell
 
 async function getArchivesData() {
   try {
+    // Archive counts are stable enough for hourly ISR and should be visible in initial HTML.
     const res = await fetch(`${API_BASE_URL}/api/archives/`, { next: { revalidate: 3600 } });
     if (!res.ok) throw new Error('Failed to fetch archives');
     const data: YearArchive[] = await res.json();

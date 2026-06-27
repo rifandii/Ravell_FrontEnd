@@ -1,24 +1,21 @@
-// src/services/apiClient.ts
 import axios from 'axios';
 import type { Article, Category, Tag } from '../types/types';
 
-// Safe environment variable resolution for both Vite and Next.js
+// Shared browser-side API client. Next server components use native fetch so
+// ISR/revalidation metadata stays attached to each server-rendered request.
 const BASE_URL = (typeof import.meta !== 'undefined' && import.meta.env)
   ? (import.meta.env.VITE_API_BASE_URL || 'https://api.ravell.tech')
   : (typeof process !== 'undefined' && process.env ? (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech') : 'https://api.ravell.tech');
 const API_BASE_URL = `${BASE_URL}/api`;
 
-// [PERBAIKAN 1] Membuat Axios Instance
-// Ini memungkinkan kita mengatur konfigurasi global satu kali saja.
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 20000, // [PENTING] 20 detik timeout untuk mengantisipasi "Cold Start" Railway
+  timeout: 20000, // Keep slow backend responses bounded for client-side views.
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Antarmuka respons paginasi
 export interface PaginatedResponse<T> {
   count: number;
   next: string | null;
@@ -26,19 +23,14 @@ export interface PaginatedResponse<T> {
   results: T[];
 }
 
-// Fungsi fetching artikel dengan paginasi
 export const getPaginatedArticles = async (urlOrPath: string): Promise<PaginatedResponse<Article>> => {
   try {
-    // [PERBAIKAN 2] Logika Cerdas URL
-    // Cek apakah input adalah URL lengkap (http...) atau path relatif (/articles...)
-    // Django REST Framework sering mengembalikan 'next' sebagai URL lengkap.
+    // Django pagination can return absolute next/previous URLs; use them as-is.
     if (urlOrPath.startsWith('http')) {
-       // Jika URL lengkap, gunakan axios biasa (bypass baseURL instance)
-       const response = await axios.get(urlOrPath);
-       return response.data;
+      const response = await axios.get(urlOrPath);
+      return response.data;
     }
 
-    // Jika path relatif, gunakan apiClient (otomatis pasang API_BASE_URL)
     const response = await apiClient.get(urlOrPath);
     return response.data;
   } catch (error) {
@@ -49,7 +41,6 @@ export const getPaginatedArticles = async (urlOrPath: string): Promise<Paginated
 
 export const getArticleBySlug = async (slug: string): Promise<Article | null> => {
   try {
-    // Gunakan apiClient, tidak perlu tulis ${API_BASE_URL} lagi
     const response = await apiClient.get(`/articles/${slug}/`);
     return response.data;
   } catch (error) {
@@ -60,7 +51,7 @@ export const getArticleBySlug = async (slug: string): Promise<Article | null> =>
 
 export const getLatestArticles = async (): Promise<Article[]> => {
   try {
-    const response = await apiClient.get(`/articles/latest/`);
+    const response = await apiClient.get('/articles/latest/');
     return response.data;
   } catch (error) {
     console.error('Error fetching latest articles:', error);
@@ -70,7 +61,7 @@ export const getLatestArticles = async (): Promise<Article[]> => {
 
 export const getPaginatedCategories = async (): Promise<PaginatedResponse<Category>> => {
   try {
-    const response = await apiClient.get(`/categories/`);
+    const response = await apiClient.get('/categories/');
     return response.data;
   } catch (error) {
     console.error('Error fetching categories:', error);
@@ -80,7 +71,7 @@ export const getPaginatedCategories = async (): Promise<PaginatedResponse<Catego
 
 export const getPaginatedTags = async (): Promise<PaginatedResponse<Tag>> => {
   try {
-    const response = await apiClient.get(`/tags/`);
+    const response = await apiClient.get('/tags/');
     return response.data;
   } catch (error) {
     console.error('Error fetching tags:', error);
@@ -114,7 +105,7 @@ export interface ContentSignature {
 
 export const getContentSignature = async (): Promise<ContentSignature> => {
   try {
-    const response = await apiClient.get<ContentSignature>(`/content/signature/`);
+    const response = await apiClient.get<ContentSignature>('/content/signature/');
     return response.data;
   } catch (error) {
     console.error('Error fetching content signature:', error);

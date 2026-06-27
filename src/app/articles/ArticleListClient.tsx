@@ -25,6 +25,8 @@ const MONTH_NAMES = [
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
+// The listing stays client-rendered because search, filters, validation, and
+// pagination are driven by URL query state after the static shell loads.
 export default function ArticleListClient() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -40,6 +42,7 @@ export default function ArticleListClient() {
   const [validatedCategoryName, setValidatedCategoryName] = useState<string | null>(null);
   const [isInvalidFilter, setIsInvalidFilter] = useState<boolean>(false);
 
+  // Convert URL filters into the page heading and supporting context shown above the results.
   const pageContext = useMemo(() => {
     const categorySlug = searchParams.get('categories__slug');
     const tagSlug = searchParams.get('tags__slug');
@@ -108,6 +111,7 @@ export default function ArticleListClient() {
       const categorySlug = searchParams.get('categories__slug');
 
       try {
+        // Validate slug filters alongside the article query so bad tag/category URLs fail clearly.
         const promises: [Promise<PaginatedResponse<Article>>, Promise<Tag | null> | null, Promise<Category | null> | null] = [
           getPaginatedArticles(`/articles/?${query}`),
           tagSlug ? getTagBySlug(tagSlug) : null,
@@ -162,6 +166,7 @@ export default function ArticleListClient() {
     loadData();
   }, [searchParams]);
 
+  // The API returns absolute pagination URLs; keep only query params before routing inside Next.
   const handlePageChange = (url: string | null) => {
     if (url) {
       const urlObj = new URL(url);
@@ -171,6 +176,7 @@ export default function ArticleListClient() {
     }
   };
 
+  // Clear to the related index page instead of silently dropping users on a generic list.
   const clearFilters = () => {
     const categorySlug = searchParams.get('categories__slug');
     const categoryParam = searchParams.get('category_name');

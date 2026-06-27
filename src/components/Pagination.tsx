@@ -29,7 +29,6 @@ const Pagination = ({ count, nextPageUrl, prevPageUrl, handlePageChange }: Pagin
       pageButtons.push(
         <button
           key={i}
-          // PERBAIKAN: Tombol nomor memanggil setSearchParams langsung
           onClick={() => setSearchParams(newSearchParams)}
           className={`px-4 py-2 rounded-full font-semibold transition-colors cursor-pointer ${
             i === currentPage
@@ -47,7 +46,7 @@ const Pagination = ({ count, nextPageUrl, prevPageUrl, handlePageChange }: Pagin
   return (
     <div className="flex flex-wrap justify-center items-center mt-12 gap-2 sm:gap-3">
       
-      {/* Tombol Previous */}
+      {/* Previous page */}
       <button
         onClick={() => handlePageChange(prevPageUrl)}
         disabled={!prevPageUrl}
@@ -56,17 +55,17 @@ const Pagination = ({ count, nextPageUrl, prevPageUrl, handlePageChange }: Pagin
         <ArrowLeft size={16} className="mr-1 sm:mr-2 inline"/> <span className="hidden sm:inline">Previous</span><span className="sm:hidden">Prev</span>
       </button>
       
-      {/* Tombol Nomor Halaman — hidden on very small screens */}
+      {/* Page numbers are hidden on very small screens. */}
       <div className="hidden sm:flex gap-2">
         {renderPaginationButtons()}
       </div>
       
-      {/* Display Halaman */}
+      {/* Current page summary */}
       <span className="text-gray-700 dark:text-gray-300 font-semibold text-sm sm:text-base">
         Page {currentPage} of {totalPages}
       </span>
       
-      {/* Tombol Next */}
+      {/* Next page */}
       <button
         onClick={() => handlePageChange(nextPageUrl)}
         disabled={!nextPageUrl}

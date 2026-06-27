@@ -266,7 +266,7 @@ const HomePage = () => {
                         "The bad guys only need to be right once. The defender has to be right every single time."
           </p>
           <p className="text-lg font-semibold text-gray-900 dark:text-white">
-            — Some IT Guy.
+            - Some IT Guy.
           </p>
         </div>
       </section>

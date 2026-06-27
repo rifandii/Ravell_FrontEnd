@@ -7,6 +7,8 @@ import type { Article, Category, Tag } from '../types/types';
 declare const process: { env: { [key: string]: string | undefined } };
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech';
 
+// Home is a server component with ISR-backed data so the first response is real
+// HTML instead of an empty SPA shell.
 export const metadata: Metadata = {
   title: 'Home | Ravell Tech',
   description: 'Your Hub for Networking & Security Insights. Dive into detailed articles, tutorials, and latest trends in networking and security.',
@@ -14,6 +16,7 @@ export const metadata: Metadata = {
 
 async function getHomeData() {
   try {
+    // Fetch the homepage data in parallel; each request participates in Next ISR.
     const [articlesRes, categoriesRes, tagsRes] = await Promise.all([
       fetch(`${API_BASE_URL}/api/articles/latest/`, { next: { revalidate: 3600 } }),
       fetch(`${API_BASE_URL}/api/categories/`, { next: { revalidate: 3600 } }),
@@ -195,7 +198,7 @@ export default async function HomePage() {
             "The bad guys only need to be right once. The defender has to be right every single time."
           </p>
           <p className="text-lg font-semibold text-gray-900 dark:text-white">
-            — Some IT Guy.
+            - Some IT Guy.
           </p>
         </div>
       </section>

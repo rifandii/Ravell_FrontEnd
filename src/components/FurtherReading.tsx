@@ -24,7 +24,6 @@ interface Article {
     title: string;
     slug: string;
     published_date: string;
-    // Tambahkan field lain jika API mengembalikan category/tags
 }
 
 interface FurtherReadingProps {
@@ -33,7 +32,7 @@ interface FurtherReadingProps {
     nextArticle: NavArticle | null;
 }
 
-// Safe environment variable resolution for both Vite and Next.js
+// Resolve the backend base URL in both legacy Vite and shared Next client usage.
 const BASE_URL = (typeof import.meta !== 'undefined' && import.meta.env)
   ? (import.meta.env.VITE_API_BASE_URL || 'https://api.ravell.tech')
   : (typeof process !== 'undefined' && process.env ? (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech') : 'https://api.ravell.tech');
@@ -57,7 +56,7 @@ const FurtherReading = ({ currentArticleSlug, previousArticle, nextArticle }: Fu
         }
     }, [currentArticleSlug]);
 
-    // Jangan render apa-apa jika tidak ada data navigasi sama sekali
+    // Do not render an empty recommendation section.
     if (!randomArticles.length && !previousArticle && !nextArticle) {
         return null;
     }
@@ -65,9 +64,9 @@ const FurtherReading = ({ currentArticleSlug, previousArticle, nextArticle }: Fu
     return (
         <section className="mt-20 pt-10 border-t border-gray-100 dark:border-gray-800">
 
-            {/* --- BAGIAN 1: LINEAR NAVIGATION (PREV/NEXT) --- */}
+            {/* Linear previous/next navigation */}
             <div className="mb-16">
-                <h3 className="sr-only">Post Navigation</h3> {/* Screen Reader Only */}
+                <h3 className="sr-only">Post Navigation</h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Previous Article Card */}
@@ -85,7 +84,7 @@ const FurtherReading = ({ currentArticleSlug, previousArticle, nextArticle }: Fu
                             </span>
                         </Link>
                     ) : (
-                        // Empty placeholder agar layout grid tetap rapi jika hanya ada Next
+                        // Placeholder keeps the two-column layout stable when only Next exists.
                         <div className="hidden md:block"></div>
                     )}
 
@@ -109,7 +108,7 @@ const FurtherReading = ({ currentArticleSlug, previousArticle, nextArticle }: Fu
                 </div>
             </div>
 
-            {/* --- BAGIAN 2: DISCOVERY (RANDOM ARTICLES) --- */}
+            {/* Discovery recommendations */}
             {randomArticles.length > 0 && (
                 <div>
                     <div className="flex items-center gap-2 mb-8">
@@ -126,7 +125,7 @@ const FurtherReading = ({ currentArticleSlug, previousArticle, nextArticle }: Fu
                                 to={`/articles/${article.slug}`}
                                 className="group flex flex-col h-full bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5 hover:bg-white dark:hover:bg-gray-800 border border-transparent hover:border-gray-200 dark:hover:border-gray-700 hover:shadow-md transition-all duration-300"
                             >
-                                {/* Icon Decorative */}
+                                {/* Decorative icon */}
                                 <div className="mb-4">
                                     <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                         <BookOpen className="w-4 h-4" />

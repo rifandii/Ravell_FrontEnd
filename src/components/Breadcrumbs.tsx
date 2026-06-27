@@ -4,7 +4,6 @@ import { useLocation, Link } from 'react-router-dom';
 import { ChevronRight, Home } from 'lucide-react';
 
 
-// Tambahkan prop articleTitle
 interface BreadcrumbsProps {
   articleTitle?: string;
 }
@@ -13,9 +12,9 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ articleTitle }) => {
   const location = useLocation();
   const pathnames = location.pathname.split('/').filter(x => x);
 
-  // Fungsi untuk mengubah slug menjadi teks yang mudah dibaca
+  // Convert route segments and query-derived slugs into readable breadcrumb labels.
   const formatName = (name: string): string => {
-    // Menangani slug filter (misal: categories__slug=security)
+    // Filter routes can pass label hints through the query string.
     if (name.includes('=')) {
         const parts = name.split('=');
         if (location.search.includes('category_name')) {
@@ -31,13 +30,9 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ articleTitle }) => {
 
   return (
     <nav className="text-sm" aria-label="Breadcrumb">
-      {/* [PERBAIKAN 1] 
-        Hapus 'inline-flex' dan 'space-x' dari <ol>.
-        Ini mengizinkan <ol> menjadi 'block' (default) 
-        dan membiarkan konten di dalamnya mengalir (wrap) secara alami.
-      */}
+      {/* Keep the list inline-friendly so long article titles can wrap naturally. */}
       <ol>
-        {/* Item Home */}
+        {/* Home link */}
         <li className="inline-flex items-center">
           <Link 
             to="/" 
@@ -48,25 +43,19 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ articleTitle }) => {
           </Link>
         </li>
 
-        {/* Item Breadcrumbs lainnya */}
+        {/* Route segments */}
         {pathnames.map((value, index) => {
           const isLast = index === pathnames.length - 1;
           const to = `/${pathnames.slice(0, index + 1).join('/')}`;
           const name = formatName(value);
 
           return (
-            // [PERBAIKAN 2] 
-            // Ubah <li> menjadi 'inline' (bukan 'inline-flex') 
-            // agar mengalir seperti teks.
             <li key={to} className="inline">
               
-              {/* [PERBAIKAN 3] Beri 'inline-block' agar sejajar */}
+              {/* Inline icon keeps wrapping behavior consistent with long labels. */}
               <ChevronRight className="w-4 h-4 text-gray-400 mx-1 inline-block" />
               
               {isLast ? (
-                // [PERBAIKAN 4]
-                // - Hapus 'truncate' dan 'max-w-xs'
-                // - Tambahkan 'break-words' untuk mematahkan teks jika perlu
                 <span className="text-gray-500 dark:text-gray-300 font-semibold cursor-default break-words">
                   {articleTitle || name} 
                 </span>

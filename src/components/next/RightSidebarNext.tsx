@@ -36,15 +36,15 @@ const RightSidebarNext = () => {
         <div className="p-6 space-y-6 flex-grow">
           <div className="space-y-3">
             <div className="w-16 h-3 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
-            <div className="w-full h-8 bg-gray-150 dark:bg-gray-800/50 rounded-xl animate-pulse"></div>
-            <div className="w-full h-8 bg-gray-150 dark:bg-gray-800/50 rounded-xl animate-pulse"></div>
+            <div className="w-full h-8 bg-gray-100 dark:bg-gray-800/50 rounded-xl animate-pulse"></div>
+            <div className="w-full h-8 bg-gray-100 dark:bg-gray-800/50 rounded-xl animate-pulse"></div>
           </div>
           <div className="space-y-3 pt-6 border-t border-gray-100 dark:border-gray-800">
             <div className="w-20 h-3 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
             <div className="flex flex-wrap gap-2">
-              <div className="w-16 h-6 bg-gray-150 dark:bg-gray-800/50 rounded-lg animate-pulse"></div>
-              <div className="w-12 h-6 bg-gray-150 dark:bg-gray-800/50 rounded-lg animate-pulse"></div>
-              <div className="w-20 h-6 bg-gray-150 dark:bg-gray-800/50 rounded-lg animate-pulse"></div>
+              <div className="w-16 h-6 bg-gray-100 dark:bg-gray-800/50 rounded-lg animate-pulse"></div>
+              <div className="w-12 h-6 bg-gray-100 dark:bg-gray-800/50 rounded-lg animate-pulse"></div>
+              <div className="w-20 h-6 bg-gray-100 dark:bg-gray-800/50 rounded-lg animate-pulse"></div>
             </div>
           </div>
         </div>
@@ -93,7 +93,7 @@ const RightSidebarNext = () => {
             href={`/articles?tags__slug=${tag.slug}&tag_name=${tag.name}`}
             className="
               text-xs font-medium px-3 py-1.5 rounded-lg transition-all duration-200 cursor-pointer
-              bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-750
+              bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700
               hover:bg-purple-50 hover:text-purple-600 hover:border-purple-200
               dark:hover:bg-purple-900/20 dark:hover:text-purple-300 dark:hover:border-purple-800
             "
@@ -115,7 +115,7 @@ const RightSidebarNext = () => {
       </div>
       {headings && headings.length > 0 ? (
         <nav className="relative">
-          <div className="absolute left-[5px] top-2 bottom-2 w-[1px] bg-gray-150 dark:bg-gray-800"></div>
+          <div className="absolute left-[5px] top-2 bottom-2 w-[1px] bg-gray-100 dark:bg-gray-800"></div>
 
           <ul className="space-y-1">
             {headings.map((heading) => (
@@ -139,7 +139,7 @@ const RightSidebarNext = () => {
           </ul>
         </nav>
       ) : (
-        <div className="text-center py-6 text-gray-450 dark:text-gray-550">
+        <div className="text-center py-6 text-gray-400 dark:text-gray-500">
           <FileText className="w-6 h-6 mx-auto mb-2 opacity-50" />
           <p className="text-xs">No headings found</p>
         </div>
@@ -152,7 +152,7 @@ const RightSidebarNext = () => {
       <div className="h-16 px-6 border-b border-gray-200 dark:border-gray-800 flex items-center shrink-0">
       </div>
 
-      <div className="flex-1 flex flex-col divide-y divide-gray-150 dark:divide-gray-800/60">
+      <div className="flex-1 flex flex-col divide-y divide-gray-100 dark:divide-gray-800/60">
         {isArticleDetailPage ? (
           <>
             <div className="p-6">

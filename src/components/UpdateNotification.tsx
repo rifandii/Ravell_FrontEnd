@@ -15,9 +15,9 @@ const UpdateNotification = () => {
   const [updateReason, setUpdateReason] = useState<'app' | 'content' | null>(null);
   const [waitingWorker, setWaitingWorker] = useState<ServiceWorker | null>(null);
 
-  // Effect 1: Service Worker (App Update) Listener
+  // Detect service-worker updates and expose manual dev triggers for testing the notification UI.
   useEffect(() => {
-    // For testing/mocking in development environment
+    // Dev-only hooks let QA trigger update banners without publishing a real service worker.
     const isDev = (typeof import.meta !== 'undefined' && import.meta.env && !import.meta.env.PROD) || (typeof process !== 'undefined' && process.env && process.env.NODE_ENV !== 'production');
     if (isDev) {
       window.__triggerUpdateNotification = () => {
@@ -68,11 +68,11 @@ const UpdateNotification = () => {
       reg.addEventListener('updatefound', onUpdateFound);
 
       const updateInterval = setInterval(() => {
-        reg.update().catch((err) => console.log('Error updating SW:', err));
+        reg.update().catch((err) => console.warn('Error updating SW:', err));
       }, 60000);
 
       const onFocus = () => {
-        reg.update().catch((err) => console.log('Error updating SW on focus:', err));
+        reg.update().catch((err) => console.warn('Error updating SW on focus:', err));
       };
       window.addEventListener('focus', onFocus);
 
@@ -88,7 +88,7 @@ const UpdateNotification = () => {
     };
   }, []);
 
-  // Effect 2: Content Database Update Polling
+  // Poll a lightweight backend signature so users can reload when published content changes.
   useEffect(() => {
     let active = true;
     let signature = "";
@@ -111,7 +111,7 @@ const UpdateNotification = () => {
       }
     };
 
-    // Initialize content signature on load
+    // Capture the baseline signature once, then compare future checks against it.
     const initSignature = async () => {
       const sig = await checkContentUpdates();
       if (sig && active) {
@@ -120,7 +120,7 @@ const UpdateNotification = () => {
     };
     initSignature();
 
-    // Check periodically every 60 seconds
+    // Poll periodically while the tab stays open.
     const interval = setInterval(async () => {
       if (signature) {
         const nextSig = await checkContentUpdates(signature);
@@ -130,7 +130,7 @@ const UpdateNotification = () => {
       }
     }, 60000);
 
-    // Also check when tab is refocused
+    // Re-check immediately when users return to the tab.
     const handleFocus = async () => {
       if (signature) {
         const nextSig = await checkContentUpdates(signature);

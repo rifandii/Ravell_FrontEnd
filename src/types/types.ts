@@ -1,6 +1,6 @@
 // src/types/types.ts
 
-// Interface untuk Navigasi Kontekstual (Previous/Next Article)
+// Lightweight article link used for previous/next navigation.
 export interface NavArticle {
   title: string;
   slug: string;
@@ -19,7 +19,6 @@ export interface Article {
   categories: Category[];
   tags: Tag[];
   featured_image_url: string | null;
-  // Tambahkan field baru di sini
   previous_article: NavArticle | null;
   next_article: NavArticle | null;
 }

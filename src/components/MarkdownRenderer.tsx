@@ -11,13 +11,15 @@ interface MarkdownRendererProps {
   onImageClick?: (src: string) => void;
 }
 
+// Central markdown renderer shared by Next SSG pages and the legacy Vite path.
+// Keep URL normalization here so article bodies render consistently in both runtimes.
 export default function MarkdownRenderer({ content, onImageClick }: MarkdownRendererProps) {
   const components: Components = {
-    // Override standard pre container to prevent double boxes
+    // Avoid nested <pre> wrappers because CodeBlock owns the final code container.
     pre({ children }) {
       return <>{children}</>;
     },
-    // Override standard code blocks
+    // Route fenced code blocks to the syntax highlighter while keeping inline code lightweight.
     code({ className, children, ...props }) {
       const match = /language-([^\s]+)/.exec(className || '');
       const isBlockCode = (className && className.startsWith('language-')) ||
@@ -41,7 +43,7 @@ export default function MarkdownRenderer({ content, onImageClick }: MarkdownRend
       );
     },
 
-    // Table elements overrides for beautiful premium layout
+    // Tables need explicit wrappers so wide technical tables remain scrollable on mobile.
     table({ children }) {
       return (
         <div className="my-6 overflow-hidden rounded-2xl border border-gray-200 dark:border-purple-900/30 bg-white dark:bg-[#120e22]/20 shadow-md dark:shadow-purple-950/5">
@@ -89,7 +91,7 @@ export default function MarkdownRenderer({ content, onImageClick }: MarkdownRend
       );
     },
 
-    // Custom Images rendering with zoom support
+    // Normalize relative backend image paths and keep zoom support opt-in for article pages.
     img(props) {
       const src = typeof props.src === 'string' ? props.src : undefined;
       const alt = typeof props.alt === 'string' ? props.alt : undefined;
@@ -120,7 +122,7 @@ export default function MarkdownRenderer({ content, onImageClick }: MarkdownRend
       );
     },
 
-    // Custom Headings (H2) rendering with auto-ID slugification for ToC jump anchors
+    // H2/H3 anchors are reused by the right-sidebar table of contents.
     h2: ({ children }) => {
       const text = React.Children.toArray(children).join('');
       const id = slugify(text, { lower: true, strict: true });
@@ -128,13 +130,13 @@ export default function MarkdownRenderer({ content, onImageClick }: MarkdownRend
         <h2 id={id} className="group flex items-center gap-2 text-2xl md:text-3xl font-bold mt-12 mb-6 text-gray-900 dark:text-white scroll-mt-24">
           {children}
           <a href={`#${id}`} className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-purple-500 transition-opacity" aria-label="Link to this section">
-
+            #
           </a>
         </h2>
       );
     },
 
-    // Custom Headings (H3) rendering with auto-ID slugification
+    // H3 anchors stay aligned with generated table-of-contents links.
     h3: ({ children }) => {
       const text = React.Children.toArray(children).join('');
       const id = slugify(text, { lower: true, strict: true });
@@ -145,7 +147,7 @@ export default function MarkdownRenderer({ content, onImageClick }: MarkdownRend
       );
     },
 
-    // Prevent wrapping images inside paragraphs
+    // ReactMarkdown wraps markdown images in paragraphs; unwrap them to keep figure layout valid.
     p({ children }) {
       const hasImg = React.Children.toArray(children).some(
         (child) =>

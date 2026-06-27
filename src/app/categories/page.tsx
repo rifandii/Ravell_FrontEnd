@@ -13,6 +13,7 @@ export const metadata: Metadata = {
 
 async function getCategoriesData() {
   try {
+    // Keep category hierarchy and article count on the server-rendered page for fast index browsing.
     const [categoriesRes, articlesRes] = await Promise.all([
       fetch(`${API_BASE_URL}/api/categories/`, { next: { revalidate: 3600 } }),
       fetch(`${API_BASE_URL}/api/articles/`, { next: { revalidate: 3650 } }),

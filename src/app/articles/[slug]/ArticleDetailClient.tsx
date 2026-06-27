@@ -6,15 +6,17 @@ import ImageModal from '../../../components/ImageModal';
 import slugify from 'slugify';
 import type { Article, Heading } from '../../../types/types';
 
+// Client companion for the SSG article page. It only handles browser-only
+// behavior: sidebar state, heading extraction, and image zoom interactions.
 export default function ArticleDetailClient({ article }: { article: Article }) {
   const { setHeadings, setPageTitle } = useSidebar();
   const [zoomedImageUrl, setZoomedImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    // 1. Set judul halaman di sidebar global
     setPageTitle(article.title);
 
-    // 2. Ekstrak Heading H2 & H3 dari konten Markdown secara dinamis untuk TOC
+    // Markdown is rendered by the server component first; extract H2/H3 anchors
+    // after hydration so the right sidebar can build an accurate table of contents.
     const extractHeadings = () => {
       const articleEl = document.querySelector('article');
       if (!articleEl) return;
@@ -25,7 +27,7 @@ export default function ArticleDetailClient({ article }: { article: Article }) {
       hTags.forEach((h) => {
         const text = h.textContent || '';
         const id = h.id || slugify(text, { lower: true, strict: true });
-        h.id = id; // Tambahkan anchor ID
+        h.id = id;
         newHeadings.push({
           id,
           text,
@@ -35,7 +37,6 @@ export default function ArticleDetailClient({ article }: { article: Article }) {
       setHeadings(newHeadings);
     };
 
-    // Eksekusi ekstraksi heading setelah render markdown selesai
     const timer = setTimeout(extractHeadings, 150);
 
     return () => {
@@ -45,7 +46,8 @@ export default function ArticleDetailClient({ article }: { article: Article }) {
     };
   }, [article, setHeadings, setPageTitle]);
 
-  // Listener untuk zoom gambar di dalam artikel
+  // Event delegation keeps markdown image zoom working without attaching a
+  // separate click handler to each generated image node.
   useEffect(() => {
     const handleImageClick = (e: MouseEvent) => {
       const target = e.target as HTMLImageElement;

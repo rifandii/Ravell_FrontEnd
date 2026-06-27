@@ -267,6 +267,42 @@ npx vercel@latest env ls
 The old SPA fallback rewrite to `/index.html` is intentionally removed because
 it conflicts with Next App Router routing.
 
+## Production SSG Verification
+
+After the migration, production article URLs are expected to expose title,
+summary, metadata, and article body in the initial HTML. This is the behavior
+that enables Telegram and other Open Graph consumers to show article previews
+without executing client-side JavaScript.
+
+Verified production checks:
+
+- `https://ravell.tech/articles/deploying-ipsec-site-to-site-vpns-with-ftd`
+  returns `200`.
+- Response is `text/html; charset=utf-8`.
+- Vercel reports `x-vercel-cache: PRERENDER` and `x-nextjs-prerender: 1`.
+- The article title and body are present in page source.
+- `/`, `/categories`, `/tags`, and `/archives` also return prerendered HTML.
+
+## Code Hygiene Policy
+
+- Remove unused demo/default assets instead of leaving migration debris in the
+  production tree.
+- Keep comments for architectural boundaries, SSG/ISR behavior, API/runtime
+  compatibility, and non-obvious UI logic.
+- Do not add line-by-line comments that merely repeat the code; those comments
+  rot quickly and make future changes harder to review.
+- Legacy Vite files are kept only for explicit fallback/comparison commands and
+  should not be treated as the active production runtime.
+
+Cleanup completed after SSG promotion:
+
+- Removed unused Vite/React default assets.
+- Removed the unused Supabase SEO demo component and its private helper.
+- Replaced debug/noisy service-worker logs with quieter failure warnings.
+- Fixed invalid Tailwind utility names in sidebar/tag UI.
+- Added comments around SSG, ISR, Open Graph metadata, query-driven article
+  listing, markdown rendering, and runtime API selection.
+
 ## Rollback
 
 The safest rollback options are:

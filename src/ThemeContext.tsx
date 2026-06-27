@@ -16,9 +16,9 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window === 'undefined') {
-      return 'light'; // Default theme for SSR
+      return 'light'; // SSR fallback before localStorage/system preference is available.
     }
-    // Ambil preferensi dari localStorage atau deteksi preferensi sistem
+    // Prefer explicit user choice, then fall back to the OS color scheme.
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       return savedTheme as Theme;
@@ -32,13 +32,13 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    // Tambahkan atau hapus class 'dark' di elemen <html>
+    // Tailwind dark mode is class-based, so keep the html class in sync with context state.
     const root = window.document.documentElement;
     if (root && root.classList) {
       root.classList.remove(theme === 'light' ? 'dark' : 'light');
       root.classList.add(theme);
     }
-    // Simpan preferensi tema ke localStorage
+    // Persist the explicit choice for the next visit.
     localStorage.setItem('theme', theme);
   }, [theme]);
 

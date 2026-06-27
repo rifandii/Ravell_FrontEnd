@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import type { Article } from '../types/types';
-import ReactMarkdown from 'react-markdown'; // <-- 1. IMPORT ReactMarkdown
-import remarkGfm from 'remark-gfm'; // Opsional: untuk GFM (tabel, dll.)
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import dayjs from 'dayjs';
 
 interface ArticleCardProps {
@@ -17,42 +17,41 @@ const ArticleCardHome = ({ article }: ArticleCardProps) => {
                  hover:shadow-2xl hover:-translate-y-1 group h-full flex flex-col"
     >
       {article.featured_image_url && (
-        <div className="overflow-hidden"> {/* Wrapper untuk zoom gambar */}
+        <div className="overflow-hidden">
           <img
             src={article.featured_image_url}
             alt={article.title}
-            // [PERBAIKAN 2] Buat gambar sedikit zoom saat di-hover
             className="w-full h-40 sm:h-48 object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"
           />
         </div>
       )}
       
-      {/* Wrapper konten dibuat flex-col agar footer (tags) bisa 'menempel' di bawah */}
+      {/* Flex column keeps tags anchored at the bottom of cards with uneven summaries. */}
       <div className="p-3 sm:p-4 flex flex-col flex-grow">
-        {/* Judul */}
+        {/* Article title */}
         <h2 className="text-base sm:text-lg md:text-xl font-bold mb-2 text-gray-900 dark:text-gray-200 
                        group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors line-clamp-2">
           {article.title}
         </h2>
         
-        {/* Metadata */}
+        {/* Publication metadata */}
         <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4">
           Published on {dayjs(article.published_date).format('MMM D, YYYY')} by {article.author_username}
         </p>
         
-        {/* [PERBAIKAN 3] Ganti <p> dengan ReactMarkdown */}
+        {/* Render markdown summaries without allowing long text to break card height. */}
         <div 
           className="prose prose-sm dark:prose-invert max-w-none 
                      text-gray-700 dark:text-gray-300 
-                     mb-4 line-clamp-3" // <-- 'line-clamp-3' membatasi 3 baris
+                     mb-4 line-clamp-3"
         >
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
             {article.summary}
           </ReactMarkdown>
         </div>
         
-        {/* Tags (didorong ke bawah dengan 'mt-auto') */}
+        {/* Tags */}
         <div className="mt-auto flex flex-wrap gap-2">
           {article.tags.map(tag => (
             <span 

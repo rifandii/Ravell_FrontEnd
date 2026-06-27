@@ -35,6 +35,7 @@ interface TagTheme {
   shadowHover: string;
 }
 
+// Map infrastructure/security keywords to visual themes without storing presentation data in the API.
 const getTagTheme = (tagName: string): TagTheme => {
   const name = tagName.toLowerCase().trim();
 
@@ -248,6 +249,7 @@ export const metadata: Metadata = {
 
 async function getTagsData() {
   try {
+    // Tags are rendered server-side so topic names and counts are available without client fetches.
     const data = await getPaginatedTags();
     return {
       tags: (data.results || []) as Tag[],
@@ -303,7 +305,7 @@ export default async function TagsPage() {
                   href={`/articles?tags__slug=${tag.slug}&tag_name=${tag.name}`}
                   className={`group relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-xl ${theme.shadowHover} ${theme.cardHoverBorder} transition-all duration-300 transform hover:-translate-y-1`}
                 >
-                  <div className="absolute -right-6 -top-6 text-9xl font-black text-gray-55/15 dark:text-gray-700/20 opacity-50 group-hover:scale-110 transition-transform duration-500 pointer-events-none select-none font-sans">
+                  <div className="absolute -right-6 -top-6 text-9xl font-black text-gray-500/15 dark:text-gray-700/20 opacity-50 group-hover:scale-110 transition-transform duration-500 pointer-events-none select-none font-sans">
                     #
                   </div>
 
