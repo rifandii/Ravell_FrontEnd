@@ -262,13 +262,16 @@ npx vercel@latest env ls
 
 `vercel.json` configures:
 
+- the branch-local Vercel framework override to `nextjs` for the development branch.
 - RSS/Atom feed rewrites to the backend feed endpoints.
 - `sw.js` cache-control.
 - security headers including HSTS, frame denial, content-type nosniff,
   permissions policy, COOP/COEP/CORP, and CSP.
 
 The old SPA fallback rewrite to `/index.html` is intentionally removed on
-`development` because it conflicts with Next App Router routing.
+`development` because it conflicts with Next App Router routing. The Vercel
+project-level preset may still show Vite for production safety; this branch uses
+the `vercel.json` framework override for the Next.js preview build.
 
 ## Branch Workflow
 
