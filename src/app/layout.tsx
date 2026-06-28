@@ -3,11 +3,13 @@ import { SidebarProvider } from '../SidebarContext';
 import { ThemeProvider } from '../ThemeContext';
 import { GlobalProvider } from '../context/GlobalContext';
 import LayoutClient from './LayoutClient';
+import ServiceWorkerRegistration from '../components/ServiceWorkerRegistration';
 import '../index.css';
 
 export const metadata: Metadata = {
   title: 'Ravell Tech',
   description: 'Your Hub for Networking & Security Insights',
+  manifest: '/manifest.json',
 };
 
 // Providers live at the root so static pages, client widgets, and legacy shared
@@ -23,6 +25,7 @@ export default function RootLayout({
         <ThemeProvider>
           <SidebarProvider>
             <GlobalProvider>
+              <ServiceWorkerRegistration />
               <LayoutClient>
                 {children}
               </LayoutClient>

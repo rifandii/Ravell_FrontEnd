@@ -1,145 +1,100 @@
-// public/sw.js
+const STATIC_CACHE_NAME = 'ravell-static-v2';
+const LEGACY_CACHE_NAMES = new Set([
+  'ravell-cache-v1',
+  'ravell-assets-v1',
+  'ravell-images-v1',
+]);
 
-const CACHE_NAME = 'ravell-cache-v1';
-const ASSET_CACHE_NAME = 'ravell-assets-v1';
-const IMAGE_CACHE_NAME = 'ravell-images-v1';
-
-// Pre-cache core shell
-const PRECACHE_ASSETS = [
-  '/',
-  '/index.html',
-  '/logo.png',
-  '/manifest.json'
+const RAVELL_CACHE_PREFIX = 'ravell-';
+const HASHED_ASSET_PREFIXES = [
+  '/_next/static/',
+  '/assets/',
 ];
+const API_HOSTNAMES = new Set([
+  'api.ravell.tech',
+  'api-dev.ravell.tech',
+]);
 
-// Install event: Precache core assets
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(PRECACHE_ASSETS);
-    })
-  );
+  event.waitUntil(self.skipWaiting());
 });
 
-// Activate event: Clean up old caches
 self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cache) => {
-          if (cache !== CACHE_NAME && cache !== ASSET_CACHE_NAME && cache !== IMAGE_CACHE_NAME) {
-            return caches.delete(cache);
-          }
-        })
-      );
-    }).then(() => self.clients.claim())
-  );
+  event.waitUntil(activateWorker());
 });
 
-// Fetch event: Network interception & caching
 self.addEventListener('fetch', (event) => {
   const request = event.request;
-  const url = new URL(request.url);
 
-  // Skip non-GET requests
   if (request.method !== 'GET') return;
 
-  // Skip Chrome extensions, local hot reloading, etc.
-  if (!url.protocol.startsWith('http')) return;
+  const url = new URL(request.url);
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
 
-  // 1. API Requests & HTML Navigate Requests: Network-First
-  // This ensures users get the latest articles/updates when online, but can read offline.
-  if (url.pathname.startsWith('/api/') || request.mode === 'navigate') {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          // Cache successful network responses
-          if (response.status === 200) {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-            
-            // Also store index.html cache update if navigating
-            if (request.mode === 'navigate') {
-              const indexCopy = response.clone();
-              caches.open(CACHE_NAME).then((cache) => cache.put('/index.html', indexCopy));
-            }
-          }
-          return response;
-        })
-        .catch(() => {
-          // If network fails, serve from cache
-          return caches.match(request).then((cachedResponse) => {
-            if (cachedResponse) return cachedResponse;
-            // If it's a page navigation request, serve index.html (SPA Router takes care of the rest)
-            if (request.mode === 'navigate') {
-              return caches.match('/index.html');
-            }
-            return new Response('Network error', { status: 503, statusText: 'Service Unavailable' });
-          });
-        })
-    );
-    return;
+  if (request.mode === 'navigate' || request.destination === 'document') return;
+  if (isApiRequest(url)) return;
+
+  if (isFingerprintStaticAsset(url)) {
+    event.respondWith(cacheFirst(request));
   }
-
-  // 2. Static Assets (Vite CSS/JS bundle, Google Fonts): Cache-First
-  // Since these are versioned/hashed and immutable, we cache them forever once retrieved.
-  if (
-    url.pathname.includes('/assets/') ||
-    url.hostname.includes('fonts.googleapis.com') ||
-    url.hostname.includes('fonts.gstatic.com')
-  ) {
-    event.respondWith(
-      caches.match(request).then((cachedResponse) => {
-        if (cachedResponse) return cachedResponse;
-
-        return fetch(request).then((response) => {
-          if (response.status === 200) {
-            const copy = response.clone();
-            caches.open(ASSET_CACHE_NAME).then((cache) => cache.put(request, copy));
-          }
-          return response;
-        });
-      })
-    );
-    return;
-  }
-
-  // 3. Images (Django uploaded images, public local images): Stale-While-Revalidate
-  // Fast display from cache first, then fetch new/updated images in the background.
-  if (
-    request.destination === 'image' ||
-    url.pathname.match(/\.(png|jpg|jpeg|gif|svg|webp|ico)$/)
-  ) {
-    event.respondWith(
-      caches.match(request).then((cachedResponse) => {
-        const fetchPromise = fetch(request).then((response) => {
-          if (response.status === 200) {
-            const copy = response.clone();
-            caches.open(IMAGE_CACHE_NAME).then((cache) => cache.put(request, copy));
-          }
-          return response;
-        });
-        return cachedResponse || fetchPromise;
-      })
-    );
-    return;
-  }
-
-  // 4. Default Strategy: Network-First
-  event.respondWith(
-    fetch(request)
-      .then((response) => response)
-      .catch(() => {
-        return caches.match(request).then((cachedResponse) => {
-          return cachedResponse || new Response('Network error', { status: 503, statusText: 'Service Unavailable' });
-        });
-      })
-  );
 });
 
-// Listen for skip waiting messages
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
 });
+
+async function activateWorker() {
+  const cacheNames = await caches.keys();
+  const obsoleteCacheNames = cacheNames.filter((cacheName) => {
+    const isLegacyCache = LEGACY_CACHE_NAMES.has(cacheName);
+    const isOldRavellCache = cacheName.startsWith(RAVELL_CACHE_PREFIX) && cacheName !== STATIC_CACHE_NAME;
+    return isLegacyCache || isOldRavellCache;
+  });
+
+  await Promise.all(obsoleteCacheNames.map((cacheName) => caches.delete(cacheName)));
+  await self.clients.claim();
+
+  if (obsoleteCacheNames.length > 0) {
+    await reloadWindowClients();
+  }
+}
+
+async function reloadWindowClients() {
+  const windowClients = await self.clients.matchAll({
+    type: 'window',
+    includeUncontrolled: true,
+  });
+
+  await Promise.all(
+    windowClients.map((client) => {
+      if ('navigate' in client) {
+        return client.navigate(client.url).catch(() => undefined);
+      }
+      return undefined;
+    })
+  );
+}
+
+function isApiRequest(url) {
+  return url.pathname.startsWith('/api/') || API_HOSTNAMES.has(url.hostname);
+}
+
+function isFingerprintStaticAsset(url) {
+  return url.origin === self.location.origin
+    && HASHED_ASSET_PREFIXES.some((prefix) => url.pathname.startsWith(prefix));
+}
+
+async function cacheFirst(request) {
+  const cachedResponse = await caches.match(request);
+  if (cachedResponse) return cachedResponse;
+
+  const response = await fetch(request);
+  if (response.ok) {
+    const cache = await caches.open(STATIC_CACHE_NAME);
+    await cache.put(request, response.clone());
+  }
+
+  return response;
+}

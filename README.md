@@ -22,6 +22,7 @@ The active production runtime is Next.js App Router with static generation:
 - `npm run dev` starts `next dev`.
 - `npm run build` runs `next build`.
 - `npm run start` and `npm run preview` serve the built Next app.
+- `npm run test:e2e` runs Playwright browser regression tests.
 - Article detail pages are generated with SSG and revalidated hourly.
 - The previous Vite SPA remains in the repository for fallback/comparison via
   `npm run dev:vite`, `npm run build:vite`, and `npm run preview:vite`.
@@ -112,10 +113,28 @@ npm run build:vite
 npm run preview:vite
 ```
 
+## PWA and Cache Policy
+
+The active Next.js runtime registers `/sw.js` only in production builds. The
+service worker is intentionally conservative:
+
+- document navigation and article routes are not cached by the service worker;
+- `/index.html` is not precached and is never used as an App Router fallback;
+- backend API requests pass through without service-worker caching;
+- cache-first behavior is limited to same-origin fingerprinted assets under
+  `/_next/static/` and legacy `/assets/`;
+- legacy SPA caches `ravell-cache-v1`, `ravell-assets-v1`, and
+  `ravell-images-v1` are deleted during the v2 activation path.
+
+The detailed policy and migration behavior are documented in
+`docs/frontend/cache-policy.md`.
+
 ## Project Structure
 
 ```text
 Ravell_FrontEnd/
+|-- docs/
+|   `-- frontend/cache-policy.md
 |-- public/
 |   |-- manifest.json
 |   |-- sw.js
@@ -234,6 +253,13 @@ Lint:
 npm run lint
 ```
 
+Browser regression tests:
+
+```bash
+npm run build
+npm run test:e2e
+```
+
 ## Vercel Deployment
 
 Vercel is connected to the GitHub repository and deploys by branch:
@@ -261,6 +287,8 @@ npx vercel@latest env ls
 - Vercel framework override to `nextjs`.
 - RSS/Atom feed rewrites to backend feed endpoints.
 - `sw.js` cache-control.
+- PWA service-worker cache migration is documented in
+  `docs/frontend/cache-policy.md`.
 - security headers including HSTS, frame denial, content-type nosniff,
   permissions policy, COOP/COEP/CORP, and CSP.
 
