@@ -10,8 +10,6 @@ import { AnimatePresence } from "framer-motion";
 import { SidebarProvider } from "./SidebarContext";
 import { ThemeProvider } from "./ThemeContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { SpeedInsights } from '@vercel/speed-insights/next';
-import { usePageTracking } from "./hooks/usePageTracking";
 
 // Components
 import Header from "./components/Header";
@@ -47,11 +45,6 @@ const ScrollToTop = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
-  return null;
-};
-
-const PageTracker = () => {
-  usePageTracking();
   return null;
 };
 
@@ -94,7 +87,6 @@ function AppContent() {
                 </Routes>
               </AnimatePresence>
             </Suspense>
-            <SpeedInsights />
           </main>
         </div>
 
@@ -114,7 +106,6 @@ function App() {
         <ThemeProvider>
           <SidebarProvider>
             <ScrollToTop />
-            <PageTracker />
             <AppContent />
           </SidebarProvider>
         </ThemeProvider>

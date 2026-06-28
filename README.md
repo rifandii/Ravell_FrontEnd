@@ -63,7 +63,7 @@ Nginx -> Gunicorn -> Django Ninja API
 | Animation | Framer Motion |
 | Icons | Lucide React, Heroicons |
 | SEO | Next metadata API; `react-helmet-async` only for legacy Vite path |
-| Analytics/performance | Google Analytics page tracking hook, Vercel Speed Insights |
+| Analytics | Direct GA4 page-view tracking from Next App Router |
 | PWA/static assets | `manifest.json`, `sw.js`, maskable icons, PWA icons |
 
 ## Next.js / SSG Scope
@@ -136,7 +136,9 @@ The detailed policy and migration behavior are documented in
 ```text
 Ravell_FrontEnd/
 |-- docs/
-|   `-- frontend/cache-policy.md
+|   `-- frontend/
+|       |-- analytics-ownership.md
+|       `-- cache-policy.md
 |-- public/
 |   |-- manifest.json
 |   |-- sw.js
@@ -191,6 +193,7 @@ Ravell_FrontEnd/
 | Variable | Purpose |
 | --- | --- |
 | `NEXT_PUBLIC_API_BASE_URL` | Public backend base URL without `/api`, for example `https://api.ravell.tech` |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | Optional GA4 measurement ID used by the App Router page-view tracker |
 
 ### Legacy Vite runtime
 
@@ -209,6 +212,11 @@ For production Next.js builds, configure
 `NEXT_PUBLIC_API_BASE_URL=https://api.ravell.tech` in the Vercel Production
 environment. For preview builds, configure
 `NEXT_PUBLIC_API_BASE_URL=https://api-dev.ravell.tech`.
+
+GA4 page-view tracking is owned by the active Next.js runtime and documented in
+`docs/frontend/analytics-ownership.md`. Do not hard-code analytics IDs in
+source files; configure `NEXT_PUBLIC_GA_MEASUREMENT_ID` in Vercel environments
+where analytics should run.
 
 Do not commit `.env`, `.env.local`, `.env.*`, or `.vercel/`. They are
 gitignored and may contain local or Vercel-generated values.
@@ -291,6 +299,8 @@ npx vercel@latest env ls
 - `sw.js` cache-control.
 - PWA service-worker cache migration is documented in
   `docs/frontend/cache-policy.md`.
+- direct GA4 page-view ownership is documented in
+  `docs/frontend/analytics-ownership.md`.
 - security headers including HSTS, frame denial, content-type nosniff,
   permissions policy, COOP/COEP/CORP, and CSP.
 

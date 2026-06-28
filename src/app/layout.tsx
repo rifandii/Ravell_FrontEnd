@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
+import { Suspense } from 'react';
 import { SidebarProvider } from '../SidebarContext';
 import { ThemeProvider } from '../ThemeContext';
 import { GlobalProvider } from '../context/GlobalContext';
+import AnalyticsPageView from '../components/AnalyticsPageView';
 import LayoutClient from './LayoutClient';
 import ServiceWorkerRegistration from '../components/ServiceWorkerRegistration';
 import '../index.css';
@@ -11,6 +14,8 @@ export const metadata: Metadata = {
   description: 'Your Hub for Networking & Security Insights',
   manifest: '/manifest.json',
 };
+
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
 // Providers live at the root so static pages, client widgets, and legacy shared
 // components use the same theme, sidebar, and global navigation data.
@@ -22,9 +27,33 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased">
+        {GA_MEASUREMENT_ID ? (
+          <>
+            <script
+              id="ga4-init"
+              dangerouslySetInnerHTML={{
+                __html: `
+window.dataLayer = window.dataLayer || [];
+window.gtag = window.gtag || function(){window.dataLayer.push(arguments);};
+window.gtag('js', new Date());
+window.gtag('config', ${JSON.stringify(GA_MEASUREMENT_ID)}, { send_page_view: false });
+`,
+              }}
+            />
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GA_MEASUREMENT_ID)}`}
+              strategy="afterInteractive"
+            />
+          </>
+        ) : null}
         <ThemeProvider>
           <SidebarProvider>
             <GlobalProvider>
+              {GA_MEASUREMENT_ID ? (
+                <Suspense fallback={null}>
+                  <AnalyticsPageView measurementId={GA_MEASUREMENT_ID} />
+                </Suspense>
+              ) : null}
               <ServiceWorkerRegistration />
               <LayoutClient>
                 {children}
