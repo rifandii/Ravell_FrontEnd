@@ -37,8 +37,8 @@ export default function AnalyticsPageView({ measurementId }: { measurementId: st
       const gtag = ensureGtag();
       lastTrackedPath.current = pagePath;
 
-      gtag('event', 'page_view', {
-        send_to: measurementId,
+      gtag('config', measurementId, {
+        send_page_view: true,
         page_path: pagePath,
         page_location: window.location.href,
         page_title: document.title,
