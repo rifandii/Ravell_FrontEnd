@@ -4,7 +4,7 @@ const EXPECTED_GA_ID = process.env.E2E_GA_MEASUREMENT_ID || process.env.NEXT_PUB
 
 test.skip(!EXPECTED_GA_ID, 'Set E2E_GA_MEASUREMENT_ID or NEXT_PUBLIC_GA_MEASUREMENT_ID to validate GA4 page-view ownership.');
 
-test('direct GA4 emits one page-view config for initial, client, and back navigation', async ({ page }) => {
+test('direct GA4 emits one page_view for initial, client, and back navigation', async ({ page }) => {
   await page.route('https://www.googletagmanager.com/gtag/js**', async (route) => {
     await route.fulfill({
       status: 200,
@@ -19,15 +19,15 @@ test('direct GA4 emits one page-view config for initial, client, and back naviga
   expect(configEntries.some((entry) => entry.name === EXPECTED_GA_ID && entry.payload?.send_page_view === false)).toBe(true);
   await expect(page.locator('script[src*="googletagmanager.com/gtag/js"]')).toHaveCount(1);
   await expect(page.locator('script[src*="googletagmanager.com/gtm.js"]')).toHaveCount(0);
-  await expectPageViewConfigCount(page, 1);
+  await expectPageViewCount(page, 1);
 
   await page.getByRole('link', { name: 'Articles' }).click();
   await expect(page).toHaveURL(/\/articles$/);
-  await expectPageViewConfigCount(page, 2);
+  await expectPageViewCount(page, 2);
 
   await page.goBack();
   await expect(page).toHaveURL(/\/$/);
-  await expectPageViewConfigCount(page, 3);
+  await expectPageViewCount(page, 3);
 });
 
 async function waitForConfigEntries(page: Page) {
@@ -40,24 +40,15 @@ async function waitForConfigEntries(page: Page) {
   return entries.filter((entry) => entry.command === 'config');
 }
 
-async function expectPageViewConfigCount(page: Page, expectedCount: number) {
+async function expectPageViewCount(page: Page, expectedCount: number) {
   await expect.poll(async () => {
     const entries = await getDataLayerEntries(page);
-    return getPageViewConfigEntries(entries).length;
+    return entries.filter((entry) => entry.command === 'event' && entry.name === 'page_view').length;
   }).toBe(expectedCount);
 
   await page.waitForTimeout(300);
   const entries = await getDataLayerEntries(page);
-  expect(getPageViewConfigEntries(entries)).toHaveLength(expectedCount);
-}
-
-function getPageViewConfigEntries(entries: Awaited<ReturnType<typeof getDataLayerEntries>>) {
-  return entries.filter((entry) => {
-    return entry.command === 'config'
-      && entry.name === EXPECTED_GA_ID
-      && entry.payload?.send_page_view !== false
-      && typeof entry.payload?.page_path === 'string';
-  });
+  expect(entries.filter((entry) => entry.command === 'event' && entry.name === 'page_view')).toHaveLength(expectedCount);
 }
 
 async function getDataLayerEntries(page: Page) {
