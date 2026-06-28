@@ -34,7 +34,7 @@ test('cleans legacy SPA caches and does not serve article routes from index.html
   await expectCurrentWorkerSource(page);
 
   const migratedPage = await context.newPage();
-  await migratedPage.goto('/');
+  await gotoAllowingServiceWorkerReload(migratedPage, '/');
   await waitForActiveServiceWorker(migratedPage);
 
   await migratedPage.waitForFunction(async (legacyNames) => {
@@ -105,6 +105,18 @@ async function waitForActiveServiceWorker(page: Page) {
     const registration = await navigator.serviceWorker.ready;
     return registration.active?.scriptURL || '';
   });
+}
+
+async function gotoAllowingServiceWorkerReload(page: Page, path: string) {
+  try {
+    await page.goto(path, { waitUntil: 'domcontentloaded' });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (!message.includes('ERR_ABORTED') && !message.includes('frame was detached')) {
+      throw error;
+    }
+    await page.waitForLoadState('domcontentloaded').catch(() => undefined);
+  }
 }
 
 async function getCacheNames(page: Page) {
