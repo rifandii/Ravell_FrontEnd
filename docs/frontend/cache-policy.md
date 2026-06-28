@@ -48,11 +48,12 @@ with explicit Next.js revalidation metadata where needed.
 The service worker uses cache-first only for same-origin fingerprinted assets:
 
 - `/_next/static/`
-- `/assets/` for legacy Vite comparison builds
 
-These paths are safe because deployed file names are content-addressed or
-versioned by the build output. Non-fingerprinted files such as `/manifest.json`,
-`/logo.png`, and PWA icons are not precached by the service worker.
+This path is safe because Next.js emits content-addressed build assets there.
+The legacy Vite `/assets/` path is not cached by the service worker until
+`FE-01` proves those assets are still required and immutable.
+Non-fingerprinted files such as `/manifest.json`, `/logo.png`, and PWA icons
+are not precached by the service worker.
 
 ## Images
 
@@ -69,10 +70,10 @@ The previous SPA-era service worker used these cache names:
 - `ravell-images-v1`
 
 The current service worker uses `ravell-static-v2`. During activation it deletes
-the legacy cache names and any other `ravell-*` cache that is not the current
-static cache. If legacy caches are found, the worker claims clients and reloads
-open window clients once so old tabs can leave the stale SPA shell without a
-manual browser-cache uninstall.
+the legacy cache names and older caches in the `ravell-static-*` namespace only.
+Other product caches, such as a future `ravell-other-feature-v1`, are not owned
+by this worker and must not be deleted by this migration. The worker claims
+clients after activation but does not force-refresh open tabs.
 
 The service worker file is served with:
 
@@ -99,6 +100,8 @@ fallback comparison builds.
 
 - fresh visit service-worker registration;
 - legacy `ravell-*-v1` cache cleanup;
+- preservation of non-worker caches such as `ravell-other-feature-v1`;
+- cache-first behavior only for `/_next/static/`, not `/assets/`;
 - update from a simulated legacy worker to the current worker;
-- reload and navigation to an article route;
-- assertion that an article route is not served a legacy SPA shell.
+- assertion that activation does not force a tab reload;
+- assertion that offline article navigation fails instead of receiving an SPA shell.

@@ -5,10 +5,9 @@ const LEGACY_CACHE_NAMES = new Set([
   'ravell-images-v1',
 ]);
 
-const RAVELL_CACHE_PREFIX = 'ravell-';
+const STATIC_CACHE_PREFIX = 'ravell-static-';
 const HASHED_ASSET_PREFIXES = [
   '/_next/static/',
-  '/assets/',
 ];
 const API_HOSTNAMES = new Set([
   'api.ravell.tech',
@@ -49,32 +48,12 @@ async function activateWorker() {
   const cacheNames = await caches.keys();
   const obsoleteCacheNames = cacheNames.filter((cacheName) => {
     const isLegacyCache = LEGACY_CACHE_NAMES.has(cacheName);
-    const isOldRavellCache = cacheName.startsWith(RAVELL_CACHE_PREFIX) && cacheName !== STATIC_CACHE_NAME;
-    return isLegacyCache || isOldRavellCache;
+    const isOldStaticCache = cacheName.startsWith(STATIC_CACHE_PREFIX) && cacheName !== STATIC_CACHE_NAME;
+    return isLegacyCache || isOldStaticCache;
   });
 
   await Promise.all(obsoleteCacheNames.map((cacheName) => caches.delete(cacheName)));
   await self.clients.claim();
-
-  if (obsoleteCacheNames.length > 0) {
-    await reloadWindowClients();
-  }
-}
-
-async function reloadWindowClients() {
-  const windowClients = await self.clients.matchAll({
-    type: 'window',
-    includeUncontrolled: true,
-  });
-
-  await Promise.all(
-    windowClients.map((client) => {
-      if ('navigate' in client) {
-        return client.navigate(client.url).catch(() => undefined);
-      }
-      return undefined;
-    })
-  );
 }
 
 function isApiRequest(url) {
@@ -87,13 +66,17 @@ function isFingerprintStaticAsset(url) {
 }
 
 async function cacheFirst(request) {
-  const cachedResponse = await caches.match(request);
+  const cache = await caches.open(STATIC_CACHE_NAME);
+  const cachedResponse = await cache.match(request);
   if (cachedResponse) return cachedResponse;
 
   const response = await fetch(request);
-  if (response.ok) {
-    const cache = await caches.open(STATIC_CACHE_NAME);
-    await cache.put(request, response.clone());
+  if (response.ok && response.type === 'basic' && response.status !== 206) {
+    try {
+      await cache.put(request, response.clone());
+    } catch {
+      // Cache quota/write failure must not break static asset delivery.
+    }
   }
 
   return response;

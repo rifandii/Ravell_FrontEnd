@@ -122,9 +122,11 @@ service worker is intentionally conservative:
 - `/index.html` is not precached and is never used as an App Router fallback;
 - backend API requests pass through without service-worker caching;
 - cache-first behavior is limited to same-origin fingerprinted assets under
-  `/_next/static/` and legacy `/assets/`;
+  `/_next/static/`;
 - legacy SPA caches `ravell-cache-v1`, `ravell-assets-v1`, and
-  `ravell-images-v1` are deleted during the v2 activation path.
+  `ravell-images-v1` are deleted during the v2 activation path;
+- unrelated `ravell-*` caches are preserved unless they are in the
+  `ravell-static-*` namespace.
 
 The detailed policy and migration behavior are documented in
 `docs/frontend/cache-policy.md`.
