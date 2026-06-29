@@ -1,0 +1,980 @@
+{
+  "components": {
+    "schemas": {
+      "ArticleSchema": {
+        "properties": {
+          "author_username": {
+            "default": "",
+            "title": "Author Username",
+            "type": "string"
+          },
+          "categories": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/CategorySchema"
+            },
+            "title": "Categories",
+            "type": "array"
+          },
+          "featured_image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Featured Image Url"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "is_published": {
+            "title": "Is Published",
+            "type": "boolean"
+          },
+          "markdown_content": {
+            "title": "Markdown Content",
+            "type": "string"
+          },
+          "next_article": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/NeighborArticleSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "previous_article": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/NeighborArticleSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "published_date": {
+            "format": "date-time",
+            "title": "Published Date",
+            "type": "string"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          },
+          "tags": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/TagSchema"
+            },
+            "title": "Tags",
+            "type": "array"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_date": {
+            "format": "date-time",
+            "title": "Updated Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "slug",
+          "summary",
+          "markdown_content",
+          "published_date",
+          "updated_date",
+          "is_published"
+        ],
+        "title": "ArticleSchema",
+        "type": "object"
+      },
+      "CategorySchema": {
+        "properties": {
+          "children": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/CategorySchema"
+            },
+            "title": "Children",
+            "type": "array"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "post_count": {
+            "default": 0,
+            "title": "Post Count",
+            "type": "integer"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "slug"
+        ],
+        "title": "CategorySchema",
+        "type": "object"
+      },
+      "ContentSignatureSchema": {
+        "properties": {
+          "signature": {
+            "title": "Signature",
+            "type": "string"
+          }
+        },
+        "required": [
+          "signature"
+        ],
+        "title": "ContentSignatureSchema",
+        "type": "object"
+      },
+      "ImageSchema": {
+        "properties": {
+          "alt_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alt Text"
+          },
+          "caption": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Caption"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "image_file": {
+            "title": "Image File",
+            "type": "string"
+          },
+          "uploaded_at": {
+            "format": "date-time",
+            "title": "Uploaded At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "image_file",
+          "uploaded_at"
+        ],
+        "title": "ImageSchema",
+        "type": "object"
+      },
+      "Input": {
+        "properties": {
+          "page": {
+            "default": 1,
+            "title": "Page",
+            "type": "integer"
+          },
+          "page_size": {
+            "default": 10,
+            "title": "Page Size",
+            "type": "integer"
+          }
+        },
+        "title": "Input",
+        "type": "object"
+      },
+      "MonthArchiveSchema": {
+        "properties": {
+          "month": {
+            "title": "Month",
+            "type": "string"
+          },
+          "month_number": {
+            "title": "Month Number",
+            "type": "integer"
+          },
+          "post_count": {
+            "title": "Post Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "month",
+          "month_number",
+          "post_count"
+        ],
+        "title": "MonthArchiveSchema",
+        "type": "object"
+      },
+      "NeighborArticleSchema": {
+        "properties": {
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "slug"
+        ],
+        "title": "NeighborArticleSchema",
+        "type": "object"
+      },
+      "PagedArticleSchema": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "next": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next"
+          },
+          "previous": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/ArticleSchema"
+            },
+            "title": "Results",
+            "type": "array"
+          }
+        },
+        "required": [
+          "count",
+          "results"
+        ],
+        "title": "PagedArticleSchema",
+        "type": "object"
+      },
+      "PagedCategorySchema": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "next": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next"
+          },
+          "previous": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/CategorySchema"
+            },
+            "title": "Results",
+            "type": "array"
+          }
+        },
+        "required": [
+          "count",
+          "results"
+        ],
+        "title": "PagedCategorySchema",
+        "type": "object"
+      },
+      "PagedImageSchema": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "next": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next"
+          },
+          "previous": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/ImageSchema"
+            },
+            "title": "Results",
+            "type": "array"
+          }
+        },
+        "required": [
+          "count",
+          "results"
+        ],
+        "title": "PagedImageSchema",
+        "type": "object"
+      },
+      "PagedTagSchema": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "next": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next"
+          },
+          "previous": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/TagSchema"
+            },
+            "title": "Results",
+            "type": "array"
+          }
+        },
+        "required": [
+          "count",
+          "results"
+        ],
+        "title": "PagedTagSchema",
+        "type": "object"
+      },
+      "TagSchema": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "post_count": {
+            "default": 0,
+            "title": "Post Count",
+            "type": "integer"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "slug"
+        ],
+        "title": "TagSchema",
+        "type": "object"
+      },
+      "YearArchiveSchema": {
+        "properties": {
+          "months": {
+            "items": {
+              "$ref": "#/components/schemas/MonthArchiveSchema"
+            },
+            "title": "Months",
+            "type": "array"
+          },
+          "total_posts": {
+            "title": "Total Posts",
+            "type": "integer"
+          },
+          "year": {
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "year",
+          "total_posts",
+          "months"
+        ],
+        "title": "YearArchiveSchema",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "API Refactored using Django Ninja",
+    "title": "Ravell Blog API",
+    "version": "2.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/archives/": {
+      "get": {
+        "operationId": "core_api_list_archives",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/YearArchiveSchema"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "List Archives"
+      }
+    },
+    "/api/articles/": {
+      "get": {
+        "operationId": "core_api_list_articles",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "categories__slug",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Categories  Slug"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tags__slug",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tags  Slug"
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Search"
+            }
+          },
+          {
+            "in": "query",
+            "name": "year",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Year"
+            }
+          },
+          {
+            "in": "query",
+            "name": "month",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Month"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "title": "Page",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "title": "Page Size",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedArticleSchema"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "List Articles"
+      }
+    },
+    "/api/articles/latest/": {
+      "get": {
+        "operationId": "core_api_get_latest_articles",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ArticleSchema"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get Latest Articles"
+      }
+    },
+    "/api/articles/random_articles/": {
+      "get": {
+        "operationId": "core_api_get_random_articles",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "exclude_slug",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Exclude Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ArticleSchema"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get Random Articles"
+      }
+    },
+    "/api/articles/{slug}/": {
+      "get": {
+        "operationId": "core_api_get_article_detail",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "title": "Slug",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleSchema"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get Article Detail"
+      }
+    },
+    "/api/categories/": {
+      "get": {
+        "operationId": "core_api_list_categories",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "title": "Page",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "title": "Page Size",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedCategorySchema"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "List Categories"
+      }
+    },
+    "/api/categories/{slug}/": {
+      "get": {
+        "operationId": "core_api_retrieve_category",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "title": "Slug",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategorySchema"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Retrieve Category"
+      }
+    },
+    "/api/content/signature/": {
+      "get": {
+        "operationId": "core_api_get_content_signature",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContentSignatureSchema"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get Content Signature"
+      }
+    },
+    "/api/images/": {
+      "get": {
+        "operationId": "core_api_list_images",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "title": "Page",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "title": "Page Size",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedImageSchema"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "List Images"
+      }
+    },
+    "/api/images/{id}/": {
+      "get": {
+        "operationId": "core_api_retrieve_image",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "title": "Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImageSchema"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Retrieve Image"
+      }
+    },
+    "/api/tags/": {
+      "get": {
+        "operationId": "core_api_list_tags",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "title": "Page",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "title": "Page Size",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedTagSchema"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "List Tags"
+      }
+    },
+    "/api/tags/{slug}/": {
+      "get": {
+        "operationId": "core_api_retrieve_tag",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "title": "Slug",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagSchema"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Retrieve Tag"
+      }
+    },
+    "/api/telegram/webhook/": {
+      "post": {
+        "description": "Endpoint Webhook Telegram Ninja API dengan otorisasi ACL chat.id yang ketat.",
+        "operationId": "core_api_telegram_webhook",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "summary": "Telegram Webhook"
+      }
+    }
+  },
+  "servers": []
+}

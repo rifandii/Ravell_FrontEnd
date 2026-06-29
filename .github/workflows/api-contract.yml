@@ -1,0 +1,39 @@
+name: API Contract
+
+on:
+  pull_request:
+  push:
+    branches:
+      - development
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generated-types:
+    name: Generated TypeScript drift
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: corepack pnpm install --frozen-lockfile
+
+      - name: Check generated API contracts
+        run: corepack pnpm run api:types:check
+
+      - name: Typecheck
+        run: corepack pnpm run typecheck

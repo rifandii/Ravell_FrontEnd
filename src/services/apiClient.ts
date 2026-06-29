@@ -1,4 +1,13 @@
 import axios from 'axios';
+import type {
+  ApiArticle,
+  ApiArticleListResponse,
+  ApiCategory,
+  ApiCategoryListResponse,
+  ApiContentSignature,
+  ApiTag,
+  ApiTagListResponse,
+} from '../types/api-contracts';
 import type { Article, Category, Tag } from '../types/types';
 
 // Shared browser-side API client. Next server components use native fetch so
@@ -23,15 +32,22 @@ export interface PaginatedResponse<T> {
   results: T[];
 }
 
+type ArticleResponse = ApiArticle & Article;
+type CategoryResponse = ApiCategory & Category;
+type TagResponse = ApiTag & Tag;
+type ArticleListResponse = ApiArticleListResponse & PaginatedResponse<Article>;
+type CategoryListResponse = ApiCategoryListResponse & PaginatedResponse<Category>;
+type TagListResponse = ApiTagListResponse & PaginatedResponse<Tag>;
+
 export const getPaginatedArticles = async (urlOrPath: string): Promise<PaginatedResponse<Article>> => {
   try {
     // Django pagination can return absolute next/previous URLs; use them as-is.
     if (urlOrPath.startsWith('http')) {
-      const response = await axios.get(urlOrPath);
+      const response = await axios.get<ArticleListResponse>(urlOrPath);
       return response.data;
     }
 
-    const response = await apiClient.get(urlOrPath);
+    const response = await apiClient.get<ArticleListResponse>(urlOrPath);
     return response.data;
   } catch (error) {
     console.error('Error fetching paginated articles:', error);
@@ -41,7 +57,7 @@ export const getPaginatedArticles = async (urlOrPath: string): Promise<Paginated
 
 export const getArticleBySlug = async (slug: string): Promise<Article | null> => {
   try {
-    const response = await apiClient.get(`/articles/${slug}/`);
+    const response = await apiClient.get<ArticleResponse>(`/articles/${slug}/`);
     return response.data;
   } catch (error) {
     console.error(`Error fetching article with slug ${slug}:`, error);
@@ -51,7 +67,7 @@ export const getArticleBySlug = async (slug: string): Promise<Article | null> =>
 
 export const getLatestArticles = async (): Promise<Article[]> => {
   try {
-    const response = await apiClient.get('/articles/latest/');
+    const response = await apiClient.get<ArticleResponse[]>('/articles/latest/');
     return response.data;
   } catch (error) {
     console.error('Error fetching latest articles:', error);
@@ -61,7 +77,7 @@ export const getLatestArticles = async (): Promise<Article[]> => {
 
 export const getPaginatedCategories = async (): Promise<PaginatedResponse<Category>> => {
   try {
-    const response = await apiClient.get('/categories/');
+    const response = await apiClient.get<CategoryListResponse>('/categories/');
     return response.data;
   } catch (error) {
     console.error('Error fetching categories:', error);
@@ -71,7 +87,7 @@ export const getPaginatedCategories = async (): Promise<PaginatedResponse<Catego
 
 export const getPaginatedTags = async (): Promise<PaginatedResponse<Tag>> => {
   try {
-    const response = await apiClient.get('/tags/');
+    const response = await apiClient.get<TagListResponse>('/tags/');
     return response.data;
   } catch (error) {
     console.error('Error fetching tags:', error);
@@ -81,7 +97,7 @@ export const getPaginatedTags = async (): Promise<PaginatedResponse<Tag>> => {
 
 export const getCategoryBySlug = async (slug: string): Promise<Category | null> => {
   try {
-    const response = await apiClient.get(`/categories/${slug}/`);
+    const response = await apiClient.get<CategoryResponse>(`/categories/${slug}/`);
     return response.data;
   } catch (error) {
     console.error(`Error fetching category with slug ${slug}:`, error);
@@ -91,7 +107,7 @@ export const getCategoryBySlug = async (slug: string): Promise<Category | null> 
 
 export const getTagBySlug = async (slug: string): Promise<Tag | null> => {
   try {
-    const response = await apiClient.get(`/tags/${slug}/`);
+    const response = await apiClient.get<TagResponse>(`/tags/${slug}/`);
     return response.data;
   } catch (error) {
     console.error(`Error fetching tag with slug ${slug}:`, error);
@@ -105,7 +121,7 @@ export interface ContentSignature {
 
 export const getContentSignature = async (): Promise<ContentSignature> => {
   try {
-    const response = await apiClient.get<ContentSignature>('/content/signature/');
+    const response = await apiClient.get<ApiContentSignature & ContentSignature>('/content/signature/');
     return response.data;
   } catch (error) {
     console.error('Error fetching content signature:', error);

@@ -22,6 +22,10 @@ The active production runtime is Next.js App Router with static generation:
 - `npm run dev` starts `next dev`.
 - `npm run build` runs `next build`.
 - `npm run start` and `npm run preview` serve the built Next app.
+- `npm run typecheck` runs TypeScript project validation.
+- `npm run api:types` regenerates API contracts from the backend OpenAPI
+  artifact.
+- `npm run api:types:check` verifies generated API contract drift.
 - `npm run test:e2e` runs Playwright browser regression tests.
 - Article detail pages are generated with SSG and revalidated hourly.
 - The previous Vite SPA remains in the repository for fallback/comparison via
@@ -137,6 +141,7 @@ The detailed policy and migration behavior are documented in
 Ravell_FrontEnd/
 |-- docs/
 |   `-- frontend/
+|       |-- api-contracts.md
 |       |-- analytics-ownership.md
 |       `-- cache-policy.md
 |-- public/
@@ -156,6 +161,8 @@ Ravell_FrontEnd/
 |   |-- context/GlobalContext.tsx   # Global data provider
 |   |-- hooks/                      # Page tracking and active heading hooks
 |   |-- services/apiClient.ts       # API client and endpoint wrappers
+|   |-- types/generated/            # Generated OpenAPI snapshot and TS contracts
+|   |-- types/api-contracts.ts      # Transport contract aliases
 |   |-- types/types.ts              # Shared TypeScript API shapes
 |   |-- SidebarContext.tsx
 |   |-- ThemeContext.tsx
@@ -185,6 +192,32 @@ Ravell_FrontEnd/
 | `GET /api/archives/` | Year/month archive navigation |
 | `GET /api/images/` | Image list |
 | `GET /api/content/signature/` | Lightweight content-change polling |
+
+## API Contract Workflow
+
+Backend Django Ninja OpenAPI is the API source of truth. The frontend generated
+artifacts are:
+
+```text
+src/types/generated/ravell-api.openapi.json
+src/types/generated/api.ts
+```
+
+Regenerate and validate them with:
+
+```bash
+npm run api:types
+npm run api:types:check
+npm run typecheck
+```
+
+Generated transport contracts stay separated from frontend view models. The
+compatibility boundary is `src/types/api-contracts.ts`; UI components should
+continue to consume the view models from `src/types/types.ts` unless a deliberate
+adapter migration is being made.
+
+Detailed workflow and ownership rules are documented in
+`docs/frontend/api-contracts.md`.
 
 ## Environment Variables
 
@@ -268,6 +301,13 @@ Browser regression tests:
 ```bash
 npm run build
 npm run test:e2e
+```
+
+API contract validation:
+
+```bash
+npm run api:types:check
+npm run typecheck
 ```
 
 ## Vercel Deployment
@@ -364,8 +404,9 @@ The safest rollback options are:
 
 - Keep `NEXT_PUBLIC_API_BASE_URL` aligned with the branch environment.
 - Keep `VITE_API_BASE_URL` only for legacy Vite testing.
-- When changing backend response shapes, update `src/types/types.ts` and the
-  affected page/component data mapping.
+- When changing backend response shapes, regenerate API contracts with
+  `npm run api:types`, then update `src/types/types.ts` and affected
+  page/component data mapping only if the frontend view model changes.
 - The backend can trigger Vercel deploy hooks when articles, categories, or tags
   change, if `VERCEL_DEPLOY_HOOK_URL` is configured server-side.
 
