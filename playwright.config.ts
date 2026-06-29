@@ -7,7 +7,7 @@ const localWebServer = process.env.E2E_BASE_URL
   ? {}
   : {
       webServer: {
-        command: `npm run start -- --hostname 127.0.0.1 --port ${port}`,
+        command: `corepack pnpm exec next start --hostname 127.0.0.1 --port ${port}`,
         url: baseURL,
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,

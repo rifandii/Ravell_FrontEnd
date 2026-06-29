@@ -10,6 +10,7 @@ import ServiceWorkerRegistration from '../components/ServiceWorkerRegistration';
 import '../index.css';
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://ravell.tech'),
   title: 'Ravell Tech',
   description: 'Your Hub for Networking & Security Insights',
   manifest: '/manifest.json',

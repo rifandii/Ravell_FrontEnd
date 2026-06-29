@@ -51,6 +51,9 @@ model boundary. Compatibility aliases live in `src/types/api-contracts.ts` so
 the API client can typecheck against generated transport contracts without
 forcing every UI component to import generated OpenAPI shapes.
 
+Generated contracts protect schema drift. They do not replace API integration
+tests, authorization tests, or runtime response validation.
+
 ## Required Validation
 
 Before merging an API contract change:

@@ -4,7 +4,7 @@ Production frontend for the Ravell Networks technical blog and knowledge base.
 The site serves networking, infrastructure, cloud, cybersecurity, firewall, SDN,
 and automation content from the Ravell backend API.
 
-Last reviewed: 2026-06-28
+Last reviewed: 2026-06-29
 
 ## Live Environments
 
@@ -19,14 +19,15 @@ The Vercel project is `ravell-networks-projects/ravell-front-end`.
 
 The active production runtime is Next.js App Router with static generation:
 
-- `npm run dev` starts `next dev`.
-- `npm run build` runs `next build`.
-- `npm run start` and `npm run preview` serve the built Next app.
-- `npm run typecheck` runs TypeScript project validation.
-- `npm run api:types` regenerates API contracts from the backend OpenAPI
+- `corepack pnpm run dev` starts `next dev`.
+- `corepack pnpm run build` runs `next build`.
+- `corepack pnpm run start` and `corepack pnpm run preview` serve the built Next app.
+- `corepack pnpm run typecheck` runs TypeScript project validation.
+- `corepack pnpm run api:types` regenerates API contracts from the backend OpenAPI
   artifact.
-- `npm run api:types:check` verifies generated API contract drift.
-- `npm run test:e2e` runs Playwright browser regression tests.
+- `corepack pnpm run api:types:check` verifies generated API contract drift.
+- `corepack pnpm run test:e2e` runs Playwright browser regression tests.
+- `corepack pnpm run test:e2e:smoke` runs the QA-02 Next.js regression smoke suite.
 - Article detail pages are generated with SSG and revalidated hourly.
 - The previous Vite SPA remains in the repository for fallback/comparison via
   `npm run dev:vite`, `npm run build:vite`, and `npm run preview:vite`.
@@ -206,9 +207,9 @@ src/types/generated/api.ts
 Regenerate and validate them with:
 
 ```bash
-npm run api:types
-npm run api:types:check
-npm run typecheck
+corepack pnpm run api:types
+corepack pnpm run api:types:check
+corepack pnpm run typecheck
 ```
 
 Generated transport contracts stay separated from frontend view models. The
@@ -251,6 +252,11 @@ GA4 page-view tracking is owned by the active Next.js runtime and documented in
 source files; configure `NEXT_PUBLIC_GA_MEASUREMENT_ID` in Vercel environments
 where analytics should run.
 
+Canonical URLs intentionally resolve to `https://ravell.tech` for both
+production and preview/development builds. `dev.ravell.tech` should render the
+same article metadata but keep canonical and Open Graph URLs pointed at the
+production host to avoid indexing preview content as a duplicate origin.
+
 Do not commit `.env`, `.env.local`, `.env.*`, or `.vercel/`. They are
 gitignored and may contain local or Vercel-generated values.
 
@@ -259,8 +265,8 @@ gitignored and may contain local or Vercel-generated values.
 Prerequisites:
 
 - Node.js 20+ recommended. The Vercel project currently uses Node 24.x.
-- npm is the active package manager in scripts. pnpm lock/workspace files are
-  present for migration/tooling compatibility.
+- pnpm is the active package manager. Use the version declared in
+  `packageManager` through Corepack.
 
 Setup:
 
@@ -268,7 +274,8 @@ Setup:
 git clone git@github.com:rifandii/Ravell_FrontEnd.git
 cd Ravell_FrontEnd
 git checkout main
-npm install
+corepack enable
+corepack pnpm install --frozen-lockfile
 ```
 
 Create a local override only when needed:
@@ -280,34 +287,50 @@ NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000
 Run the active Next.js app:
 
 ```bash
-npm run dev
+corepack pnpm run dev
 ```
 
 Build and serve locally:
 
 ```bash
-npm run build
-npm run start
+corepack pnpm run build
+corepack pnpm run start
 ```
 
 Lint:
 
 ```bash
-npm run lint
+corepack pnpm run lint
 ```
 
 Browser regression tests:
 
 ```bash
-npm run build
-npm run test:e2e
+corepack pnpm run build
+corepack pnpm run test:e2e
+```
+
+QA-02 Next.js smoke tests against development:
+
+```powershell
+$env:E2E_BASE_URL='https://dev.ravell.tech'
+$env:E2E_API_BASE_URL='https://api-dev.ravell.tech'
+corepack pnpm run test:e2e:smoke
+```
+
+QA-02 read-only production smoke tests:
+
+```powershell
+$env:E2E_BASE_URL='https://ravell.tech'
+$env:E2E_API_BASE_URL='https://api.ravell.tech'
+corepack pnpm run test:e2e:smoke
 ```
 
 API contract validation:
 
 ```bash
-npm run api:types:check
-npm run typecheck
+corepack pnpm run api:types:check
+corepack pnpm run typecheck
 ```
 
 ## Vercel Deployment

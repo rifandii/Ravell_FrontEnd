@@ -1,0 +1,76 @@
+name: Frontend Smoke
+
+on:
+  pull_request:
+  push:
+    branches:
+      - development
+      - main
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: Deployed frontend URL. Leave empty to build and test locally.
+        required: false
+        type: string
+      api_base_url:
+        description: Expected backend base URL without /api.
+        required: false
+        default: https://api-dev.ravell.tech
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  next-regression-smoke:
+    name: Next.js regression smoke
+    runs-on: ubuntu-latest
+
+    env:
+      NEXT_PUBLIC_API_BASE_URL: ${{ github.ref_name == 'main' && 'https://api.ravell.tech' || 'https://api-dev.ravell.tech' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: corepack pnpm install --frozen-lockfile
+
+      - name: Install Playwright browser
+        run: corepack pnpm exec playwright install --with-deps chromium
+
+      - name: Build local Next.js app
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.base_url == '' }}
+        run: corepack pnpm run build
+
+      - name: Run smoke tests
+        run: corepack pnpm run test:e2e:smoke
+        env:
+          E2E_BASE_URL: ${{ github.event.inputs.base_url }}
+          E2E_API_BASE_URL: ${{ github.event.inputs.api_base_url || env.NEXT_PUBLIC_API_BASE_URL }}
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Upload Playwright test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 14
