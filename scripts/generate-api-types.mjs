@@ -8,10 +8,8 @@ const generatedDir = resolve(repoRoot, 'src/types/generated');
 const schemaSnapshotPath = resolve(generatedDir, 'ravell-api.openapi.json');
 const outputPath = resolve(generatedDir, 'api.ts');
 const backendSchemaPath = resolve(repoRoot, '../Ravell_BackEnd/openapi/ravell-api.openapi.json');
-const sourceSchemaPath = process.env.OPENAPI_SCHEMA_PATH
-  ? resolve(repoRoot, process.env.OPENAPI_SCHEMA_PATH)
-  : (existsSync(backendSchemaPath) ? backendSchemaPath : schemaSnapshotPath);
 const checkOnly = process.argv.includes('--check');
+const sourceSchemaPath = resolveSourceSchemaPath();
 
 if (!existsSync(sourceSchemaPath)) {
   throw new Error(
@@ -41,10 +39,26 @@ function assertFileMatches(path, expected) {
     throw new Error(`Generated file is missing: ${relative(path)}`);
   }
 
-  const actual = readFileSync(path, 'utf8');
+  const actual = normalizeLineEndings(readFileSync(path, 'utf8'));
   if (actual !== expected) {
     throw new Error(`Generated file is out of date: ${relative(path)}`);
   }
+}
+
+function normalizeLineEndings(value) {
+  return value.replaceAll('\r\n', '\n');
+}
+
+function resolveSourceSchemaPath() {
+  if (process.env.OPENAPI_SCHEMA_PATH) {
+    return resolve(repoRoot, process.env.OPENAPI_SCHEMA_PATH);
+  }
+
+  if (checkOnly) {
+    return schemaSnapshotPath;
+  }
+
+  return existsSync(backendSchemaPath) ? backendSchemaPath : schemaSnapshotPath;
 }
 
 function generateTypeScript(openApiSchema) {
