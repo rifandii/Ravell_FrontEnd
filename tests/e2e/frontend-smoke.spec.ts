@@ -210,8 +210,8 @@ function collectCriticalBrowserIssues(page: Page) {
     }
   });
 
-  page.on('response', async (response) => {
-    if (await isIgnoredSpeculationPrefetchRefusal(response)) return;
+  page.on('response', (response) => {
+    if (isIgnoredSpeculationPrefetchRefusal(response)) return;
 
     if (response.status() >= 400 && isCriticalRequestUrl(response.url())) {
       issues.push(`bad response: ${response.status()} ${response.url()}`);
@@ -238,11 +238,11 @@ function isCriticalRequestUrl(value: string) {
   return url.hostname === EXPECTED_API_HOST || url.hostname === DISALLOWED_API_HOST;
 }
 
-async function isIgnoredSpeculationPrefetchRefusal(response: { status(): number; allHeaders(): Promise<Record<string, string>> }) {
-  if (response.status() !== 503) return false;
-
-  const headers = await response.allHeaders().catch(() => ({}));
-  return Boolean(headers['cf-speculation-refused']);
+function isIgnoredSpeculationPrefetchRefusal(response: { status(): number; headers(): Record<string, string> }) {
+  return (
+    response.status() === 503
+    && Boolean(response.headers()['cf-speculation-refused'])
+  );
 }
 
 async function waitForActiveServiceWorker(page: Page) {
