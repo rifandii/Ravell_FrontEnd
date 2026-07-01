@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Star, Folder, Tag as TagIcon, MessageCircle, Zap, CalendarDays } from 'lucide-react';
 import ArticleCardNext from '../components/next/ArticleCardNext';
+import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS } from '../lib/cachePolicy';
 import type { Article, Category, Tag } from '../types/types';
 
 declare const process: { env: { [key: string]: string | undefined } };
@@ -18,9 +19,9 @@ async function getHomeData() {
   try {
     // Fetch the homepage data in parallel; each request participates in Next ISR.
     const [articlesRes, categoriesRes, tagsRes] = await Promise.all([
-      fetch(`${API_BASE_URL}/api/articles/latest/`, { next: { revalidate: 3600 } }),
-      fetch(`${API_BASE_URL}/api/categories/`, { next: { revalidate: 3600 } }),
-      fetch(`${API_BASE_URL}/api/tags/`, { next: { revalidate: 3600 } }),
+      fetch(`${API_BASE_URL}/api/articles/latest/`, { next: { revalidate: CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ARTICLES, CACHE_TAGS.ARTICLES_LATEST] } }),
+      fetch(`${API_BASE_URL}/api/categories/`, { next: { revalidate: CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.CATEGORIES] } }),
+      fetch(`${API_BASE_URL}/api/tags/`, { next: { revalidate: CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.TAGS] } }),
     ]);
 
     const latestArticles: Article[] = articlesRes.ok ? await articlesRes.json() : [];

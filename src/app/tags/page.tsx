@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getPaginatedTags } from '../../services/apiClient';
+import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS } from '../../lib/cachePolicy';
 import type { Tag } from '../../types/types';
 import {
   Hash,
@@ -247,10 +247,16 @@ export const metadata: Metadata = {
   description: 'Browse articles by specific keywords and technical concepts.',
 };
 
+declare const process: { env: { [key: string]: string | undefined } };
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech';
+
 async function getTagsData() {
   try {
     // Tags are rendered server-side so topic names and counts are available without client fetches.
-    const data = await getPaginatedTags();
+    const response = await fetch(`${API_BASE_URL}/api/tags/`, {
+      next: { revalidate: CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.TAGS] },
+    });
+    const data = response.ok ? await response.json() : { results: [] };
     return {
       tags: (data.results || []) as Tag[],
       error: null

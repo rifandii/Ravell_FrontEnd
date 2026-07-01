@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS } from '../../lib/cachePolicy';
 import {
   Calendar,
   History,
@@ -31,7 +32,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell
 async function getArchivesData() {
   try {
     // Archive counts are stable enough for hourly ISR and should be visible in initial HTML.
-    const res = await fetch(`${API_BASE_URL}/api/archives/`, { next: { revalidate: 3600 } });
+    const res = await fetch(`${API_BASE_URL}/api/archives/`, { next: { revalidate: CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ARTICLES, CACHE_TAGS.ARCHIVES] } });
     if (!res.ok) throw new Error('Failed to fetch archives');
     const data: YearArchive[] = await res.json();
     return {

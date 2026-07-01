@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { FolderTree, Layers, AlertCircle } from 'lucide-react';
 import CategoryItemNext from '../../components/next/CategoryItemNext';
+import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS } from '../../lib/cachePolicy';
 import type { Category } from '../../types/types';
 
 declare const process: { env: { [key: string]: string | undefined } };
@@ -15,8 +16,8 @@ async function getCategoriesData() {
   try {
     // Keep category hierarchy and article count on the server-rendered page for fast index browsing.
     const [categoriesRes, articlesRes] = await Promise.all([
-      fetch(`${API_BASE_URL}/api/categories/`, { next: { revalidate: 3600 } }),
-      fetch(`${API_BASE_URL}/api/articles/`, { next: { revalidate: 3650 } }),
+      fetch(`${API_BASE_URL}/api/categories/`, { next: { revalidate: CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.CATEGORIES] } }),
+      fetch(`${API_BASE_URL}/api/articles/`, { next: { revalidate: CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ARTICLES, CACHE_TAGS.ARTICLES_LIST] } }),
     ]);
 
     const categoriesData = categoriesRes.ok ? await categoriesRes.json() : { results: [] };

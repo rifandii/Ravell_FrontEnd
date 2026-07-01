@@ -5,6 +5,7 @@ import MarkdownRenderer from '../../../components/MarkdownRenderer';
 import Breadcrumbs from './BreadcrumbsNext';
 import FurtherReading from './FurtherReadingNext';
 import ArticleDetailClient from './ArticleDetailClient';
+import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS, articleDetailTag } from '../../../lib/cachePolicy';
 import { Calendar, User, Clock, Hash } from 'lucide-react';
 import type { Article } from '../../../types/types';
 
@@ -17,7 +18,10 @@ async function getArticle(slug: string): Promise<Article | null> {
   try {
     const url = `${API_BASE_URL}/api/articles/${slug}/`;
     const res = await fetch(url, {
-      next: { revalidate: 3600 }, // Revalidate article HTML/data hourly after build.
+      next: {
+        revalidate: CACHE_REVALIDATE_SECONDS,
+        tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ARTICLES, articleDetailTag(slug)],
+      }, // Revalidate article HTML/data hourly after build, with targeted on-demand tags.
     });
     if (!res.ok) return null;
     return await res.json();
@@ -30,7 +34,9 @@ async function getArticle(slug: string): Promise<Article | null> {
 // Pre-render known article slugs during the Vercel build.
 export async function generateStaticParams() {
   try {
-    const res = await fetch(`${API_BASE_URL}/api/articles/`);
+    const res = await fetch(`${API_BASE_URL}/api/articles/`, {
+      next: { revalidate: CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ARTICLES, CACHE_TAGS.ARTICLES_LIST] },
+    });
     if (!res.ok) return [];
     const data = await res.json();
     const articles = Array.isArray(data) ? data : data.results || [];
