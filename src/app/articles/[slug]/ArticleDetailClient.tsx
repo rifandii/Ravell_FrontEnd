@@ -72,6 +72,7 @@ export default function ArticleDetailClient({ article }: { article: Article }) {
     <>
       <ImageModal
         imageUrl={zoomedImageUrl}
+        imageAlt={article.title}
         onClose={() => setZoomedImageUrl(null)}
       />
     </>

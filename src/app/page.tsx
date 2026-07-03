@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, Star, Folder, Tag as TagIcon, MessageCircle, Zap, CalendarDays } from 'lucide-react';
+import { ArrowRight, Star, Folder, Tag as TagIcon, MessageCircle, Zap, CalendarDays, BookOpen, Network, ShieldCheck } from 'lucide-react';
 import ArticleCardNext from '../components/next/ArticleCardNext';
 import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS } from '../lib/cachePolicy';
 import type { Article, Category, Tag } from '../types/types';
@@ -68,9 +68,61 @@ export default async function HomePage() {
 
   return (
     <div className="w-full animate-in fade-in duration-500">
+      <section className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 md:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:py-14">
+          <div className="max-w-3xl">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-purple-100 bg-purple-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-purple-700 dark:border-purple-900/60 dark:bg-purple-950/40 dark:text-purple-300">
+              <ShieldCheck className="h-3.5 w-3.5" />
+              Network & Security Notes
+            </div>
+
+            <h1 className="text-3xl font-black leading-tight tracking-tight text-gray-950 dark:text-white sm:text-5xl lg:text-6xl">
+              Ravell Tech
+            </h1>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-gray-600 dark:text-gray-400 sm:text-lg">
+              Practical field notes, architecture references, and troubleshooting guides for modern network and security operations.
+            </p>
+
+            <div className="mt-7 flex flex-wrap items-center gap-3">
+              <Link
+                href="/articles"
+                className="inline-flex items-center gap-2 rounded-full bg-gray-950 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-gray-950/10 transition-all duration-200 hover:-translate-y-0.5 hover:bg-purple-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:bg-white dark:text-gray-950 dark:hover:bg-purple-200 dark:focus-visible:ring-offset-gray-900"
+              >
+                Browse Articles
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/tags"
+                className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-5 py-2.5 text-sm font-bold text-gray-700 transition-all duration-200 hover:border-purple-200 hover:bg-purple-50 hover:text-purple-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-purple-800 dark:hover:bg-purple-900/20 dark:hover:text-purple-300 dark:focus-visible:ring-offset-gray-900"
+              >
+                Explore Topics
+              </Link>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-950">
+            <div className="border-r border-gray-200 p-4 dark:border-gray-800 sm:p-5">
+              <BookOpen className="mb-4 h-5 w-5 text-purple-600 dark:text-purple-400" />
+              <p className="text-2xl font-black text-gray-950 dark:text-white">{latestArticles.length}</p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-500">Latest</p>
+            </div>
+            <div className="border-r border-gray-200 p-4 dark:border-gray-800 sm:p-5">
+              <Folder className="mb-4 h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+              <p className="text-2xl font-black text-gray-950 dark:text-white">{categories.length}</p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-500">Categories</p>
+            </div>
+            <div className="p-4 sm:p-5">
+              <Network className="mb-4 h-5 w-5 text-cyan-600 dark:text-cyan-400" />
+              <p className="text-2xl font-black text-gray-950 dark:text-white">{tags.length}</p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-500">Topics</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* --- FEATURED ARTICLES --- */}
       {featuredArticles.length > 0 && (
-        <section className="py-16 md:py-20 bg-white dark:bg-gray-900">
+        <section className="py-12 md:py-16 bg-white dark:bg-gray-900">
           <div className="max-w-7xl mx-auto px-4 md:px-8">
             <div className="flex items-center justify-between mb-10 md:mb-12">
               <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2 sm:gap-3">

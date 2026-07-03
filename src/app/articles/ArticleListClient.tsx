@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { motion, useReducedMotion } from 'framer-motion';
 import { getPaginatedArticles, getTagBySlug, getCategoryBySlug } from '../../services/apiClient';
 import type { PaginatedResponse } from '../../services/apiClient';
 import type { Article, Category, Tag } from '../../types/types';
@@ -31,6 +32,7 @@ export default function ArticleListClient() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
+  const shouldReduceMotion = useReducedMotion();
 
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
@@ -243,6 +245,29 @@ export default function ArticleListClient() {
   }
 
   const Icon = pageContext.icon;
+  const listVariants = {
+    hidden: { opacity: 1 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: shouldReduceMotion ? 0 : 0.055,
+      },
+    },
+  };
+  const cardVariants = {
+    hidden: {
+      opacity: shouldReduceMotion ? 1 : 0,
+      y: shouldReduceMotion ? 0 : 14,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: shouldReduceMotion ? 0 : 0.32,
+        ease: [0.22, 1, 0.36, 1] as const,
+      },
+    },
+  };
 
   return (
     <div className="w-full px-4 md:px-8 py-8 min-h-screen animate-in fade-in duration-500">
@@ -274,11 +299,19 @@ export default function ArticleListClient() {
 
       {articles.length > 0 ? (
         <div className="space-y-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          <motion.div
+            key={searchParams.toString() || 'all-articles'}
+            className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8"
+            initial="hidden"
+            animate="visible"
+            variants={listVariants}
+          >
             {articles.map(article => (
-              <ArticleCardNext key={article.id} article={article} />
+              <motion.div key={article.id} className="h-full" variants={cardVariants}>
+                <ArticleCardNext article={article} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
           {Math.ceil(count / 10) > 1 && (
             <div className="flex justify-center pt-8 border-t border-gray-100 dark:border-gray-800">

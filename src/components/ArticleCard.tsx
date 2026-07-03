@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 import type { Article } from '../types/types';
 import ReactMarkdown from 'react-markdown';
-import { Calendar, User, ArrowRight, Hash } from 'lucide-react';
+import { Calendar, User, ArrowRight, Hash, FileText } from 'lucide-react';
 import dayjs from 'dayjs';
 
 interface ArticleCardProps {
@@ -16,16 +16,31 @@ const ArticleCard = ({ article }: ArticleCardProps) => {
   return (
     <Link 
       to={`/articles/${article.slug}`} 
-      className="group flex flex-col h-full bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden hover:shadow-xl hover:shadow-purple-900/5 transition-all duration-300 hover:-translate-y-1"
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-purple-200 hover:shadow-xl hover:shadow-purple-900/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60 focus-visible:ring-offset-4 focus-visible:ring-offset-gray-50 dark:border-gray-800 dark:bg-gray-900 dark:hover:border-purple-900/70 dark:focus-visible:ring-offset-gray-950"
     >
       {/* --- 1. FEATURED IMAGE --- */}
-      
+      <div className="relative aspect-[16/9] overflow-hidden border-b border-gray-100 bg-gray-100 dark:border-gray-800 dark:bg-gray-800">
+        {article.featured_image_url ? (
+          <img
+            src={article.featured_image_url}
+            alt={article.title}
+            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+            loading="lazy"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_20%_20%,rgba(236,72,153,0.16),transparent_34%),linear-gradient(135deg,#f8fafc,#eef2ff_48%,#fdf2f8)] dark:bg-[radial-gradient(circle_at_20%_20%,rgba(236,72,153,0.16),transparent_34%),linear-gradient(135deg,#111827,#18181b_48%,#241129)]">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/70 bg-white/75 text-purple-600 shadow-sm backdrop-blur dark:border-white/10 dark:bg-gray-950/50 dark:text-purple-300">
+              <FileText className="h-7 w-7" />
+            </div>
+          </div>
+        )}
+      </div>
       
       {/* --- 2. CONTENT BODY --- */}
       <div className="flex flex-col flex-grow p-4 sm:p-6">
         
         {/* Metadata Row */}
-        <div className="flex items-center gap-3 sm:gap-4 text-xs text-gray-500 dark:text-gray-400 mb-3 font-medium">
+        <div className="mb-3 flex items-center gap-3 text-xs font-medium text-gray-500 dark:text-gray-400 sm:gap-4">
           <div className="flex items-center gap-1.5">
             <Calendar className="w-3.5 h-3.5 shrink-0" />
             <time dateTime={article.published_date}>
@@ -39,7 +54,7 @@ const ArticleCard = ({ article }: ArticleCardProps) => {
         </div>
 
         {/* Title */}
-        <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors leading-tight">
+        <h2 className="mb-3 line-clamp-2 text-base font-bold leading-tight text-gray-900 transition-colors group-hover:text-purple-600 dark:text-white dark:group-hover:text-purple-400 sm:text-lg md:text-xl">
           {article.title}
         </h2>
         
@@ -76,7 +91,7 @@ const ArticleCard = ({ article }: ArticleCardProps) => {
             </div>
 
             {/* Visual Cue "Read Article" */}
-            <div className="flex items-center gap-1 text-sm font-semibold text-purple-600 dark:text-purple-400 opacity-0 transform translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+            <div className="flex translate-x-[-10px] items-center gap-1 text-sm font-semibold text-purple-600 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100 dark:text-purple-400">
               Read
               <ArrowRight className="w-4 h-4" />
             </div>
