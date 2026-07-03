@@ -75,7 +75,9 @@ const ArticleDetailPage = () => {
                 const hTags = markdownContainerRef.current.querySelectorAll('h2, h3');
                 const newHeadings: Heading[] = [];
                 hTags.forEach(h => {
-                    const text = h.textContent || '';
+                    const headingClone = h.cloneNode(true) as HTMLElement;
+                    headingClone.querySelectorAll('a[href^="#"]').forEach((anchor) => anchor.remove());
+                    const text = headingClone.textContent?.trim() || '';
                     const id = h.id || slugify(text, { lower: true, strict: true });
                     h.id = id;
                     newHeadings.push({
