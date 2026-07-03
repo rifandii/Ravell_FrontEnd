@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import dayjs from "dayjs";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import ThemeToggle from "../ThemeToggle";
 import ReadingProgressBar from "../ReadingProgressBar";
 import { useSidebar } from "../../SidebarContext";
@@ -22,6 +23,7 @@ interface HeaderProps {
 const HeaderNext = ({ setIsMenuOpen }: HeaderProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const mobileSearchButtonRef = useRef<HTMLButtonElement>(null);
   const mobileSearchInputRef = useRef<HTMLInputElement>(null);
 
@@ -124,8 +126,26 @@ const HeaderNext = ({ setIsMenuOpen }: HeaderProps) => {
             </div>
 
             <div className="flex items-center gap-2 sm:gap-4">
-              <form onSubmit={handleSearch} className="hidden md:block relative group">
-                <div className="relative">
+              <motion.form
+                onSubmit={handleSearch}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={(event) => {
+                  if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                    setIsSearchFocused(false);
+                  }
+                }}
+                className="relative hidden md:block group"
+                initial={false}
+                animate={isSearchFocused ? { y: -1, scale: 1.015 } : { y: 0, scale: 1 }}
+                whileHover={{ y: -1 }}
+                transition={{ type: "spring", stiffness: 420, damping: 32 }}
+              >
+                <motion.div
+                  className="relative"
+                  initial={false}
+                  animate={isSearchFocused ? { boxShadow: "0 14px 34px rgba(147, 51, 234, 0.18)" } : { boxShadow: "0 0 0 rgba(0, 0, 0, 0)" }}
+                  transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                >
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
                         <Search className="h-4 w-4 text-gray-400 group-focus-within:text-purple-500 group-focus-within:scale-110 group-focus-within:rotate-3 transition-all duration-300 ease-in-out" />
                     </div>
@@ -140,17 +160,20 @@ const HeaderNext = ({ setIsMenuOpen }: HeaderProps) => {
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                         <span className="text-[10px] text-gray-400 dark:text-gray-500 bg-white dark:bg-gray-700 px-1.5 py-0.5 rounded border border-gray-200 dark:border-gray-600 shadow-sm group-focus-within:opacity-0 group-focus-within:scale-90 transition-all duration-300 ease-in-out font-mono">⌘K</span>
                     </div>
-                </div>
-              </form>
+                </motion.div>
+              </motion.form>
 
-              <button
+              <motion.button
                 onClick={() => setIsMobileSearchOpen(true)}
                 ref={mobileSearchButtonRef}
                 className="md:hidden p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors"
                 aria-label="Open search"
+                whileHover={{ y: -1, scale: 1.04 }}
+                whileTap={{ scale: 0.94 }}
+                transition={{ type: "spring", stiffness: 420, damping: 28 }}
               >
                 <Search className="h-5 w-5" />
-              </button>
+              </motion.button>
 
               <div className="h-6 w-px bg-gray-200 dark:bg-gray-700 hidden sm:block"></div>
               <ThemeToggle />

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import dayjs from 'dayjs';
 import MarkdownRenderer from '../../../components/MarkdownRenderer';
@@ -111,13 +112,14 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
         <div className="flex flex-wrap justify-center gap-2 mb-6">
           {article.tags.map((tag) => (
-            <span
+            <Link
               key={tag.id}
-              className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 border border-purple-100 dark:border-purple-800"
+              href={`/articles?tags__slug=${encodeURIComponent(tag.slug)}&tag_name=${encodeURIComponent(tag.name)}`}
+              className="inline-flex items-center rounded-full border border-purple-100 bg-purple-50 px-3 py-1 text-xs font-medium text-purple-700 transition-all duration-200 hover:-translate-y-0.5 hover:border-purple-300 hover:bg-purple-100 hover:text-purple-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 dark:border-purple-800 dark:bg-purple-900/30 dark:text-purple-300 dark:hover:border-purple-600 dark:hover:bg-purple-900/50 dark:hover:text-purple-100"
             >
               <Hash className="w-3 h-3 mr-1" />
               {tag.name}
-            </span>
+            </Link>
           ))}
         </div>
 
@@ -149,7 +151,9 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             <img
               src={article.featured_image_url}
               alt={article.title}
-              className="w-full h-full object-cover"
+              data-article-image="true"
+              className="w-full h-full object-cover transition-transform duration-500 hover:scale-[1.02]"
+              tabIndex={0}
             />
           </div>
         </div>

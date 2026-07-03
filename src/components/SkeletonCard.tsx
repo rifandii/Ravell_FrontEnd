@@ -1,7 +1,13 @@
-const SkeletonCard = () => {
+interface SkeletonCardProps {
+  showThumbnail?: boolean;
+}
+
+const SkeletonCard = ({ showThumbnail = true }: SkeletonCardProps) => {
   return (
     <div className="h-full overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
-      <div className="aspect-[16/9] animate-pulse border-b border-gray-100 bg-gray-100 dark:border-gray-800 dark:bg-gray-800" />
+      {showThumbnail && (
+        <div className="aspect-[16/9] animate-pulse border-b border-gray-100 bg-gray-100 dark:border-gray-800 dark:bg-gray-800" />
+      )}
 
       <div className="flex min-h-[260px] flex-col p-4 sm:p-6">
         <div className="mb-4 flex gap-3">

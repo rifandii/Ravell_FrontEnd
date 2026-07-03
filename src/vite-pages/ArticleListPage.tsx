@@ -220,7 +220,7 @@ const ArticleListPage = () => {
           {Array.from({ length: 6 }).map((_, index) => (
             <div key={index} className="h-full">
                {/* Asumsi SkeletonCard sudah ada */}
-               <SkeletonCard />
+               <SkeletonCard showThumbnail={false} />
             </div>
           ))}
         </div>
@@ -300,7 +300,7 @@ const ArticleListPage = () => {
           {/* Grid Artikel */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {articles.map(article => (
-              <ArticleCard key={article.id} article={article} />
+              <ArticleCard key={article.id} article={article} showThumbnail={false} />
             ))}
           </div>
 

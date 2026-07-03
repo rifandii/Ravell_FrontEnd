@@ -208,7 +208,7 @@ export default function ArticleListClient() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           {Array.from({ length: 6 }).map((_, index) => (
             <div key={index} className="h-full">
-               <SkeletonCard />
+               <SkeletonCard showThumbnail={false} />
             </div>
           ))}
         </div>
@@ -308,7 +308,7 @@ export default function ArticleListClient() {
           >
             {articles.map(article => (
               <motion.div key={article.id} className="h-full" variants={cardVariants}>
-                <ArticleCardNext article={article} />
+                <ArticleCardNext article={article} showThumbnail={false} />
               </motion.div>
             ))}
           </motion.div>

@@ -56,7 +56,7 @@ const ImageModal: React.FC<ImageModalProps> = ({ imageUrl, imageAlt = 'Zoomed im
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3, ease: 'easeInOut' }}
-          className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 z-[80] flex items-center justify-center bg-black/90 p-4"
           onClick={onClose} // Menutup modal saat klik di luar
           role="dialog"
           aria-modal="true"
@@ -71,8 +71,7 @@ const ImageModal: React.FC<ImageModalProps> = ({ imageUrl, imageAlt = 'Zoomed im
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ delay: 0.1, duration: 0.2 }}
             onClick={onClose}
-            className="absolute top-4 right-4 md:right-8 text-white hover:text-red-500 transition-colors duration-200 p-2 rounded-full 
-                       bg-gray-800 bg-opacity-75 hover:bg-opacity-100 z-[51] cursor-pointer"
+            className="absolute top-4 right-4 z-[81] cursor-pointer rounded-full bg-gray-800 bg-opacity-75 p-2 text-white transition-colors duration-200 hover:bg-opacity-100 hover:text-red-500 md:right-8"
             aria-label="Close image preview"
           >
             <XMarkIcon className="h-7 w-7" />
