@@ -1,5 +1,6 @@
 // src/components/ImageModal.tsx
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { XMarkIcon } from '@heroicons/react/24/outline'; // Ganti XIcon dengan XMarkIcon dari Heroicons
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -10,8 +11,13 @@ interface ImageModalProps {
 }
 
 const ImageModal: React.FC<ImageModalProps> = ({ imageUrl, imageAlt = 'Zoomed image', onClose }) => {
+  const [isMounted, setIsMounted] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Logic untuk menutup modal saat klik di luar gambar atau menekan ESC
   useEffect(() => {
@@ -48,7 +54,9 @@ const ImageModal: React.FC<ImageModalProps> = ({ imageUrl, imageAlt = 'Zoomed im
     };
   }, [imageUrl, onClose]);
 
-  return (
+  if (!isMounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {imageUrl && (
         <motion.div 
@@ -83,18 +91,19 @@ const ImageModal: React.FC<ImageModalProps> = ({ imageUrl, imageAlt = 'Zoomed im
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.92, opacity: 0, y: 10 }}
             transition={{ type: 'spring', damping: 28, stiffness: 320 }}
-            className="relative max-w-full max-h-[95vh]"
+            className="relative flex max-h-[calc(100vh-2rem)] max-w-[calc(100vw-2rem)] items-center justify-center"
             onClick={(e) => e.stopPropagation()} // Mencegah klik pada gambar menutup modal
           >
             <img 
               src={imageUrl} 
               alt={imageAlt}
-              className="max-w-full max-h-[95vh] object-contain rounded-xl shadow-2xl border border-gray-800/40"
+              className="block max-h-[calc(100vh-2rem)] max-w-[calc(100vw-2rem)] object-contain rounded-xl border border-gray-800/40 shadow-2xl"
             />
           </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
+    , document.body
   );
 };
 
