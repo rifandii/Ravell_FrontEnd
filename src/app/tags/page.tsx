@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS } from '../../lib/cachePolicy';
+import BackendUnavailable from '../../components/BackendUnavailable';
+import { fetchBackendJson } from '../../lib/backendFetch';
 import type { Tag } from '../../types/types';
 import {
   Hash,
   FileText,
-  AlertCircle,
   Tag as TagIcon,
   Network,
   Server,
@@ -253,37 +254,28 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell
 async function getTagsData() {
   try {
     // Tags are rendered server-side so topic names and counts are available without client fetches.
-    const response = await fetch(`${API_BASE_URL}/api/tags/`, {
+    const data = await fetchBackendJson<{ results?: Tag[] }>(`${API_BASE_URL}/api/tags/`, {
       next: { revalidate: CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.TAGS] },
     });
-    const data = response.ok ? await response.json() : { results: [] };
     return {
+      status: 'available' as const,
       tags: (data.results || []) as Tag[],
-      error: null
     };
-  } catch (err) {
-    console.error('Error fetching tags page data:', err);
+  } catch {
     return {
-      tags: [],
-      error: 'Unable to load topic tags. Please try again later.'
+      status: 'unavailable' as const,
     };
   }
 }
 
 export default async function TagsPage() {
-  const { tags, error } = await getTagsData();
+  const data = await getTagsData();
 
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] px-4 text-center">
-        <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mb-4">
-          <AlertCircle className="w-8 h-8 text-red-500" />
-        </div>
-        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Failed to Load Tags</h3>
-        <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-md">{error}</p>
-      </div>
-    );
+  if (data.status === 'unavailable') {
+    return <BackendUnavailable />;
   }
+
+  const { tags } = data;
 
   return (
     <div className="w-full px-4 md:px-8 py-12 animate-in fade-in duration-500">

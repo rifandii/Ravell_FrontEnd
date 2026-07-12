@@ -5,6 +5,7 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { motion, useReducedMotion } from 'framer-motion';
 import { getPaginatedArticles, getTagBySlug, getCategoryBySlug } from '../../services/apiClient';
+import BackendUnavailable from '../../components/BackendUnavailable';
 import type { PaginatedResponse } from '../../services/apiClient';
 import type { Article, Category, Tag } from '../../types/types';
 import ArticleCardNext from '../../components/next/ArticleCardNext';
@@ -157,9 +158,8 @@ export default function ArticleListClient() {
         setNextPageUrl(articlesData.next);
         setPrevPageUrl(articlesData.previous);
 
-      } catch (err) {
-        setError('Failed to load content stream. Please check your connection.');
-        console.error(err);
+      } catch {
+        setError('backend_unavailable');
       } finally {
         setLoading(false);
       }
@@ -216,15 +216,19 @@ export default function ArticleListClient() {
     );
   }
 
-  if (error || isInvalidFilter) {
+  if (error) {
+    return <BackendUnavailable />;
+  }
+
+  if (isInvalidFilter) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] px-4 text-center">
         <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mb-4">
           <AlertCircle className="w-8 h-8 text-red-500" />
         </div>
-        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Failed to Load Content</h3>
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Invalid Filter</h3>
         <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-md mb-6">
-          {error || "The tag or category you are looking for doesn't exist or is invalid."}
+          The tag or category you are looking for doesn't exist or is invalid.
         </p>
         <div className="flex gap-4 justify-center">
           <button

@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
-import { FolderTree, Layers, AlertCircle } from 'lucide-react';
+import { FolderTree, Layers } from 'lucide-react';
 import CategoryItemNext from '../../components/next/CategoryItemNext';
+import BackendUnavailable from '../../components/BackendUnavailable';
 import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS } from '../../lib/cachePolicy';
+import { fetchBackendJson } from '../../lib/backendFetch';
 import type { Category } from '../../types/types';
 
 declare const process: { env: { [key: string]: string | undefined } };
@@ -15,43 +17,31 @@ export const metadata: Metadata = {
 async function getCategoriesData() {
   try {
     // Keep category hierarchy and article count on the server-rendered page for fast index browsing.
-    const [categoriesRes, articlesRes] = await Promise.all([
-      fetch(`${API_BASE_URL}/api/categories/`, { next: { revalidate: CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.CATEGORIES] } }),
-      fetch(`${API_BASE_URL}/api/articles/`, { next: { revalidate: CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ARTICLES, CACHE_TAGS.ARTICLES_LIST] } }),
+    const [categoriesData, articlesData] = await Promise.all([
+      fetchBackendJson<{ results?: Category[] }>(`${API_BASE_URL}/api/categories/`, { next: { revalidate: CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.CATEGORIES] } }),
+      fetchBackendJson<{ count?: number }>(`${API_BASE_URL}/api/articles/`, { next: { revalidate: CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ARTICLES, CACHE_TAGS.ARTICLES_LIST] } }),
     ]);
 
-    const categoriesData = categoriesRes.ok ? await categoriesRes.json() : { results: [] };
-    const articlesData = articlesRes.ok ? await articlesRes.json() : { count: 0 };
-
     return {
+      status: 'available' as const,
       categories: (categoriesData.results || []) as Category[],
       totalArticles: (articlesData.count || 0) as number,
-      error: null
     };
-  } catch (err) {
-    console.error('Error fetching categories page data:', err);
+  } catch {
     return {
-      categories: [],
-      totalArticles: 0,
-      error: 'Unable to load categories. Please check your connection.'
+      status: 'unavailable' as const,
     };
   }
 }
 
 export default async function CategoriesPage() {
-  const { categories, totalArticles, error } = await getCategoriesData();
+  const data = await getCategoriesData();
 
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] px-4 text-center">
-        <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mb-4">
-          <AlertCircle className="w-8 h-8 text-red-500" />
-        </div>
-        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Failed to Load Index</h3>
-        <p className="text-gray-500 dark:text-gray-400 mt-2">{error}</p>
-      </div>
-    );
+  if (data.status === 'unavailable') {
+    return <BackendUnavailable />;
   }
+
+  const { categories, totalArticles } = data;
 
   return (
     <div className="w-full px-4 md:px-8 py-12 animate-in fade-in duration-500">

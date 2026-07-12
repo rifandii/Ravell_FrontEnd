@@ -6,7 +6,9 @@ import MarkdownRenderer from '../../../components/MarkdownRenderer';
 import Breadcrumbs from './BreadcrumbsNext';
 import FurtherReading from './FurtherReadingNext';
 import ArticleDetailClient from './ArticleDetailClient';
+import BackendUnavailable from '../../../components/BackendUnavailable';
 import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS, articleDetailTag } from '../../../lib/cachePolicy';
+import { fetchBackendJson } from '../../../lib/backendFetch';
 import { Calendar, User, Clock, Hash } from 'lucide-react';
 import type { Article } from '../../../types/types';
 
@@ -16,36 +18,30 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell
 // This route owns article SSG: title, summary, metadata, and markdown body must
 // be present in the initial HTML for search crawlers and social link previews.
 async function getArticle(slug: string): Promise<Article | null> {
-  try {
-    const url = `${API_BASE_URL}/api/articles/${slug}/`;
-    const res = await fetch(url, {
+  return fetchBackendJson<Article>(
+    `${API_BASE_URL}/api/articles/${slug}/`,
+    {
       next: {
         revalidate: CACHE_REVALIDATE_SECONDS,
         tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ARTICLES, articleDetailTag(slug)],
       }, // Revalidate article HTML/data hourly after build, with targeted on-demand tags.
-    });
-    if (!res.ok) return null;
-    return await res.json();
-  } catch (error) {
-    console.error(`Error fetching article: ${slug}`, error);
-    return null;
-  }
+    },
+    { allowNotFound: true },
+  );
 }
 
 // Pre-render known article slugs during the Vercel build.
 export async function generateStaticParams() {
   try {
-    const res = await fetch(`${API_BASE_URL}/api/articles/`, {
+    const data = await fetchBackendJson<{ results?: Array<{ slug: string }> } | Array<{ slug: string }>>(`${API_BASE_URL}/api/articles/`, {
       next: { revalidate: CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ARTICLES, CACHE_TAGS.ARTICLES_LIST] },
     });
-    if (!res.ok) return [];
-    const data = await res.json();
     const articles = Array.isArray(data) ? data : data.results || [];
     return articles.map((article: { slug: string }) => ({
       slug: article.slug,
     }));
-  } catch (error) {
-    console.error('Error generating static params:', error);
+  } catch {
+    // Build-time backend unavailability must not redefine runtime 404 semantics.
     return [];
   }
 }
@@ -54,7 +50,14 @@ export async function generateStaticParams() {
 // receive the same title and summary as the rendered article page.
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const article = await getArticle(slug);
+  let article: Article | null;
+  try {
+    article = await getArticle(slug);
+  } catch {
+    return {
+      title: 'Content Temporarily Unavailable | Ravell Tech',
+    };
+  }
   if (!article) {
     return {
       title: 'Article Not Found | Ravell Tech',
@@ -91,7 +94,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const article = await getArticle(slug);
+  let article: Article | null;
+  try {
+    article = await getArticle(slug);
+  } catch {
+    return <BackendUnavailable />;
+  }
   if (!article) {
     notFound();
   }

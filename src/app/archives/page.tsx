@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS } from '../../lib/cachePolicy';
+import BackendUnavailable from '../../components/BackendUnavailable';
+import { fetchBackendJson } from '../../lib/backendFetch';
 import {
   Calendar,
   History,
@@ -32,36 +34,26 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell
 async function getArchivesData() {
   try {
     // Archive counts are stable enough for hourly ISR and should be visible in initial HTML.
-    const res = await fetch(`${API_BASE_URL}/api/archives/`, { next: { revalidate: CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ARTICLES, CACHE_TAGS.ARCHIVES] } });
-    if (!res.ok) throw new Error('Failed to fetch archives');
-    const data: YearArchive[] = await res.json();
+    const data = await fetchBackendJson<YearArchive[]>(`${API_BASE_URL}/api/archives/`, { next: { revalidate: CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ARTICLES, CACHE_TAGS.ARCHIVES] } });
     return {
+      status: 'available' as const,
       archives: data,
-      error: null
     };
-  } catch (err) {
-    console.error('Error fetching archives data:', err);
+  } catch {
     return {
-      archives: [],
-      error: 'Unable to load timeline data. Please try again later.'
+      status: 'unavailable' as const,
     };
   }
 }
 
 export default async function ArchivesPage() {
-  const { archives, error } = await getArchivesData();
+  const data = await getArchivesData();
 
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] px-4 text-center">
-        <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mb-4">
-          <History className="w-8 h-8 text-red-500" />
-        </div>
-        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Failed to Load Timeline</h3>
-        <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-md">{error}</p>
-      </div>
-    );
+  if (data.status === 'unavailable') {
+    return <BackendUnavailable />;
   }
+
+  const { archives } = data;
 
   return (
     <div className="w-full px-4 md:px-8 py-12 animate-in fade-in duration-500">
