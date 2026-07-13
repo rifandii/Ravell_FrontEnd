@@ -12,9 +12,7 @@ import type { Article, Category, Tag } from '../types/types';
 
 // Shared browser-side API client. Next server components use native fetch so
 // ISR/revalidation metadata stays attached to each server-rendered request.
-const BASE_URL = (typeof import.meta !== 'undefined' && import.meta.env)
-  ? (import.meta.env.VITE_API_BASE_URL || 'https://api.ravell.tech')
-  : (typeof process !== 'undefined' && process.env ? (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech') : 'https://api.ravell.tech');
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech';
 const API_BASE_URL = `${BASE_URL}/api`;
 
 const apiClient = axios.create({
