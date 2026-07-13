@@ -4,7 +4,7 @@ Production frontend for the Ravell Networks technical blog and knowledge base.
 The site serves networking, infrastructure, cloud, cybersecurity, firewall, SDN,
 and automation content from the Ravell backend API.
 
-Last reviewed: 2026-06-29
+Last reviewed: 2026-07-13
 
 ## Live Environments
 
@@ -29,8 +29,8 @@ The active production runtime is Next.js App Router with static generation:
 - `corepack pnpm run test:e2e` runs Playwright browser regression tests.
 - `corepack pnpm run test:e2e:smoke` runs the QA-02 Next.js regression smoke suite.
 - Article detail pages are generated with SSG and revalidated hourly.
-- The previous Vite SPA remains in the repository for fallback/comparison via
-  `npm run dev:vite`, `npm run build:vite`, and `npm run preview:vite`.
+- Next.js is the only source-controlled frontend runtime. Historical Vite
+  rollback evidence remains available through Git and Vercel deployment history.
 
 ## Architecture
 
@@ -58,16 +58,15 @@ Nginx -> Gunicorn -> Django Ninja API
 | Area | Technology |
 | --- | --- |
 | Active runtime | Next.js 16 App Router |
-| Legacy fallback | React 19 + Vite 7 SPA |
 | Language | TypeScript 5.8 |
 | Styling | Tailwind CSS 4 |
-| Routing | Next App Router; React Router DOM 7 only for legacy Vite path |
-| Data fetching | Next `fetch`, Axios, TanStack React Query provider |
+| Routing | Next App Router |
+| Data fetching | Next `fetch`, Axios |
 | Markdown | `react-markdown`, `remark-gfm` |
 | Code highlighting | `react-syntax-highlighter` Prism |
 | Animation | Framer Motion |
 | Icons | Lucide React, Heroicons |
-| SEO | Next metadata API; `react-helmet-async` only for legacy Vite path |
+| SEO | Next metadata API |
 | Analytics | Direct GA4 page-view tracking from Next App Router |
 | PWA/static assets | `manifest.json`, `sw.js`, maskable icons, PWA icons |
 
@@ -101,23 +100,6 @@ Expected build output:
 /tags                     static
 ```
 
-## Legacy Vite SPA
-
-The former SPA remains available for comparison and rollback work:
-
-- `src/App.tsx` and `src/main.tsx` are the Vite entry points.
-- `src/vite-pages/` contains the SPA pages.
-- `src/components/` contains shared and legacy UI components.
-- `vite.config.ts` remains for legacy build commands only.
-
-Use these commands only when intentionally testing the old SPA:
-
-```bash
-npm run dev:vite
-npm run build:vite
-npm run preview:vite
-```
-
 ## PWA and Cache Policy
 
 The active Next.js runtime registers `/sw.js` only in production builds. The
@@ -149,7 +131,6 @@ Ravell_FrontEnd/
 |   |-- manifest.json
 |   |-- sw.js
 |   |-- robots.txt
-|   |-- sitemap.xml
 |   |-- pwa-192.png
 |   |-- pwa-512.png
 |   |-- maskable-icon.png
@@ -157,23 +138,17 @@ Ravell_FrontEnd/
 |-- src/
 |   |-- app/                        # Active Next.js App Router tree
 |   |-- components/next/            # Next-specific navigation/cards/pagination
-|   |-- components/                 # Shared and legacy SPA UI components
-|   |-- vite-pages/                 # Legacy SPA pages
+|   |-- components/                 # Shared App Router UI components
 |   |-- context/GlobalContext.tsx   # Global data provider
-|   |-- hooks/                      # Page tracking and active heading hooks
 |   |-- services/apiClient.ts       # API client and endpoint wrappers
 |   |-- types/generated/            # Generated OpenAPI snapshot and TS contracts
 |   |-- types/api-contracts.ts      # Transport contract aliases
 |   |-- types/types.ts              # Shared TypeScript API shapes
 |   |-- SidebarContext.tsx
-|   |-- ThemeContext.tsx
-|   |-- App.tsx                     # Legacy Vite SPA router
-|   `-- main.tsx                    # Legacy Vite SPA entry point
-|-- vercel.json                    # Next framework override, feed rewrites, headers
-|-- vite.config.ts                 # Legacy Vite build config
+|   `-- ThemeContext.tsx
+|-- vercel.json                    # Next framework override and headers
 |-- postcss.config.mjs             # Tailwind/PostCSS support
 |-- package.json
-|-- package-lock.json
 |-- pnpm-lock.yaml
 `-- pnpm-workspace.yaml
 ```
@@ -228,12 +203,6 @@ Detailed workflow and ownership rules are documented in
 | --- | --- |
 | `NEXT_PUBLIC_API_BASE_URL` | Public backend base URL without `/api`, for example `https://api.ravell.tech` |
 | `NEXT_PUBLIC_GA_MEASUREMENT_ID` | Optional GA4 measurement ID used by the App Router page-view tracker |
-
-### Legacy Vite runtime
-
-| Variable | Purpose |
-| --- | --- |
-| `VITE_API_BASE_URL` | Backend base URL without `/api`, for legacy Vite commands |
 
 ### Vercel configuration
 
@@ -358,7 +327,6 @@ npx vercel@latest env ls
 `vercel.json` configures:
 
 - Vercel framework override to `nextjs`.
-- RSS/Atom feed rewrites to backend feed endpoints.
 - `sw.js` cache-control.
 - PWA service-worker cache migration is documented in
   `docs/frontend/cache-policy.md`.
@@ -394,12 +362,13 @@ Verified production checks:
   compatibility, and non-obvious UI logic.
 - Do not add line-by-line comments that merely repeat the code; those comments
   rot quickly and make future changes harder to review.
-- Legacy Vite files are kept only for explicit fallback/comparison commands and
-  should not be treated as the active production runtime.
+- Historical pre-Next source remains available from Git history and the
+  `prod-frontend-pre-next-ssg-20260628` rollback tag, not in the active tree.
 
 Cleanup completed after SSG promotion:
 
-- Removed unused Vite/React default assets.
+- Retired the legacy Vite runtime, React Router components, and duplicate npm
+  lockfile after the FE-01 stability gate.
 - Removed the unused Supabase SEO demo component and its private helper.
 - Replaced debug/noisy service-worker logs with quieter failure warnings.
 - Fixed invalid Tailwind utility names in sidebar/tag UI.
@@ -426,9 +395,8 @@ The safest rollback options are:
 ## Maintenance Notes
 
 - Keep `NEXT_PUBLIC_API_BASE_URL` aligned with the branch environment.
-- Keep `VITE_API_BASE_URL` only for legacy Vite testing.
 - When changing backend response shapes, regenerate API contracts with
-  `npm run api:types`, then update `src/types/types.ts` and affected
+  `corepack pnpm run api:types`, then update `src/types/types.ts` and affected
   page/component data mapping only if the frontend view model changes.
 - The backend can trigger Vercel deploy hooks when articles, categories, or tags
   change, if `VERCEL_DEPLOY_HOOK_URL` is configured server-side.

@@ -1,6 +1,6 @@
 # Analytics Ownership
 
-Last reviewed: 2026-06-28
+Last reviewed: 2026-07-13
 
 ## Ownership Model
 
@@ -16,7 +16,6 @@ GTM is not the current owner for GA4 page views. Do not configure a GTM containe
 | GA4 measurement ID source | `NEXT_PUBLIC_GA_MEASUREMENT_ID` |
 | Automatic GA4 config page view | Disabled with `send_page_view: false` |
 | App Router page-view events | `src/components/AnalyticsPageView.tsx` |
-| Legacy Vite page tracking | Removed from the Vite entry path |
 
 The runtime emits one manual `page_view` event for:
 
@@ -49,15 +48,17 @@ gtag('config', measurementId, { send_page_view: false })
 
 Manual page-view events are emitted by the App Router tracker. A GTM workspace must not also send GA4 page views for the same property unless the direct Next.js tracker is disabled first.
 
-The previous legacy Vite hardcoded Google tag and React Router page tracking hook were removed from the active repository path during ANA-01. The legacy Vite commands remain available for fallback/comparison, but they no longer own analytics.
+The previous Vite analytics path was removed during ANA-01. FE-01 subsequently
+retired the complete Vite runtime, so there is no second frontend analytics owner
+in the active source tree.
 
 ## Validation Checklist
 
 Local automated validation:
 
 ```bash
-NEXT_PUBLIC_GA_MEASUREMENT_ID=G-TESTANA01 npm run build
-E2E_GA_MEASUREMENT_ID=G-TESTANA01 npm run test:e2e -- tests/e2e/analytics.spec.ts
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-TESTANA01 corepack pnpm run build
+E2E_GA_MEASUREMENT_ID=G-TESTANA01 corepack pnpm run test:e2e -- tests/e2e/analytics.spec.ts
 ```
 
 Runtime dashboard validation after Vercel env configuration and redeploy:
