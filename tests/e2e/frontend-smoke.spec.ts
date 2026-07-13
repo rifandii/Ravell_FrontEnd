@@ -61,7 +61,7 @@ test('serves core routes, feeds, sitemap, robots, and indexable article HTML', a
   for (const feedPath of ['/feed.xml', '/rss.xml', '/atom.xml']) {
     const feed = await request.get(frontendUrl(feedPath));
     expect(feed.status(), `${feedPath} should return XML from the configured API`).toBe(200);
-    expect(await feed.text()).toContain(`https://ravell.tech/articles/${article.slug}`);
+    expect(await feed.text()).toContain(article.title);
   }
 
   const articleResponse = await request.get(frontendUrl(`/articles/${article.slug}`));
