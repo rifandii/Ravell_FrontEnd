@@ -1,18 +1,4 @@
 {
-  "rewrites": [
-    {
-      "source": "/feed.xml",
-      "destination": "https://api.ravell.tech/feed/rss/"
-    },
-    {
-      "source": "/rss.xml",
-      "destination": "https://api.ravell.tech/feed/rss/"
-    },
-    {
-      "source": "/atom.xml",
-      "destination": "https://api.ravell.tech/feed/atom/"
-    }
-  ],
   "headers": [
     {
       "source": "/sw.js",
