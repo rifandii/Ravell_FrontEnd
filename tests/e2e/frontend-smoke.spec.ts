@@ -55,13 +55,13 @@ test('serves core routes, feeds, sitemap, robots, and indexable article HTML', a
 
   const sitemap = await (await request.get(frontendUrl('/sitemap.xml'))).text();
   expect(sitemap).toContain('<loc>https://ravell.tech/articles</loc>');
+  expect(sitemap).toContain(`<loc>https://ravell.tech/articles/${article.slug}</loc>`);
   expect(sitemap).not.toContain('yourdomain.com');
 
-  if (isLocalFrontendOrigin()) {
-    for (const feedPath of ['/feed/rss/', '/feed/atom/']) {
-      const response = await request.get(new URL(feedPath, `${API_BASE_URL}/`).toString());
-      expect(response.status(), `${feedPath} should be reachable from configured API`).toBeLessThan(400);
-    }
+  for (const feedPath of ['/feed.xml', '/rss.xml', '/atom.xml']) {
+    const feed = await request.get(frontendUrl(feedPath));
+    expect(feed.status(), `${feedPath} should return XML from the configured API`).toBe(200);
+    expect(await feed.text()).toContain(`https://ravell.tech/articles/${article.slug}`);
   }
 
   const articleResponse = await request.get(frontendUrl(`/articles/${article.slug}`));
@@ -334,8 +334,7 @@ function isLocalFrontendOrigin() {
 }
 
 function endpointPathsForCurrentOrigin() {
-  const paths = ['/sitemap.xml', '/robots.txt'];
-  return isLocalFrontendOrigin() ? paths : ['/feed.xml', '/rss.xml', '/atom.xml', ...paths];
+  return ['/feed.xml', '/rss.xml', '/atom.xml', '/sitemap.xml', '/robots.txt'];
 }
 
 function frontendUrl(path: string) {
