@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import dayjs from "dayjs";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import ThemeToggle from "../ThemeToggle";
 import ReadingProgressBar from "../ReadingProgressBar";
 import { useSidebar } from "../../SidebarContext";
@@ -22,6 +23,9 @@ interface HeaderProps {
 const HeaderNext = ({ setIsMenuOpen }: HeaderProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const mobileSearchButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileSearchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -36,6 +40,28 @@ const HeaderNext = ({ setIsMenuOpen }: HeaderProps) => {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  useEffect(() => {
+    if (!isMobileSearchOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const focusTimer = window.setTimeout(() => mobileSearchInputRef.current?.focus(), 0);
+
+    const handleOverlayKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsMobileSearchOpen(false);
+        mobileSearchButtonRef.current?.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleOverlayKeyDown);
+    return () => {
+      window.clearTimeout(focusTimer);
+      document.body.style.overflow = originalOverflow;
+      document.removeEventListener('keydown', handleOverlayKeyDown);
+    };
+  }, [isMobileSearchOpen]);
 
   const { tags: mobileTags, recentArticles: latestArticles } = useGlobalData();
   const router = useRouter();
@@ -53,6 +79,11 @@ const HeaderNext = ({ setIsMenuOpen }: HeaderProps) => {
   const handleTagClick = (slug: string, name: string) => {
     setIsMobileSearchOpen(false);
     router.push(`/articles?tags__slug=${slug}&tag_name=${name}`);
+  };
+
+  const closeMobileSearch = () => {
+    setIsMobileSearchOpen(false);
+    mobileSearchButtonRef.current?.focus();
   };
 
   const getPageTitle = (path: string) => {
@@ -95,8 +126,26 @@ const HeaderNext = ({ setIsMenuOpen }: HeaderProps) => {
             </div>
 
             <div className="flex items-center gap-2 sm:gap-4">
-              <form onSubmit={handleSearch} className="hidden md:block relative group">
-                <div className="relative">
+              <motion.form
+                onSubmit={handleSearch}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={(event) => {
+                  if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                    setIsSearchFocused(false);
+                  }
+                }}
+                className="relative hidden md:block group"
+                initial={false}
+                animate={isSearchFocused ? { y: -1, scale: 1.015 } : { y: 0, scale: 1 }}
+                whileHover={{ y: -1 }}
+                transition={{ type: "spring", stiffness: 420, damping: 32 }}
+              >
+                <motion.div
+                  className="relative"
+                  initial={false}
+                  animate={isSearchFocused ? { boxShadow: "0 14px 34px rgba(147, 51, 234, 0.18)" } : { boxShadow: "0 0 0 rgba(0, 0, 0, 0)" }}
+                  transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                >
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
                         <Search className="h-4 w-4 text-gray-400 group-focus-within:text-purple-500 group-focus-within:scale-110 group-focus-within:rotate-3 transition-all duration-300 ease-in-out" />
                     </div>
@@ -111,15 +160,20 @@ const HeaderNext = ({ setIsMenuOpen }: HeaderProps) => {
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                         <span className="text-[10px] text-gray-400 dark:text-gray-500 bg-white dark:bg-gray-700 px-1.5 py-0.5 rounded border border-gray-200 dark:border-gray-600 shadow-sm group-focus-within:opacity-0 group-focus-within:scale-90 transition-all duration-300 ease-in-out font-mono">⌘K</span>
                     </div>
-                </div>
-              </form>
+                </motion.div>
+              </motion.form>
 
-              <button
+              <motion.button
                 onClick={() => setIsMobileSearchOpen(true)}
+                ref={mobileSearchButtonRef}
                 className="md:hidden p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors"
+                aria-label="Open search"
+                whileHover={{ y: -1, scale: 1.04 }}
+                whileTap={{ scale: 0.94 }}
+                transition={{ type: "spring", stiffness: 420, damping: 28 }}
               >
                 <Search className="h-5 w-5" />
-              </button>
+              </motion.button>
 
               <div className="h-6 w-px bg-gray-200 dark:bg-gray-700 hidden sm:block"></div>
               <ThemeToggle />
@@ -133,23 +187,32 @@ const HeaderNext = ({ setIsMenuOpen }: HeaderProps) => {
       </header>
 
       {isMobileSearchOpen && (
-        <div className="fixed inset-0 z-[60] bg-white dark:bg-gray-950 animate-in fade-in duration-200 flex flex-col md:hidden">
+        <div
+          className="fixed inset-0 z-[60] flex flex-col bg-white animate-in fade-in duration-200 dark:bg-gray-950 md:hidden"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Search articles"
+        >
             <div className="flex items-center gap-3 p-4 border-b border-gray-100 dark:border-gray-800">
             <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-purple-600 dark:text-purple-400" />
                 <form onSubmit={handleSearch}>
+                    <label htmlFor="mobile-search-input" className="sr-only">
+                      Search articles and tags
+                    </label>
                     <input
+                        id="mobile-search-input"
+                        ref={mobileSearchInputRef}
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        autoFocus
                         className="w-full pl-10 pr-4 py-3 bg-gray-100 dark:bg-gray-900 rounded-xl border-none text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 placeholder-gray-500"
                         placeholder="Search articles, tags..."
                     />
                 </form>
             </div>
             <button
-                onClick={() => setIsMobileSearchOpen(false)}
+                onClick={closeMobileSearch}
                 className="p-3 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl"
             >
                 <span className="sr-only">Close</span>

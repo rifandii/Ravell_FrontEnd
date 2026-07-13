@@ -11,6 +11,7 @@ import type { Article, Heading } from '../../../types/types';
 export default function ArticleDetailClient({ article }: { article: Article }) {
   const { setHeadings, setPageTitle } = useSidebar();
   const [zoomedImageUrl, setZoomedImageUrl] = useState<string | null>(null);
+  const [zoomedImageAlt, setZoomedImageAlt] = useState(article.title);
 
   useEffect(() => {
     setPageTitle(article.title);
@@ -25,7 +26,9 @@ export default function ArticleDetailClient({ article }: { article: Article }) {
       const newHeadings: Heading[] = [];
 
       hTags.forEach((h) => {
-        const text = h.textContent || '';
+        const headingClone = h.cloneNode(true) as HTMLElement;
+        headingClone.querySelectorAll('a[href^="#"]').forEach((anchor) => anchor.remove());
+        const text = headingClone.textContent?.trim() || '';
         const id = h.id || slugify(text, { lower: true, strict: true });
         h.id = id;
         newHeadings.push({
@@ -49,29 +52,55 @@ export default function ArticleDetailClient({ article }: { article: Article }) {
   // Event delegation keeps markdown image zoom working without attaching a
   // separate click handler to each generated image node.
   useEffect(() => {
-    const handleImageClick = (e: MouseEvent) => {
-      const target = e.target as HTMLImageElement;
-      if (target.tagName === 'IMG' && target.closest('article')) {
-        setZoomedImageUrl(target.src);
+    const openArticleImage = (image: HTMLImageElement) => {
+      setZoomedImageAlt(image.alt || article.title);
+      setZoomedImageUrl(image.currentSrc || image.src);
+    };
+
+    const handleImageClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      const image = target.closest('img');
+      if (image && (image.closest('article') || image.dataset.articleImage === 'true')) {
+        openArticleImage(image);
+      }
+    };
+
+    const handleImageKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement;
+      const image = target.closest('img');
+      if (image && (image.closest('article') || image.dataset.articleImage === 'true') && (event.key === 'Enter' || event.key === ' ')) {
+        event.preventDefault();
+        openArticleImage(image);
       }
     };
 
     const articleEl = document.querySelector('article');
+    const previewImages = document.querySelectorAll<HTMLImageElement>('article img, img[data-article-image="true"]');
+    previewImages.forEach((image) => {
+      image.setAttribute('tabindex', '0');
+      image.setAttribute('role', 'button');
+      image.setAttribute('aria-label', `Open image preview${image.alt ? `: ${image.alt}` : ''}`);
+      image.classList.add('cursor-zoom-in');
+    });
+
+    document.addEventListener('click', handleImageClick);
+    document.addEventListener('keydown', handleImageKeyDown);
+
     if (articleEl) {
-      articleEl.addEventListener('click', handleImageClick);
+      articleEl.querySelectorAll('img').forEach((image) => image.classList.add('cursor-zoom-in'));
     }
 
     return () => {
-      if (articleEl) {
-        articleEl.removeEventListener('click', handleImageClick);
-      }
+      document.removeEventListener('click', handleImageClick);
+      document.removeEventListener('keydown', handleImageKeyDown);
     };
-  }, []);
+  }, [article.title]);
 
   return (
     <>
       <ImageModal
         imageUrl={zoomedImageUrl}
+        imageAlt={zoomedImageAlt}
         onClose={() => setZoomedImageUrl(null)}
       />
     </>
