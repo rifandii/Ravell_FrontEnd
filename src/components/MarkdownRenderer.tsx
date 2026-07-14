@@ -11,8 +11,8 @@ interface MarkdownRendererProps {
   onImageClick?: (src: string) => void;
 }
 
-// Central markdown renderer shared by Next SSG pages and the legacy Vite path.
-// Keep URL normalization here so article bodies render consistently in both runtimes.
+// Central markdown renderer shared by Next server and client article views.
+// Keep URL normalization here so server and client article views stay consistent.
 export default function MarkdownRenderer({ content, onImageClick }: MarkdownRendererProps) {
   const components: Components = {
     // Avoid nested <pre> wrappers because CodeBlock owns the final code container.
@@ -96,9 +96,7 @@ export default function MarkdownRenderer({ content, onImageClick }: MarkdownRend
       const src = typeof props.src === 'string' ? props.src : undefined;
       const alt = typeof props.alt === 'string' ? props.alt : undefined;
       const isRelative = src?.startsWith('/') ?? false;
-      const apiBaseUrl = (typeof import.meta !== 'undefined' && import.meta.env)
-        ? (import.meta.env.VITE_API_BASE_URL || 'https://api.ravell.tech')
-        : (typeof process !== 'undefined' && process.env ? (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech') : 'https://api.ravell.tech');
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech';
       const fullSrc = src && isRelative ? `${apiBaseUrl}${src}` : src;
       const imageClickProps = onImageClick && fullSrc
         ? { onClick: () => onImageClick(fullSrc) }

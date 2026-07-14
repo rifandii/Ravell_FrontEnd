@@ -1,14 +1,13 @@
 # Frontend Cache Policy
 
-Last reviewed: 2026-06-28
+Last reviewed: 2026-07-13
 
-This policy applies to the active Next.js App Router runtime. The legacy Vite
-SPA remains in the repository only for fallback and comparison commands.
+This policy applies to the sole active frontend runtime: Next.js App Router.
 
 ## Runtime Goals
 
 - Keep prerendered Next.js HTML and article data governed by Next.js ISR.
-- Prevent the legacy SPA shell from being served for App Router routes.
+- Prevent an obsolete SPA shell from being served for App Router routes.
 - Preserve safe client-side caching only for fingerprinted static assets.
 - Let backend API freshness be controlled by the API response and Next.js data
   fetching layer, not by the browser service worker.
@@ -50,8 +49,7 @@ The service worker uses cache-first only for same-origin fingerprinted assets:
 - `/_next/static/`
 
 This path is safe because Next.js emits content-addressed build assets there.
-The legacy Vite `/assets/` path is not cached by the service worker until
-`FE-01` proves those assets are still required and immutable.
+The retired Vite `/assets/` path is not cached by the service worker.
 Non-fingerprinted files such as `/manifest.json`, `/logo.png`, and PWA icons
 are not precached by the service worker.
 
@@ -91,8 +89,7 @@ The active Next.js runtime registers `/sw.js` from
 keeps `next dev` from accumulating local service-worker state while still
 updating users on Vercel production and development deployments.
 
-The legacy Vite entry point keeps its existing production-only registration for
-fallback comparison builds.
+There is no second service-worker registration path in the active source tree.
 
 ## Regression Coverage
 

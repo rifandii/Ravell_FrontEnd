@@ -1,6 +1,6 @@
 # Ravell Frontend UI-UX Baseline
 
-Last updated: 2026-07-04
+Last updated: 2026-07-13
 Baseline commit: `defa70e`
 Production deployment: `https://ravell.tech`
 Development deployment: `https://dev.ravell.tech`
@@ -27,9 +27,7 @@ This document is the preservation note for the UI-UX work already approved and d
 Key files:
 
 - `src/app/articles/ArticleListClient.tsx`
-- `src/vite-pages/ArticleListPage.tsx`
 - `src/components/next/ArticleCardNext.tsx`
-- `src/components/ArticleCard.tsx`
 - `src/components/SkeletonCard.tsx`
 
 ### Article Detail Tags
@@ -41,7 +39,6 @@ Key files:
 Key files:
 
 - `src/app/articles/[slug]/page.tsx`
-- `src/vite-pages/ArticleDetailPage.tsx`
 
 ### Article Images
 
@@ -59,7 +56,6 @@ Key files:
 - `src/components/ImageModal.tsx`
 - `src/app/articles/[slug]/ArticleDetailClient.tsx`
 - `src/components/MarkdownRenderer.tsx`
-- `src/vite-pages/ArticleDetailPage.tsx`
 
 ### Search UI Motion
 
@@ -71,7 +67,6 @@ Key files:
 Key files:
 
 - `src/components/next/HeaderNext.tsx`
-- `src/components/Header.tsx`
 
 ### Table Of Contents
 
@@ -82,9 +77,7 @@ Key files:
 Key files:
 
 - `src/app/articles/[slug]/ArticleDetailClient.tsx`
-- `src/vite-pages/ArticleDetailPage.tsx`
 - `src/components/next/RightSidebarNext.tsx`
-- `src/components/RightSidebar.tsx`
 
 ### Overall Visual Direction
 
@@ -160,15 +153,10 @@ Expect conflicts or behavioral regressions if the grand implementation touches:
 - `src/app/articles/[slug]/ArticleDetailClient.tsx`
 - `src/app/articles/[slug]/page.tsx`
 - `src/components/next/HeaderNext.tsx`
-- `src/components/Header.tsx`
 - `src/components/next/ArticleCardNext.tsx`
-- `src/components/ArticleCard.tsx`
 - `src/components/SkeletonCard.tsx`
 - `src/app/articles/ArticleListClient.tsx`
-- `src/vite-pages/ArticleListPage.tsx`
-- `src/vite-pages/ArticleDetailPage.tsx`
 - `src/components/next/RightSidebarNext.tsx`
-- `src/components/RightSidebar.tsx`
 
 ## Restore Notes
 
