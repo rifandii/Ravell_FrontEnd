@@ -1,11 +1,6 @@
-type SyndicationKind = 'sitemap' | 'rss' | 'atom';
+import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS } from './cachePolicy';
 
-const CACHE_REVALIDATE_SECONDS = 3600;
-const CACHE_TAGS = {
-  CONTENT: 'ravell:content',
-  SITEMAP: 'ravell:sitemap',
-  FEED: 'ravell:feed',
-} as const;
+type SyndicationKind = 'sitemap' | 'rss' | 'atom';
 
 const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech').replace(/\/+$/, '');
 

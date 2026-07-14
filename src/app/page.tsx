@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, Star, Folder, Tag as TagIcon, MessageCircle, Zap, CalendarDays, BookOpen, Network, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Star, Folder, Tag as TagIcon, MessageCircle, CalendarDays, BookOpen, Network, ShieldCheck } from 'lucide-react';
 import ArticleCardNext from '../components/next/ArticleCardNext';
+import BackendUnavailable from '../components/BackendUnavailable';
+import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS } from '../lib/cachePolicy';
+import { fetchBackendJson } from '../lib/backendFetch';
 import type { Article, Category, Tag } from '../types/types';
 
 declare const process: { env: { [key: string]: string | undefined } };
@@ -17,53 +20,35 @@ export const metadata: Metadata = {
 async function getHomeData() {
   try {
     // Fetch the homepage data in parallel; each request participates in Next ISR.
-    const [articlesRes, categoriesRes, tagsRes] = await Promise.all([
-      fetch(`${API_BASE_URL}/api/articles/latest/`, { next: { revalidate: 3600 } }),
-      fetch(`${API_BASE_URL}/api/categories/`, { next: { revalidate: 3600 } }),
-      fetch(`${API_BASE_URL}/api/tags/`, { next: { revalidate: 3600 } }),
+    const [latestArticles, categoriesData, tagsData] = await Promise.all([
+      fetchBackendJson<Article[]>(`${API_BASE_URL}/api/articles/latest/`, { next: { revalidate: CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ARTICLES, CACHE_TAGS.ARTICLES_LATEST] } }),
+      fetchBackendJson<{ results?: Category[] }>(`${API_BASE_URL}/api/categories/`, { next: { revalidate: CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.CATEGORIES] } }),
+      fetchBackendJson<{ results?: Tag[] }>(`${API_BASE_URL}/api/tags/`, { next: { revalidate: CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.TAGS] } }),
     ]);
 
-    const latestArticles: Article[] = articlesRes.ok ? await articlesRes.json() : [];
-    const categoriesData = categoriesRes.ok ? await categoriesRes.json() : { results: [] };
-    const tagsData = tagsRes.ok ? await tagsRes.json() : { results: [] };
-
     return {
+      status: 'available' as const,
       latestArticles: latestArticles.slice(0, 6),
       featuredArticles: latestArticles.filter((_, idx) => idx % 2 === 0).slice(0, 3),
       categories: (categoriesData.results || []).slice(0, 4) as Category[],
       tags: (tagsData.results || []).slice(0, 6) as Tag[],
       error: null
     };
-  } catch (err) {
-    console.error('Error fetching homepage data:', err);
+  } catch {
     return {
-      latestArticles: [],
-      featuredArticles: [],
-      categories: [],
-      tags: [],
-      error: 'Failed to load homepage content. Please try again later.'
+      status: 'unavailable' as const,
     };
   }
 }
 
 export default async function HomePage() {
-  const { latestArticles, featuredArticles, categories, tags, error } = await getHomeData();
+  const data = await getHomeData();
 
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] px-4 text-center">
-        <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mb-4">
-          <Zap className="w-8 h-8 text-red-500" />
-        </div>
-        <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-          Failed to Load Homepage
-        </h3>
-        <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-md mb-6">
-          {error}
-        </p>
-      </div>
-    );
+  if (data.status === 'unavailable') {
+    return <BackendUnavailable />;
   }
+
+  const { latestArticles, featuredArticles, categories, tags } = data;
 
   return (
     <div className="w-full animate-in fade-in duration-500">

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { backendUnavailable } from '../lib/backendFailure';
 import type {
   ApiArticle,
   ApiArticleListResponse,
@@ -41,15 +42,14 @@ export const getPaginatedArticles = async (urlOrPath: string): Promise<Paginated
   try {
     // Django pagination can return absolute next/previous URLs; use them as-is.
     if (urlOrPath.startsWith('http')) {
-      const response = await axios.get<ArticleListResponse>(urlOrPath);
+      const response = await apiClient.get<ArticleListResponse>(urlOrPath);
       return response.data;
     }
 
     const response = await apiClient.get<ArticleListResponse>(urlOrPath);
     return response.data;
-  } catch (error) {
-    console.error('Error fetching paginated articles:', error);
-    return { count: 0, next: null, previous: null, results: [] };
+  } catch {
+    throw backendUnavailable();
   }
 };
 
@@ -58,8 +58,10 @@ export const getArticleBySlug = async (slug: string): Promise<Article | null> =>
     const response = await apiClient.get<ArticleResponse>(`/articles/${slug}/`);
     return response.data;
   } catch (error) {
-    console.error(`Error fetching article with slug ${slug}:`, error);
-    return null;
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
+      return null;
+    }
+    throw backendUnavailable();
   }
 };
 
@@ -67,9 +69,8 @@ export const getLatestArticles = async (): Promise<Article[]> => {
   try {
     const response = await apiClient.get<ArticleResponse[]>('/articles/latest/');
     return response.data;
-  } catch (error) {
-    console.error('Error fetching latest articles:', error);
-    return [];
+  } catch {
+    throw backendUnavailable();
   }
 };
 
@@ -77,9 +78,8 @@ export const getPaginatedCategories = async (): Promise<PaginatedResponse<Catego
   try {
     const response = await apiClient.get<CategoryListResponse>('/categories/');
     return response.data;
-  } catch (error) {
-    console.error('Error fetching categories:', error);
-    return { count: 0, next: null, previous: null, results: [] };
+  } catch {
+    throw backendUnavailable();
   }
 };
 
@@ -87,9 +87,8 @@ export const getPaginatedTags = async (): Promise<PaginatedResponse<Tag>> => {
   try {
     const response = await apiClient.get<TagListResponse>('/tags/');
     return response.data;
-  } catch (error) {
-    console.error('Error fetching tags:', error);
-    return { count: 0, next: null, previous: null, results: [] };
+  } catch {
+    throw backendUnavailable();
   }
 };
 
@@ -98,8 +97,10 @@ export const getCategoryBySlug = async (slug: string): Promise<Category | null> 
     const response = await apiClient.get<CategoryResponse>(`/categories/${slug}/`);
     return response.data;
   } catch (error) {
-    console.error(`Error fetching category with slug ${slug}:`, error);
-    return null;
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
+      return null;
+    }
+    throw backendUnavailable();
   }
 };
 
@@ -108,8 +109,10 @@ export const getTagBySlug = async (slug: string): Promise<Tag | null> => {
     const response = await apiClient.get<TagResponse>(`/tags/${slug}/`);
     return response.data;
   } catch (error) {
-    console.error(`Error fetching tag with slug ${slug}:`, error);
-    return null;
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
+      return null;
+    }
+    throw backendUnavailable();
   }
 };
 
@@ -121,8 +124,7 @@ export const getContentSignature = async (): Promise<ContentSignature> => {
   try {
     const response = await apiClient.get<ApiContentSignature & ContentSignature>('/content/signature/');
     return response.data;
-  } catch (error) {
-    console.error('Error fetching content signature:', error);
-    return { signature: '' };
+  } catch {
+    throw backendUnavailable();
   }
 };
