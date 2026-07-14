@@ -1,440 +1,198 @@
-# Ravell Networks - Frontend
+# Ravell Networks Frontend
 
-Production frontend for the Ravell Networks technical blog and knowledge base.
-The site serves networking, infrastructure, cloud, cybersecurity, firewall, SDN,
-and automation content from the Ravell backend API.
+Next.js App Router frontend for the Ravell Networks technical knowledge base.
+It renders public articles, taxonomy, search and filtering UI, syndication
+routes, and the server-side revalidation route used by the backend development
+cutover.
 
-Last reviewed: 2026-06-29
+Last reviewed: 2026-07-14
 
-## Live Environments
+## Operational Status
 
-| Environment | Branch | URL | Backend API | Runtime |
-| --- | --- | --- | --- | --- |
-| Production | `main` | `https://ravell.tech` | `https://api.ravell.tech` | Next.js App Router / SSG |
-| Development / Preview | `development` | `https://dev.ravell.tech` | `https://api-dev.ravell.tech` | Next.js App Router / SSG |
+| Area | Production | Development |
+| --- | --- | --- |
+| Branch / deployment target | `main` / Vercel Production | `development` / Vercel Preview alias |
+| Public URL | `https://ravell.tech` | `https://dev.ravell.tech` |
+| Backend base URL | `https://api.ravell.tech` | `https://api-dev.ravell.tech` |
+| Supported runtime | Next.js App Router | Next.js App Router |
+| UI/UX baseline | Approved and change-controlled | Same approved baseline |
+| WEB-02 frontend route | Present but production backend promotion is deferred | Signed revalidation route is runtime-validated |
+| WEB-03 syndication | Dynamic sitemap and feeds are live | Dynamic sitemap and feeds are live |
 
-The Vercel project is `ravell-networks-projects/ravell-front-end`.
+FE-01 is complete: the supported deployment and rollback path is Next.js only.
+Legacy Vite-era files may still exist in historical or unpromoted local
+worktrees, but they are not a supported dev server, build, preview, deployment,
+or rollback path.
 
-## Current Runtime Status
-
-The active production runtime is Next.js App Router with static generation:
-
-- `corepack pnpm run dev` starts `next dev`.
-- `corepack pnpm run build` runs `next build`.
-- `corepack pnpm run start` and `corepack pnpm run preview` serve the built Next app.
-- `corepack pnpm run typecheck` runs TypeScript project validation.
-- `corepack pnpm run api:types` regenerates API contracts from the backend OpenAPI
-  artifact.
-- `corepack pnpm run api:types:check` verifies generated API contract drift.
-- `corepack pnpm run test:e2e` runs Playwright browser regression tests.
-- `corepack pnpm run test:e2e:smoke` runs the QA-02 Next.js regression smoke suite.
-- Article detail pages are generated with SSG and revalidated hourly.
-- The previous Vite SPA remains in the repository for fallback/comparison via
-  `npm run dev:vite`, `npm run build:vite`, and `npm run preview:vite`.
+The approved UI/UX baseline is
+[`docs/ui-ux-baseline.md`](docs/ui-ux-baseline.md). Do not change layout,
+navigation, article interaction, error states, or visual behavior without
+explicit owner approval.
 
 ## Architecture
 
 ```text
 Browser
-  |
-  | HTTPS
-  v
-Cloudflare
-  |
-  | Frontend routes
-  v
-Vercel CDN / Next.js build output
-  |
-  | Server/client API calls through NEXT_PUBLIC_API_BASE_URL
-  v
-Tencent Cloud VM
-  |
-  v
-Nginx -> Gunicorn -> Django Ninja API
+  -> Cloudflare
+  -> Vercel CDN and Next.js App Router
+  -> public Ravell backend API over HTTPS
+  -> Cloudflare -> Nginx -> Gunicorn -> Django
 ```
 
-## Technology Stack
+The frontend does not reach a raw origin IP. It uses the environment-specific
+public API hostname. Admin access belongs to the backend and is protected by
+Cloudflare Access; public content routes remain public.
 
-| Area | Technology |
+## Runtime Behavior
+
+- Article, category, tag, archive, search, pagination, image modal, theme, and
+  empty/error states run through the App Router UI.
+- API failures remain failures: an outage is not converted to an empty result,
+  invalid filter, or article-not-found state.
+- `X-Request-ID` from backend responses is available for cross-service
+  correlation where the response exposes it.
+- The PWA service worker follows the documented conservative cache policy and
+  does not turn API or document failures into cached content.
+- The frontend exposes dynamic public syndication routes and an internal signed
+  revalidation endpoint.
+
+## Public Routes
+
+| Route | Purpose |
 | --- | --- |
-| Active runtime | Next.js 16 App Router |
-| Legacy fallback | React 19 + Vite 7 SPA |
-| Language | TypeScript 5.8 |
-| Styling | Tailwind CSS 4 |
-| Routing | Next App Router; React Router DOM 7 only for legacy Vite path |
-| Data fetching | Next `fetch`, Axios, TanStack React Query provider |
-| Markdown | `react-markdown`, `remark-gfm` |
-| Code highlighting | `react-syntax-highlighter` Prism |
-| Animation | Framer Motion |
-| Icons | Lucide React, Heroicons |
-| SEO | Next metadata API; `react-helmet-async` only for legacy Vite path |
-| Analytics | Direct GA4 page-view tracking from Next App Router |
-| PWA/static assets | `manifest.json`, `sw.js`, maskable icons, PWA icons |
+| `/` | Homepage |
+| `/articles` | Listing, search, filters, and pagination |
+| `/articles/[slug]` | Article detail and metadata |
+| `/categories`, `/tags`, `/archives` | Taxonomy and archive views |
+| `/sitemap.xml` | Dynamic sitemap |
+| `/feed.xml` | RSS-compatible feed route |
+| `/rss.xml` | RSS route |
+| `/atom.xml` | Atom route |
+| `/api/internal/revalidate` | Internal signed cache revalidation route; not public API |
 
-## Next.js / SSG Scope
+WEB-03 validated production sitemap and feed freshness without content
+mutation. The frontend routes obtain public syndication data from the backend
+instead of relying on a static `public/sitemap.xml` artifact.
 
-Implemented in `src/app` and active on production:
-
-- Root layout with theme, sidebar, and global providers.
-- Static home page with ISR revalidation.
-- Static categories, tags, archives, and about pages.
-- Article detail route `/articles/[slug]` with:
-  - `generateStaticParams` for article slug pre-rendering.
-  - `generateMetadata` for per-article SEO and social metadata.
-  - hourly revalidation for article content.
-  - previous/next article navigation.
-  - markdown rendering and client-side table-of-contents/image interactions.
-- Client-side article list route `/articles` for dynamic filters, search,
-  category/tag validation, archive filters, and pagination.
-- Next-specific sidebar, header, cards, pagination, and recursive category UI
-  under `src/components/next`.
-
-Expected build output:
-
-```text
-/                         static, revalidate 1h
-/about                    static
-/archives                 static, revalidate 1h
-/articles                 static shell with client-side filtering
-/articles/[slug]          SSG using generateStaticParams, revalidate 1h
-/categories               static, revalidate 1h
-/tags                     static
-```
-
-## Legacy Vite SPA
-
-The former SPA remains available for comparison and rollback work:
-
-- `src/App.tsx` and `src/main.tsx` are the Vite entry points.
-- `src/vite-pages/` contains the SPA pages.
-- `src/components/` contains shared and legacy UI components.
-- `vite.config.ts` remains for legacy build commands only.
-
-Use these commands only when intentionally testing the old SPA:
-
-```bash
-npm run dev:vite
-npm run build:vite
-npm run preview:vite
-```
-
-## PWA and Cache Policy
-
-The active Next.js runtime registers `/sw.js` only in production builds. The
-service worker is intentionally conservative:
-
-- document navigation and article routes are not cached by the service worker;
-- `/index.html` is not precached and is never used as an App Router fallback;
-- backend API requests pass through without service-worker caching;
-- cache-first behavior is limited to same-origin fingerprinted assets under
-  `/_next/static/`;
-- legacy SPA caches `ravell-cache-v1`, `ravell-assets-v1`, and
-  `ravell-images-v1` are deleted during the v2 activation path;
-- unrelated `ravell-*` caches are preserved unless they are in the
-  `ravell-static-*` namespace.
-
-The detailed policy and migration behavior are documented in
-`docs/frontend/cache-policy.md`.
-
-## Project Structure
-
-```text
-Ravell_FrontEnd/
-|-- docs/
-|   `-- frontend/
-|       |-- api-contracts.md
-|       |-- analytics-ownership.md
-|       `-- cache-policy.md
-|-- public/
-|   |-- manifest.json
-|   |-- sw.js
-|   |-- robots.txt
-|   |-- sitemap.xml
-|   |-- pwa-192.png
-|   |-- pwa-512.png
-|   |-- maskable-icon.png
-|   `-- logo/profile assets
-|-- src/
-|   |-- app/                        # Active Next.js App Router tree
-|   |-- components/next/            # Next-specific navigation/cards/pagination
-|   |-- components/                 # Shared and legacy SPA UI components
-|   |-- vite-pages/                 # Legacy SPA pages
-|   |-- context/GlobalContext.tsx   # Global data provider
-|   |-- hooks/                      # Page tracking and active heading hooks
-|   |-- services/apiClient.ts       # API client and endpoint wrappers
-|   |-- types/generated/            # Generated OpenAPI snapshot and TS contracts
-|   |-- types/api-contracts.ts      # Transport contract aliases
-|   |-- types/types.ts              # Shared TypeScript API shapes
-|   |-- SidebarContext.tsx
-|   |-- ThemeContext.tsx
-|   |-- App.tsx                     # Legacy Vite SPA router
-|   `-- main.tsx                    # Legacy Vite SPA entry point
-|-- vercel.json                    # Next framework override, feed rewrites, headers
-|-- vite.config.ts                 # Legacy Vite build config
-|-- postcss.config.mjs             # Tailwind/PostCSS support
-|-- package.json
-|-- package-lock.json
-|-- pnpm-lock.yaml
-`-- pnpm-workspace.yaml
-```
-
-## API Endpoints Consumed
-
-| Endpoint | Purpose |
-| --- | --- |
-| `GET /api/articles/` | Paginated article listing with filters |
-| `GET /api/articles/{slug}/` | Article detail |
-| `GET /api/articles/latest/` | Latest articles for home/sidebar |
-| `GET /api/articles/random_articles/` | Further-reading recommendations |
-| `GET /api/categories/` | Hierarchical categories |
-| `GET /api/categories/{slug}/` | Category validation/detail |
-| `GET /api/tags/` | Tags and tag counts |
-| `GET /api/tags/{slug}/` | Tag validation/detail |
-| `GET /api/archives/` | Year/month archive navigation |
-| `GET /api/images/` | Image list |
-| `GET /api/content/signature/` | Lightweight content-change polling |
-
-## API Contract Workflow
-
-Backend Django Ninja OpenAPI is the API source of truth. The frontend generated
-artifacts are:
-
-```text
-src/types/generated/ravell-api.openapi.json
-src/types/generated/api.ts
-```
-
-Regenerate and validate them with:
-
-```bash
-corepack pnpm run api:types
-corepack pnpm run api:types:check
-corepack pnpm run typecheck
-```
-
-Generated transport contracts stay separated from frontend view models. The
-compatibility boundary is `src/types/api-contracts.ts`; UI components should
-continue to consume the view models from `src/types/types.ts` unless a deliberate
-adapter migration is being made.
-
-Detailed workflow and ownership rules are documented in
-`docs/frontend/api-contracts.md`.
-
-## Environment Variables
-
-### Next.js runtime
-
-| Variable | Purpose |
-| --- | --- |
-| `NEXT_PUBLIC_API_BASE_URL` | Public backend base URL without `/api`, for example `https://api.ravell.tech` |
-| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | Optional GA4 measurement ID used by the App Router page-view tracker |
-
-### Legacy Vite runtime
-
-| Variable | Purpose |
-| --- | --- |
-| `VITE_API_BASE_URL` | Backend base URL without `/api`, for legacy Vite commands |
-
-### Vercel configuration
-
-| Environment | Branch | Expected API base URL |
-| --- | --- | --- |
-| Production | `main` | `https://api.ravell.tech` |
-| Preview | `development` | `https://api-dev.ravell.tech` |
-
-For production Next.js builds, configure
-`NEXT_PUBLIC_API_BASE_URL=https://api.ravell.tech` in the Vercel Production
-environment. For preview builds, configure
-`NEXT_PUBLIC_API_BASE_URL=https://api-dev.ravell.tech`.
-
-GA4 page-view tracking is owned by the active Next.js runtime and documented in
-`docs/frontend/analytics-ownership.md`. Do not hard-code analytics IDs in
-source files; configure `NEXT_PUBLIC_GA_MEASUREMENT_ID` in Vercel environments
-where analytics should run.
-
-Canonical URLs intentionally resolve to `https://ravell.tech` for both
-production and preview/development builds. `dev.ravell.tech` should render the
-same article metadata but keep canonical and Open Graph URLs pointed at the
-production host to avoid indexing preview content as a duplicate origin.
-
-Do not commit `.env`, `.env.local`, `.env.*`, or `.vercel/`. They are
-gitignored and may contain local or Vercel-generated values.
-
-## Local Development
+## Development And Verification
 
 Prerequisites:
 
-- Node.js 20+ recommended. The Vercel project currently uses Node 24.x.
-- pnpm is the active package manager. Use the version declared in
-  `packageManager` through Corepack.
-
-Setup:
+- Node.js 20+; use the repository `packageManager` through Corepack
+- pnpm is the authoritative package manager
+- A local environment override only when a non-default API base URL is needed
 
 ```bash
 git clone git@github.com:rifandii/Ravell_FrontEnd.git
 cd Ravell_FrontEnd
-git checkout main
+git checkout development
 corepack enable
 corepack pnpm install --frozen-lockfile
-```
-
-Create a local override only when needed:
-
-```env
-NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000
-```
-
-Run the active Next.js app:
-
-```bash
 corepack pnpm run dev
 ```
 
-Build and serve locally:
+Core validation:
 
 ```bash
-corepack pnpm run build
-corepack pnpm run start
-```
-
-Lint:
-
-```bash
-corepack pnpm run lint
-```
-
-Browser regression tests:
-
-```bash
-corepack pnpm run build
-corepack pnpm run test:e2e
-```
-
-QA-02 Next.js smoke tests against development:
-
-```powershell
-$env:E2E_BASE_URL='https://dev.ravell.tech'
-$env:E2E_API_BASE_URL='https://api-dev.ravell.tech'
-corepack pnpm run test:e2e:smoke
-```
-
-QA-02 read-only production smoke tests:
-
-```powershell
-$env:E2E_BASE_URL='https://ravell.tech'
-$env:E2E_API_BASE_URL='https://api.ravell.tech'
-corepack pnpm run test:e2e:smoke
-```
-
-API contract validation:
-
-```bash
-corepack pnpm run api:types:check
 corepack pnpm run typecheck
+corepack pnpm run lint
+corepack pnpm run api:types:check
+corepack pnpm run build
+corepack pnpm run test:e2e:smoke
 ```
 
-## Vercel Deployment
+For a read-only development smoke test, configure the test runner with the
+development hostnames. Production smoke tests require a separately approved
+read-only production validation window.
 
-Vercel is connected to the GitHub repository and deploys by branch:
+Do not use Vite commands as a fallback. Do not use `npm install` or create a
+second lockfile; keep `pnpm-lock.yaml` authoritative.
 
-- push to `main`: production deployment at `https://ravell.tech`.
-- push to `development`: preview/development deployment at
-  `https://dev.ravell.tech`.
+## Environment Variables
 
-The local checkout is linked to:
+Do not commit `.env*` files or `.vercel/`. Values stay in the approved local or
+Vercel environment configuration.
 
-```text
-ravell-networks-projects/ravell-front-end
-```
+| Variable | Scope | Purpose |
+| --- | --- | --- |
+| `NEXT_PUBLIC_API_BASE_URL` | Public build-time value | Public backend base URL without `/api` |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | Optional public build-time value | GA4 page-view tracking |
+| `RAVELL_REVALIDATION_SECRET` | Server-only Vercel value | Verifies backend-to-frontend revalidation requests |
 
-Useful CLI checks:
+`RAVELL_REVALIDATION_SECRET` must never use a `NEXT_PUBLIC_` prefix and must
+never be emitted to browser code, source, logs, screenshots, or documentation.
+It is installed only on the Vercel environment that serves the intended alias.
+
+## Content Revalidation
+
+Development proved durable backend outbox delivery to
+`/api/internal/revalidate`, including lifecycle update/restore, timer retry,
+and no-rebuild behavior in `revalidation` mode.
+
+Production backend WEB-02 promotion is deferred. Therefore, the existence of
+the frontend route does not authorize enabling a production backend delivery
+mode or adding/reusing a production secret. Treat production content-refresh
+behavior as the current approved production release behavior until a dedicated
+promotion is approved.
+
+## Vercel Release Process
+
+Vercel is connected to GitHub:
+
+- `development` produces the deployment aliased to `https://dev.ravell.tech`.
+- `main` produces the deployment aliased to `https://ravell.tech`.
+
+Use the exact reviewed commit and its resulting Vercel deployment as a release
+artifact. A production promotion requires owner approval after preview,
+typecheck, lint, API contract, build, browser smoke, UI/UX invariant, and any
+applicable backend compatibility checks are accepted.
+
+Rollback is a reviewed Vercel promotion to the previous known-good production
+deployment, followed by a source revert if source history must change. Do not
+force-push, rewrite history, or use a local legacy runtime as rollback.
+
+## External Monitoring
+
+The approved UptimeRobot Free monitors run every five minutes:
+
+- Ravell Production Frontend
+- Ravell Development Frontend
+- Ravell Development Backend Health
+- Ravell Development Backend Readiness
+- Ravell Production Backend Feed
+
+These are HEAD availability checks under the provider's free-tier 2xx/3xx
+policy. Initial preflight returned direct HTTP `200` for the selected targets.
+They are not proof of response-body correctness, browser rendering, content
+freshness, or exact HTTP-status enforcement.
+
+## API Contract Workflow
+
+The backend OpenAPI artifact is the transport contract source of truth. The
+generated frontend artifacts are under `src/types/generated/`.
 
 ```bash
-npx vercel@latest whoami
-npx vercel@latest project ls
-npx vercel@latest env ls
+corepack pnpm run api:types
+corepack pnpm run api:types:check
 ```
 
-`vercel.json` configures:
+Generated transport contracts remain separated from frontend view models. Keep
+changes to request/error semantics explicit and cover them with the relevant
+browser and API-contract checks.
 
-- Vercel framework override to `nextjs`.
-- RSS/Atom feed rewrites to backend feed endpoints.
-- `sw.js` cache-control.
-- PWA service-worker cache migration is documented in
-  `docs/frontend/cache-policy.md`.
-- direct GA4 page-view ownership is documented in
-  `docs/frontend/analytics-ownership.md`.
-- security headers including HSTS, frame denial, content-type nosniff,
-  permissions policy, COOP/COEP/CORP, and CSP.
+## Security Notes
 
-The old SPA fallback rewrite to `/index.html` is intentionally removed because
-it conflicts with Next App Router routing.
-
-## Production SSG Verification
-
-After the migration, production article URLs are expected to expose title,
-summary, metadata, and article body in the initial HTML. This is the behavior
-that enables Telegram and other Open Graph consumers to show article previews
-without executing client-side JavaScript.
-
-Verified production checks:
-
-- `https://ravell.tech/articles/deploying-ipsec-site-to-site-vpns-with-ftd`
-  returns `200`.
-- Response is `text/html; charset=utf-8`.
-- Vercel reports `x-vercel-cache: PRERENDER` and `x-nextjs-prerender: 1`.
-- The article title and body are present in page source.
-- `/`, `/categories`, `/tags`, and `/archives` also return prerendered HTML.
-
-## Code Hygiene Policy
-
-- Remove unused demo/default assets instead of leaving migration debris in the
-  production tree.
-- Keep comments for architectural boundaries, SSG/ISR behavior, API/runtime
-  compatibility, and non-obvious UI logic.
-- Do not add line-by-line comments that merely repeat the code; those comments
-  rot quickly and make future changes harder to review.
-- Legacy Vite files are kept only for explicit fallback/comparison commands and
-  should not be treated as the active production runtime.
-
-Cleanup completed after SSG promotion:
-
-- Removed unused Vite/React default assets.
-- Removed the unused Supabase SEO demo component and its private helper.
-- Replaced debug/noisy service-worker logs with quieter failure warnings.
-- Fixed invalid Tailwind utility names in sidebar/tag UI.
-- Added comments around SSG, ISR, Open Graph metadata, query-driven article
-  listing, markdown rendering, and runtime API selection.
-
-## Rollback
-
-The safest rollback options are:
-
-- Vercel rollback to the previous production deployment.
-- Git revert of the merge commit that promoted Next.js to `main`.
-- Git tag rollback point: `prod-frontend-pre-next-ssg-20260628`.
-
-## Branch Workflow
-
-1. Build features on `development`.
-2. Verify the preview frontend at `https://dev.ravell.tech`.
-3. Verify API compatibility against `https://api-dev.ravell.tech`.
-4. Merge to `main` only after QA approval.
-5. Confirm production at `https://ravell.tech` after Vercel completes the
-   build.
-
-## Maintenance Notes
-
-- Keep `NEXT_PUBLIC_API_BASE_URL` aligned with the branch environment.
-- Keep `VITE_API_BASE_URL` only for legacy Vite testing.
-- When changing backend response shapes, regenerate API contracts with
-  `npm run api:types`, then update `src/types/types.ts` and affected
-  page/component data mapping only if the frontend view model changes.
-- The backend can trigger Vercel deploy hooks when articles, categories, or tags
-  change, if `VERCEL_DEPLOY_HOOK_URL` is configured server-side.
+- Do not add client-side API keys, backend secrets, or revalidation secrets.
+- Do not bypass Cloudflare, use raw origin addresses, or add SDK/RUM/browser
+  agents without a reviewed change.
+- Keep public frontend traffic on HTTPS. Cloudflare and Vercel own edge
+  transport behavior; application code must not implement alternate origin
+  routing.
+- Production admin protection is a backend Cloudflare Access concern. The
+  frontend must not embed admin or Access credentials.
 
 ## Related Repository
 
-| Repository | Description |
+| Repository | Role |
 | --- | --- |
-| `rifandii/Ravell_BackEnd` | Django + Django Ninja backend API |
+| `rifandii/Ravell_BackEnd` | Django and Django Ninja API, admin, content lifecycle, and operations |
