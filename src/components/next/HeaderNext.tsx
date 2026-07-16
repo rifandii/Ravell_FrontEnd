@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type RefObject } from "react";
 import dayjs from "dayjs";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
@@ -17,10 +17,12 @@ import {
 } from "lucide-react";
 
 interface HeaderProps {
-  setIsMenuOpen: (isOpen: boolean) => void;
+  isMenuOpen: boolean;
+  menuButtonRef: RefObject<HTMLButtonElement | null>;
+  onOpenMenu: () => void;
 }
 
-const HeaderNext = ({ setIsMenuOpen }: HeaderProps) => {
+const HeaderNext = ({ isMenuOpen, menuButtonRef, onOpenMenu }: HeaderProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -110,18 +112,22 @@ const HeaderNext = ({ setIsMenuOpen }: HeaderProps) => {
           <nav className="px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
             <div className="flex items-center gap-4 min-w-0 flex-1">
               <button
-                onClick={() => setIsMenuOpen(true)}
+                ref={menuButtonRef}
+                type="button"
+                onClick={onOpenMenu}
                 className="md:hidden p-2 -ml-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors"
-                aria-label="Open Menu"
+                aria-label="Open navigation menu"
+                aria-expanded={isMenuOpen}
+                aria-controls="primary-navigation"
               >
-                <Menu className="h-6 w-6" />
+                <Menu className="h-6 w-6" aria-hidden="true" focusable="false" />
               </button>
 
               <div className="flex items-center gap-3 overflow-hidden">
                  <span className="hidden md:flex h-6 w-px bg-gray-300 dark:bg-gray-700"></span>
-                 <h1 className="text-sm sm:text-base md:text-lg font-semibold text-gray-900 dark:text-white truncate tracking-tight">
+                 <p className="text-sm sm:text-base md:text-lg font-semibold text-gray-900 dark:text-white truncate tracking-tight">
                     {currentTitle}
-                 </h1>
+                 </p>
               </div>
             </div>
 
