@@ -123,6 +123,58 @@ test('opens the article listing, uses the expected API host, and navigates to an
   assertNoCriticalBrowserIssues(issues);
 });
 
+test('keeps mobile navigation semantic, keyboard-accessible, and out of the closed tab order', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+
+  const menuButton = page.getByRole('button', { name: 'Open navigation menu' });
+  const navigation = page.locator('#primary-navigation');
+  const closeButton = page.getByRole('button', { name: 'Close navigation menu' });
+
+  await expect(navigation).toHaveCount(1);
+  await expect(menuButton).toHaveAttribute('aria-controls', 'primary-navigation');
+  await expect(menuButton).toHaveAttribute('aria-expanded', 'false');
+  expect(await navigation.evaluate((element) => (element as HTMLElement).inert)).toBe(true);
+
+  await menuButton.focus();
+  await page.keyboard.press('Tab');
+  expect(await page.evaluate(() => document.activeElement?.closest('#primary-navigation'))).toBeNull();
+
+  await menuButton.click();
+  await expect(menuButton).toHaveAttribute('aria-expanded', 'true');
+  await expect(closeButton).toBeVisible();
+  expect(await navigation.evaluate((element) => (element as HTMLElement).inert)).toBe(false);
+
+  await closeButton.focus();
+  await page.keyboard.press('Tab');
+  expect(await page.evaluate(() => document.activeElement?.closest('#primary-navigation a')?.getAttribute('href'))).toBe('/');
+
+  await page.keyboard.press('Escape');
+  await expect(menuButton).toHaveAttribute('aria-expanded', 'false');
+  await expect(menuButton).toBeFocused();
+
+  await menuButton.click();
+  await closeButton.click();
+  await expect(menuButton).toHaveAttribute('aria-expanded', 'false');
+  await expect(menuButton).toBeFocused();
+
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.waitForFunction(() => !((document.getElementById('primary-navigation') as HTMLElement | null)?.inert));
+  await expect(navigation).toBeVisible();
+  await expect(menuButton).toBeHidden();
+  await expect(page.locator('#desktop-search-input')).toBeVisible();
+  await expect(navigation.getByRole('link', { name: 'Articles' })).toBeVisible();
+
+  const headingLevels = await page.locator('h1, h2, h3, h4, h5, h6').evaluateAll((headings) =>
+    headings.map((heading) => Number(heading.tagName.slice(1))),
+  );
+  expect(headingLevels.filter((level) => level === 1)).toHaveLength(1);
+  expect(headingLevels[0]).toBe(1);
+  for (let index = 1; index < headingLevels.length; index += 1) {
+    expect(headingLevels[index]).toBeLessThanOrEqual(headingLevels[index - 1] + 1);
+  }
+});
+
 test('keeps search, filters, and pagination routes free from critical browser errors', async ({ page, request }) => {
   const article = await getPublishedArticle(request);
   const filterPath = article.categories?.[0]?.slug

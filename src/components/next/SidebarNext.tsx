@@ -14,10 +14,12 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 
 interface SidebarProps {
   isMenuOpen: boolean;
-  setIsMenuOpen: (isOpen: boolean) => void;
+  isMobile: boolean;
+  onClose: (restoreFocus?: boolean) => void;
+  onNavigate: () => void;
 }
 
-const SidebarNext = ({ isMenuOpen, setIsMenuOpen }: SidebarProps) => {
+const SidebarNext = ({ isMenuOpen, isMobile, onClose, onNavigate }: SidebarProps) => {
   const pathname = usePathname();
 
   const navItems = [
@@ -40,11 +42,14 @@ const SidebarNext = ({ isMenuOpen, setIsMenuOpen }: SidebarProps) => {
       {isMenuOpen && (
         <div
           className="fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm md:hidden"
-          onClick={() => setIsMenuOpen(false)}
+          onClick={() => onClose()}
         />
       )}
 
       <aside
+        id="primary-navigation"
+        aria-label="Primary navigation"
+        inert={isMobile && !isMenuOpen}
         className={`
           fixed top-0 left-0 z-50 h-full w-72 bg-white dark:bg-gray-900
           border-r border-gray-200 dark:border-gray-800
@@ -67,9 +72,9 @@ const SidebarNext = ({ isMenuOpen, setIsMenuOpen }: SidebarProps) => {
               <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-900 rounded-full"></div>
             </div>
             <div className="min-w-0">
-              <h1 className="font-bold text-sm text-gray-900 dark:text-white leading-none truncate">
+              <p className="font-bold text-sm text-gray-900 dark:text-white leading-none truncate">
                 Ravell
-              </h1>
+              </p>
               <p className="text-[10px] text-gray-500 dark:text-gray-400 font-medium flex items-center gap-0.5 mt-0.5">
                 <Terminal className="w-2.5 h-2.5" />
                 IT Guy.
@@ -78,19 +83,21 @@ const SidebarNext = ({ isMenuOpen, setIsMenuOpen }: SidebarProps) => {
           </div>
 
           <button
-            onClick={() => setIsMenuOpen(false)}
+            type="button"
+            onClick={() => onClose(true)}
             className="md:hidden p-1.5 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+            aria-label="Close navigation menu"
           >
-            <XMarkIcon className="w-5 h-5" />
+            <XMarkIcon className="w-5 h-5" aria-hidden="true" focusable="false" />
           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto py-6 px-4 hide-scrollbar space-y-8">
           {navItems.map((group, groupIndex) => (
             <div key={groupIndex}>
-              <h3 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3 px-3">
+              <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 px-3">
                 {group.label}
-              </h3>
+              </p>
               <nav className="space-y-1">
                 {group.items.map((item) => {
                   const active = isActive(item.path);
@@ -100,7 +107,7 @@ const SidebarNext = ({ isMenuOpen, setIsMenuOpen }: SidebarProps) => {
                     <Link
                       key={item.name}
                       href={item.path}
-                      onClick={() => setIsMenuOpen(false)}
+                      onClick={onNavigate}
                       className={`
                         group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200
                         ${active
@@ -131,7 +138,7 @@ const SidebarNext = ({ isMenuOpen, setIsMenuOpen }: SidebarProps) => {
 
         <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50">
           <div className="text-center">
-            <p className="text-[10px] text-gray-400 dark:text-gray-600 uppercase tracking-widest">
+            <p className="text-[10px] text-gray-600 dark:text-gray-400 uppercase tracking-widest">
               © 2025 Ravell Networks
             </p>
           </div>
