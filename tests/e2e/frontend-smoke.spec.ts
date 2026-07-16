@@ -145,6 +145,10 @@ test('keeps mobile navigation semantic, keyboard-accessible, and out of the clos
   await expect(closeButton).toBeVisible();
   expect(await navigation.evaluate((element) => (element as HTMLElement).inert)).toBe(false);
 
+  await closeButton.focus();
+  await page.keyboard.press('Tab');
+  expect(await page.evaluate(() => document.activeElement?.closest('#primary-navigation a')?.getAttribute('href'))).toBe('/');
+
   await page.keyboard.press('Escape');
   await expect(menuButton).toHaveAttribute('aria-expanded', 'false');
   await expect(menuButton).toBeFocused();
