@@ -164,7 +164,7 @@ const HeaderNext = ({ isMenuOpen, menuButtonRef, onOpenMenu }: HeaderProps) => {
                         placeholder="Search documentation..."
                     />
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <span className="text-[10px] text-gray-400 dark:text-gray-500 bg-white dark:bg-gray-700 px-1.5 py-0.5 rounded border border-gray-200 dark:border-gray-600 shadow-sm group-focus-within:opacity-0 group-focus-within:scale-90 transition-all duration-300 ease-in-out font-mono">⌘K</span>
+                        <span className="text-[10px] text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 px-1.5 py-0.5 rounded border border-gray-200 dark:border-gray-600 shadow-sm group-focus-within:opacity-0 group-focus-within:scale-90 transition-all duration-300 ease-in-out font-mono">⌘K</span>
                     </div>
                 </motion.div>
               </motion.form>

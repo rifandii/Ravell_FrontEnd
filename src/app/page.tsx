@@ -88,17 +88,17 @@ export default async function HomePage() {
             <div className="border-r border-gray-200 p-4 dark:border-gray-800 sm:p-5">
               <BookOpen className="mb-4 h-5 w-5 text-purple-600 dark:text-purple-400" />
               <p className="text-2xl font-black text-gray-950 dark:text-white">{latestArticles.length}</p>
-              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-500">Latest</p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400">Latest</p>
             </div>
             <div className="border-r border-gray-200 p-4 dark:border-gray-800 sm:p-5">
               <Folder className="mb-4 h-5 w-5 text-emerald-600 dark:text-emerald-400" />
               <p className="text-2xl font-black text-gray-950 dark:text-white">{categories.length}</p>
-              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-500">Categories</p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400">Categories</p>
             </div>
             <div className="p-4 sm:p-5">
               <Network className="mb-4 h-5 w-5 text-cyan-600 dark:text-cyan-400" />
               <p className="text-2xl font-black text-gray-950 dark:text-white">{tags.length}</p>
-              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-500">Topics</p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400">Topics</p>
             </div>
           </div>
         </div>

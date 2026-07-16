@@ -138,7 +138,7 @@ const SidebarNext = ({ isMenuOpen, isMobile, onClose, onNavigate }: SidebarProps
 
         <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50">
           <div className="text-center">
-            <p className="text-[10px] text-gray-400 dark:text-gray-600 uppercase tracking-widest">
+            <p className="text-[10px] text-gray-600 dark:text-gray-400 uppercase tracking-widest">
               © 2025 Ravell Networks
             </p>
           </div>
