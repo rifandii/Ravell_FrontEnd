@@ -1,0 +1,53 @@
+name: Claude Code
+
+# Responds to an explicit "@claude" mention in an issue or pull request comment.
+# No schedule and no push trigger, so every invocation is owner-initiated.
+#
+# Owner boundaries:
+#   - may read the repository, issues, pull requests, and CI results;
+#   - may commit to a feature branch and open a draft pull request;
+#   - must not push to main, merge a pull request, or change workflows,
+#     secrets, repository settings, or deployment configuration.
+#
+# Production boundary: a merge to main may trigger a Vercel production
+# deployment, so development -> main is a production-sensitive action and
+# belongs to the owner. The agent must never merge and never touch Vercel.
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+
+concurrency:
+  group: claude-${{ github.event.issue.number || github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  claude:
+    if: |
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write # commit to a feature branch
+      pull-requests: write # open and comment on pull requests
+      issues: write # reply in issue threads
+      id-token: write
+      actions: read # read CI results on pull requests
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: Run Claude Code
+        id: claude
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_args: |
+            --max-turns 15
+            --disallowedTools "Bash(gh pr merge:*),Bash(gh secret:*),Bash(gh workflow:*),Bash(gh ruleset:*),Bash(gh repo edit:*),Bash(gh api:*),Bash(vercel:*),Bash(npm install:*),Bash(npm ci:*)"
+            --append-system-prompt "Ravell frontend boundaries. Normal work starts from the development branch. You may read the repository, issues, pull requests, and CI results, and you may commit to the pull request branch you were invoked from. Never push to main and never merge a pull request: a merge to main may trigger a Vercel production deployment, which requires explicit owner approval. Never modify GitHub Actions workflows, secrets, branch protection, repository settings, or Vercel configuration. Treat the accepted production UI/UX as an invariant unless the task explicitly requests a visual change; do not alter spacing, animation, typography, colors, responsive behavior, or component structure incidentally while solving unrelated logic. Next.js App Router is the only active runtime: never restore the retired Vite runtime, Vite dependencies, React Router ownership, or package-lock.json. pnpm is authoritative, so use corepack pnpm and never use npm to rewrite dependency state. Never hand-edit generated API type output to silence a contract mismatch: regenerate with the established script instead. Do not silently turn backend failures into empty successful content states. Never read or print .env or .env.local values, tokens, API keys, session cookies, or the production revalidation secret, and never activate production revalidation. Run the validation baseline before proposing a change: corepack pnpm run typecheck, lint, api:types:check, and build."
