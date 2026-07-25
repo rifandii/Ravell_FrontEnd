@@ -3,11 +3,28 @@ name: Claude Code
 # Responds to an explicit "@claude" mention in an issue or pull request comment.
 # No schedule and no push trigger, so every invocation is owner-initiated.
 #
-# Owner boundaries:
-#   - may read the repository, issues, pull requests, and CI results;
-#   - may commit to a feature branch and open a draft pull request;
-#   - must not push to main, merge a pull request, or change workflows,
-#     secrets, repository settings, or deployment configuration.
+# This repository is PUBLIC, so trigger gating matters more here than anywhere
+# else in the platform.
+#
+# Two control layers, both fail-closed:
+#
+# 1. Trigger gating. The job runs only when the commenting actor is the owner.
+#    An unauthorized mention is ignored before the job starts, so it consumes no
+#    Actions minutes. The action itself also rejects actors without write
+#    access, but that check runs after the job has already started, and it
+#    admits any collaborator with write rather than one named actor.
+#
+# 2. Protected paths. The `settings` block below denies Edit and Write on
+#    workflow definitions, composite actions, and the governance files, and
+#    denies `git rm` outright. Deny rules take precedence over the action's
+#    `--permission-mode acceptEdits`, which would otherwise auto-allow any edit
+#    inside $GITHUB_WORKSPACE. `git rm` is denied because it is on the action's
+#    allowlist and would otherwise let a protected file be deleted rather than
+#    edited. Changing any protected path requires explicit owner instruction
+#    outside this channel.
+#
+# What the agent cannot do at all: merge a pull request, or reach the `gh` CLI,
+# because neither is on the action's tool allowlist.
 #
 # Production boundary: a merge to main may trigger a Vercel production
 # deployment, so development -> main is a production-sensitive action and
@@ -25,9 +42,14 @@ concurrency:
 
 jobs:
   claude:
+    # AUTHORIZED_GITHUB_ACTOR = rifandii; UNAUTHORIZED_MENTION = IGNORE.
+    # Adding an authorized actor is a deliberate workflow change.
     if: |
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude'))
+      github.event.comment.user.login == 'rifandii' &&
+      (
+        (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+        (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude'))
+      )
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -50,8 +72,25 @@ jobs:
           # draws on the owner's Claude plan quota, shared with local use, so
           # the model is pinned to Sonnet 5 to conserve that quota.
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          settings: |
+            {
+              "permissions": {
+                "deny": [
+                  "Edit(./.github/workflows/**)",
+                  "Write(./.github/workflows/**)",
+                  "Edit(./.github/actions/**)",
+                  "Write(./.github/actions/**)",
+                  "Edit(./AGENTS.md)",
+                  "Write(./AGENTS.md)",
+                  "Edit(./CLAUDE.md)",
+                  "Write(./CLAUDE.md)",
+                  "Bash(git rm:*)",
+                  "Bash(git rm *)"
+                ]
+              }
+            }
           claude_args: |
             --model claude-sonnet-5
-            --max-turns 15
-            --disallowedTools "Bash(gh pr merge:*),Bash(gh secret:*),Bash(gh workflow:*),Bash(gh ruleset:*),Bash(gh repo edit:*),Bash(gh api:*),Bash(vercel:*),Bash(npm install:*),Bash(npm ci:*)"
-            --append-system-prompt "Ravell frontend boundaries. Normal work starts from the development branch. You may read the repository, issues, pull requests, and CI results, and you may commit to the pull request branch you were invoked from. Never push to main and never merge a pull request: a merge to main may trigger a Vercel production deployment, which requires explicit owner approval. Never modify GitHub Actions workflows, secrets, branch protection, repository settings, or Vercel configuration. Treat the accepted production UI/UX as an invariant unless the task explicitly requests a visual change; do not alter spacing, animation, typography, colors, responsive behavior, or component structure incidentally while solving unrelated logic. Next.js App Router is the only active runtime: never restore the retired Vite runtime, Vite dependencies, React Router ownership, or package-lock.json. pnpm is authoritative, so use corepack pnpm and never use npm to rewrite dependency state. Never hand-edit generated API type output to silence a contract mismatch: regenerate with the established script instead. Do not silently turn backend failures into empty successful content states. Never read or print .env or .env.local values, tokens, API keys, session cookies, or the production revalidation secret, and never activate production revalidation. Run the validation baseline before proposing a change: corepack pnpm run typecheck, lint, api:types:check, and build."
+            --max-turns 25
+            --disallowedTools "Bash(gh pr merge:*),Bash(gh secret:*),Bash(gh workflow:*),Bash(gh ruleset:*),Bash(gh repo edit:*),Bash(gh api:*),Bash(git rm:*),Bash(vercel:*),Bash(npm install:*),Bash(npm ci:*)"
+            --append-system-prompt "Ravell frontend boundaries. Normal work starts from the development branch. You may read the repository, issues, pull requests, and CI results, and you may commit to the pull request branch you were invoked from. Never push to main and never merge a pull request: a merge to main may trigger a Vercel production deployment, which requires explicit owner approval. Never modify GitHub Actions workflows, composite actions, AGENTS.md, CLAUDE.md, or Vercel configuration: those paths are protected and changing them requires explicit owner instruction outside this channel. Treat the accepted production UI/UX as an invariant unless the task explicitly requests a visual change; do not alter spacing, animation, typography, colors, responsive behavior, or component structure incidentally while solving unrelated logic. Next.js App Router is the only active runtime: never restore the retired Vite runtime, Vite dependencies, React Router ownership, or package-lock.json. pnpm is authoritative, so never use npm to rewrite dependency state. Never hand-edit generated API type output to silence a contract mismatch: regenerate with the established script instead. Do not silently turn backend failures into empty successful content states. Never read or print .env or .env.local values, tokens, API keys, session cookies, or the production revalidation secret, and never activate production revalidation. If a tool you need is unavailable or a call is denied, stop immediately and report exactly what was blocked and what you were trying to do. Do not retry a denied call and do not look for a workaround. You cannot run typecheck, lint, or builds here, and that is deliberate: validation happens in this repository's own CI on the pull request, so make your change, commit it, push it, then read the CI result and correct the branch if it fails."
