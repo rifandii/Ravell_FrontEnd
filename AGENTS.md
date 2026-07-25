@@ -573,7 +573,11 @@ Production:
 
 - production actions are reserved to the owner;
 - an agent must never trigger, approve, or configure a production deployment;
-- a merge to `main` may promote to production, which is why merge authority and production authority are the same authority.
+- a merge to `main` may promote to production, which is why merge authority and production authority are the same authority;
+- the set of hosting projects is fixed; an agent must never create a new one;
+- deploy only through the established Git integration on a project that already exists, never through a provider CLI or an ad-hoc upload.
+
+The last two rules exist because an ad-hoc deploy creates a hosting project with no Git linkage, and therefore no pull request, no continuous integration, no review, and no way to patch it afterwards. Every control described in this document depends on changes arriving through Git. A deploy that bypasses Git bypasses all of them at once. If a task appears to require a new hosting project, stop and ask.
 
 Validation authority:
 
