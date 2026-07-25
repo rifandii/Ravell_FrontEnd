@@ -534,13 +534,53 @@ Repository documentation should describe:
 - deployment expectations;
 - rollback.
 
-The Ravell Obsidian vault is the canonical broader knowledge plane.
+Broader reusable architecture principles belong to a canonical knowledge plane maintained outside this repository.
 
 Do not duplicate full reusable architecture principles across README, project notes, and multiple frontend documents.
 
-When broader knowledge should be retained, propose a separately scoped Ravell_Knowledge update.
+When broader knowledge should be retained, propose it as a separately scoped update to that knowledge plane rather than expanding this document.
 
-Do not modify the knowledge vault incidentally during frontend implementation.
+Do not modify anything outside this repository incidentally during frontend implementation.
+
+## Automated Agent Boundary
+
+An automated coding agent may be invoked in this repository through an explicit `@claude` mention on an issue or pull request comment. These rules bound what any automated contributor may do.
+
+Trigger:
+
+- only the repository owner may trigger an agent run;
+- a mention from any other account is ignored before the run starts;
+- there is no scheduled, push, or otherwise automatic trigger.
+
+Branching and promotion:
+
+- agent work happens on a short-lived branch, never directly on a long-lived branch;
+- every change reaches a long-lived branch through a pull request;
+- direct push to `main` is prohibited;
+- merging a pull request is reserved to the owner;
+- an agent must never merge its own work.
+
+Protected paths:
+
+- `.github/workflows/**`;
+- `.github/actions/**`;
+- `AGENTS.md`;
+- `CLAUDE.md`.
+
+An agent may not edit, write, or delete a protected path. The denial is enforced by workflow configuration and fails closed. Changing a protected path requires explicit owner instruction outside the agent channel.
+
+Production:
+
+- production actions are reserved to the owner;
+- an agent must never trigger, approve, or configure a production deployment;
+- a merge to `main` may promote to production, which is why merge authority and production authority are the same authority.
+
+Validation authority:
+
+- an agent does not run lint, typecheck, tests, or builds in its own session;
+- continuous integration is the verification authority;
+- an agent may read a failing check and correct its own branch;
+- an agent must never modify workflow or test configuration to make a failing check pass.
 
 ## Task Operating Model
 
@@ -579,14 +619,13 @@ New work should be classified as:
 - MAINTENANCE;
 - RESIDUAL-RISK REMEDIATION.
 
-## Graphify Code Maps
+## Code Discovery
 
-This repository maintains a Graphify code map for fast discovery:
-
-- `graphify-out/graph.json`
+Contributors may use local code indexing or search tooling of their choice.
 
 Rules:
-- For codebase questions, first run `graphify query "<question>"`. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts.
-- After modifying code, run `graphify update .` (AST-only, local).
-- Treat `graphify-out/` as an untracked local artifact. Do not commit graphify output or alter assistant hooks.
+
+- any index, cache, or generated map such tooling produces is a local artifact;
+- do not commit generated index output;
+- do not add assistant hooks or local tooling configuration to this repository as a side effect of using it.
 
