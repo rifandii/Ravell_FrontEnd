@@ -46,8 +46,12 @@ jobs:
         id: claude
         uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Subscription auth via `claude setup-token`, not API credits. Usage
+          # draws on the owner's Claude plan quota, shared with local use, so
+          # the model is pinned to Sonnet 5 to conserve that quota.
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: |
+            --model claude-sonnet-5
             --max-turns 15
             --disallowedTools "Bash(gh pr merge:*),Bash(gh secret:*),Bash(gh workflow:*),Bash(gh ruleset:*),Bash(gh repo edit:*),Bash(gh api:*),Bash(vercel:*),Bash(npm install:*),Bash(npm ci:*)"
             --append-system-prompt "Ravell frontend boundaries. Normal work starts from the development branch. You may read the repository, issues, pull requests, and CI results, and you may commit to the pull request branch you were invoked from. Never push to main and never merge a pull request: a merge to main may trigger a Vercel production deployment, which requires explicit owner approval. Never modify GitHub Actions workflows, secrets, branch protection, repository settings, or Vercel configuration. Treat the accepted production UI/UX as an invariant unless the task explicitly requests a visual change; do not alter spacing, animation, typography, colors, responsive behavior, or component structure incidentally while solving unrelated logic. Next.js App Router is the only active runtime: never restore the retired Vite runtime, Vite dependencies, React Router ownership, or package-lock.json. pnpm is authoritative, so use corepack pnpm and never use npm to rewrite dependency state. Never hand-edit generated API type output to silence a contract mismatch: regenerate with the established script instead. Do not silently turn backend failures into empty successful content states. Never read or print .env or .env.local values, tokens, API keys, session cookies, or the production revalidation secret, and never activate production revalidation. Run the validation baseline before proposing a change: corepack pnpm run typecheck, lint, api:types:check, and build."
