@@ -355,6 +355,31 @@ For routes such as internal revalidation:
 
 Never print production revalidation secrets.
 
+## Autonomous Operations Authorization
+
+```text
+AUTHORIZED_AGENT = CLAUDE
+ROUTINE_OWNER_APPROVAL = NOT_REQUIRED
+MANUAL_OWNER_INPUT = NOT_REQUIRED
+AUTONOMOUS_TROUBLESHOOTING = ENABLED
+PRODUCTION_SCOPE = INCLUDED
+```
+
+Granted by the owner on 2026-07-26 for the interactive Claude session. Claude may
+inspect, fix, commit, push, open and merge pull requests, rerun CI, promote to
+`main`, deploy, and roll back without per-step approval, production included.
+
+This authorization does **not** extend to the `@claude` GitHub Action channel.
+That agent is triggered by a comment, runs in CI with no owner present, and keeps
+every restriction in `Automated Agent Boundary` below — including the protected
+paths and the rule that it never merges its own work. The two channels have
+different supervision, so they keep different authority. Widening the Action
+channel is a separate owner decision.
+
+The exceptions in the root `AGENTS.md` apply in full: Cloudflare Access
+applications and policies, raw secret values, force push, history rewrite,
+irreversible account-wide actions, and `Ravell_Knowledge`.
+
 ## Production Boundary
 
 A merge to `main` may trigger a Vercel production deployment.
@@ -365,19 +390,15 @@ Therefore:
 development → main
 ```
 
-is a production-sensitive action.
+remains a production-sensitive action. It is authorized, but it is never
+incidental: state that a change promotes production before promoting it, and
+report it as a production event separately from the source change.
 
-Do not merge to main or otherwise trigger a production deployment without the required production approval boundary.
-
-Do not modify:
-
-- Vercel production environment values;
-- production aliases;
-- production project configuration;
-- deployment protection;
-- production domains
-
-without explicit approval.
+Vercel production environment values, production aliases, production project
+configuration, deployment protection, and production domains may be changed when
+the active workstream requires it. The set of hosting projects is fixed — never
+create a new one, and deploy only through the established Git integration rather
+than a provider CLI or an ad-hoc upload.
 
 After promotion, do not validate an arbitrary READY deployment.
 
@@ -545,6 +566,8 @@ Do not modify anything outside this repository incidentally during frontend impl
 ## Automated Agent Boundary
 
 An automated coding agent may be invoked in this repository through an explicit `@claude` mention on an issue or pull request comment. These rules bound what any automated contributor may do.
+
+They are unchanged by `Autonomous Operations Authorization` above, which applies only to the interactive Claude session where the owner is present.
 
 Trigger:
 
