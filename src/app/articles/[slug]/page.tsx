@@ -14,6 +14,7 @@ import type { Article } from '../../../types/types';
 
 declare const process: { env: { [key: string]: string | undefined } };
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech';
+const LEGACY_MEDIA_PREFIX = 'https://dwsmodvssdclbrbebarl.supabase.co/storage/v1/object/public/media/';
 
 // This route owns article SSG: title, summary, metadata, and markdown body must
 // be present in the initial HTML for search crawlers and social link previews.
@@ -104,14 +105,19 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     notFound();
   }
 
+  const markdownContent = article.markdown_content.replaceAll(
+    LEGACY_MEDIA_PREFIX,
+    `${API_BASE_URL}/media/`,
+  );
+
   // Reading time is derived at render time so backend content edits stay reflected after ISR.
-  const wordCount = article.markdown_content.trim().split(/\s+/).length;
+  const wordCount = markdownContent.trim().split(/\s+/).length;
   const readingTime = Math.max(1, Math.ceil(wordCount / 200));
 
   return (
     <div className="w-full pb-20 animate-in fade-in duration-500">
       {/* Client-only helper keeps TOC extraction and image lightbox out of the server component. */}
-      <ArticleDetailClient article={article} />
+      <ArticleDetailClient title={article.title} />
 
       <header className="max-w-4xl mx-auto px-3 sm:px-4 md:px-8 pt-6 sm:pt-8 md:pt-12 mb-8 sm:mb-10 text-center">
         <div className="flex justify-center mb-6">
@@ -169,7 +175,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
       <main className="max-w-4xl mx-auto px-3 sm:px-4 md:px-8">
         <article className="prose prose-base md:prose-lg lg:prose-xl dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
-          <MarkdownRenderer content={article.markdown_content} />
+          <MarkdownRenderer content={markdownContent} />
         </article>
 
         <div className="my-16 border-t border-gray-200 dark:border-gray-800" />

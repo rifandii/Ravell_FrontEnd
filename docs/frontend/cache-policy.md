@@ -37,10 +37,10 @@ approved Next.js ISR policy. Current article detail pages revalidate hourly via
 
 The service worker does not cache API requests.
 
-Requests under `/api/` and requests to `api.ravell.tech` or
-`api-dev.ravell.tech` pass through without `respondWith`. Client-side API calls
-use the shared Axios client. Server-side App Router calls use native `fetch`
-with explicit Next.js revalidation metadata where needed.
+Requests under `/api/` and requests to the canonical `api.ravell.tech` host
+pass through without `respondWith`. Client-side API calls use the shared Axios
+client. Server-side App Router calls use native `fetch` with explicit Next.js
+revalidation metadata where needed.
 
 ## Static Assets
 
