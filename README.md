@@ -55,13 +55,14 @@ Last reviewed: 2026-07-24
 | Area | Production | Development |
 | --- | --- | --- |
 | Public URL | `https://ravell.tech` | `https://dev.ravell.tech` |
-| Backend API | `https://api.ravell.tech` | `https://api-dev.ravell.tech` |
+| Backend API | `https://api.ravell.tech` | `https://api.ravell.tech` |
 | Vercel target | Production | Preview alias |
 | Supported runtime | Next.js App Router | Next.js App Router |
 | Content revalidation | Separately promoted backend scope | Validated signed refresh flow |
 
-Development and production are independently deployed. A preview is the gate
-for a production promotion, not a substitute for it.
+Development and production are independently deployed frontend artifacts, but
+both read the same canonical backend and production-visible data. A preview is
+the gate for a production promotion, not an isolated backend environment.
 
 ## Architecture
 

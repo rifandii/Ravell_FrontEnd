@@ -15,7 +15,7 @@ on:
       api_base_url:
         description: Expected backend base URL without /api.
         required: false
-        default: https://api-dev.ravell.tech
+        default: https://api.ravell.tech
         type: string
 
 permissions:
@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      NEXT_PUBLIC_API_BASE_URL: ${{ github.ref_name == 'main' && 'https://api.ravell.tech' || 'https://api-dev.ravell.tech' }}
+      NEXT_PUBLIC_API_BASE_URL: https://api.ravell.tech
 
     steps:
       - name: Checkout code
