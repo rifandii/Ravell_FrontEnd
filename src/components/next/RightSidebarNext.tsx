@@ -29,10 +29,7 @@ const RightSidebarNext = () => {
 
   if (loading && !tags.length) {
     return (
-      <aside className="hidden xl:flex flex-col w-80 h-screen sticky top-0 border-l border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-y-auto shrink-0">
-        <div className="h-16 px-6 border-b border-gray-200 dark:border-gray-800 flex items-center shrink-0">
-          <div className="w-24 h-4 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
-        </div>
+      <aside className="hidden xl:flex flex-col w-80 h-[calc(100vh-4rem)] sticky top-16 border-l border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-y-auto shrink-0">
         <div className="p-6 space-y-6 flex-grow">
           <div className="space-y-3">
             <div className="w-16 h-3 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
@@ -148,11 +145,8 @@ const RightSidebarNext = () => {
   );
 
   return (
-    <aside className="hidden xl:flex flex-col w-80 h-screen sticky top-0 border-l border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-y-auto shrink-0">
-      <div className="h-16 px-6 border-b border-gray-200 dark:border-gray-800 flex items-center shrink-0">
-      </div>
-
-      <div className="flex-1 flex flex-col divide-y divide-gray-100 dark:divide-gray-800/60">
+      <aside className="hidden xl:flex flex-col w-80 h-[calc(100vh-4rem)] sticky top-16 border-l border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-y-auto shrink-0">
+        <div className="flex-1 flex flex-col divide-y divide-gray-100 dark:divide-gray-800/60">
         {isArticleDetailPage ? (
           <>
             <div className="p-6">

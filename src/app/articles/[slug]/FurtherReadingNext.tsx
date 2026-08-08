@@ -11,6 +11,7 @@ import {
   BookOpen,
   Calendar
 } from 'lucide-react';
+import { API_BASE_URL } from '../../../lib/apiConfig';
 
 interface NavArticle {
   title: string;
@@ -29,8 +30,6 @@ interface FurtherReadingProps {
   previousArticle: NavArticle | null;
   nextArticle: NavArticle | null;
 }
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech';
 
 const FurtherReadingNext = ({ currentArticleSlug, previousArticle, nextArticle }: FurtherReadingProps) => {
   const [randomArticles, setRandomArticles] = useState<Article[]>([]);

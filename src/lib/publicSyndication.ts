@@ -1,8 +1,7 @@
 import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS } from './cachePolicy';
+import { API_BASE_URL } from './apiConfig';
 
 type SyndicationKind = 'sitemap' | 'rss' | 'atom';
-
-const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech').replace(/\/+$/, '');
 
 const SYNDICATION_TARGETS: Record<SyndicationKind, { path: string; tag: string }> = {
   sitemap: { path: '/sitemap.xml', tag: CACHE_TAGS.SITEMAP },

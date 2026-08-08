@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS } from '../../lib/cachePolicy';
 import BackendUnavailable from '../../components/BackendUnavailable';
 import { fetchBackendJson } from '../../lib/backendFetch';
+import { API_BASE_URL } from '../../lib/apiConfig';
 import type { Tag } from '../../types/types';
 import {
   Hash,
@@ -247,9 +248,6 @@ export const metadata: Metadata = {
   title: 'Tags | Ravell Tech',
   description: 'Browse articles by specific keywords and technical concepts.',
 };
-
-declare const process: { env: { [key: string]: string | undefined } };
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech';
 
 async function getTagsData() {
   try {

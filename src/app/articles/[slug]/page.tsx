@@ -10,10 +10,9 @@ import BackendUnavailable from '../../../components/BackendUnavailable';
 import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS, articleDetailTag } from '../../../lib/cachePolicy';
 import { fetchBackendJson } from '../../../lib/backendFetch';
 import { Calendar, User, Clock, Hash } from 'lucide-react';
+import { API_BASE_URL } from '../../../lib/apiConfig';
 import type { Article } from '../../../types/types';
 
-declare const process: { env: { [key: string]: string | undefined } };
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech';
 const LEGACY_MEDIA_PREFIX = 'https://dwsmodvssdclbrbebarl.supabase.co/storage/v1/object/public/media/';
 
 // This route owns article SSG: title, summary, metadata, and markdown body must
