@@ -38,3 +38,6 @@ next-env.d.ts
 # Playwright
 test-results
 playwright-report
+
+# Graphify local artifacts (never commit)
+graphify-out/

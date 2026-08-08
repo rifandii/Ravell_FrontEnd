@@ -5,9 +5,7 @@ const FRONTEND_BASE_URL = stripTrailingSlash(process.env.E2E_BASE_URL || LOCAL_B
 const API_BASE_URL = stripTrailingSlash(process.env.E2E_API_BASE_URL || inferApiBaseUrl(FRONTEND_BASE_URL));
 const FRONTEND_ORIGIN = new URL(FRONTEND_BASE_URL).origin;
 const EXPECTED_API_HOST = new URL(API_BASE_URL).hostname;
-const DISALLOWED_API_HOST = EXPECTED_API_HOST === 'api-dev.ravell.tech'
-  ? 'api.ravell.tech'
-  : 'api-dev.ravell.tech';
+const DISALLOWED_API_HOST = 'api-dev.ravell.tech';
 
 interface ApiArticle {
   title: string;
@@ -33,6 +31,7 @@ test.afterEach(async ({ context }) => {
 
 test('serves core routes, feeds, sitemap, robots, and indexable article HTML', async ({ request }) => {
   const article = await getPublishedArticle(request);
+  const legacyMediaArticle = await getPublishedArticleWithLegacyMedia(request);
 
   const home = await request.get(frontendUrl('/'));
   expect(home.status()).toBe(200);
@@ -71,6 +70,10 @@ test('serves core routes, feeds, sitemap, robots, and indexable article HTML', a
   const text = htmlToText(html);
   expect(normalizeText(text)).toContain(normalizeText(article.title));
   expect(normalizeText(text)).toContain(normalizeText(significantMarkdownPhrase(article.markdown_content)));
+  expect(html).not.toContain('supabase.co');
+  if (article.markdown_content.includes('supabase.co')) {
+    expect(html).toContain('https://api.ravell.tech/media/');
+  }
 
   const title = getTitle(html);
   expect(title).toContain(article.title);
@@ -89,6 +92,14 @@ test('serves core routes, feeds, sitemap, robots, and indexable article HTML', a
   expect(ogTitle).toContain(article.title);
   expect(normalizeText(ogDescription || '')).toContain(normalizeText(significantTextPhrase(article.summary || article.title, 40)));
   expect(new URL(ogUrl || '', FRONTEND_BASE_URL).toString()).toBe(productionCanonicalUrl(`/articles/${article.slug}`));
+
+  if (legacyMediaArticle) {
+    const legacyHtml = await (
+      await request.get(frontendUrl(`/articles/${legacyMediaArticle.slug}`))
+    ).text();
+    expect(legacyHtml).not.toContain('supabase.co');
+    expect(legacyHtml).toContain('https://api.ravell.tech/media/');
+  }
 });
 
 test('opens the article listing, uses the expected API host, and navigates to an article', async ({ page }) => {
@@ -220,6 +231,20 @@ async function getPublishedArticle(request: APIRequestContext): Promise<ApiArtic
   const article = articles.find((item) => item.is_published !== false && item.slug && item.markdown_content);
   expect(article, 'expected at least one published article from the configured API').toBeTruthy();
   return article!;
+}
+
+async function getPublishedArticleWithLegacyMedia(request: APIRequestContext): Promise<ApiArticle | null> {
+  const response = await request.get(apiUrl('/api/articles/?page_size=10'));
+  expect(response.status()).toBe(200);
+
+  const payload = await response.json();
+  const articles: ApiArticle[] = Array.isArray(payload) ? payload : payload.results || [];
+  return articles.find(
+    (item) =>
+      item.is_published !== false
+      && item.slug
+      && item.markdown_content.includes('supabase.co'),
+  ) || null;
 }
 
 async function proxyExpectedApiWhenLocal(context: BrowserContext) {
@@ -360,7 +385,7 @@ async function activateServiceWorkerUpdate(page: Page) {
 function assertExpectedApiBaseMatchesFrontend() {
   const frontendHost = new URL(FRONTEND_BASE_URL).hostname;
   if (frontendHost === 'dev.ravell.tech') {
-    expect(API_BASE_URL).toBe('https://api-dev.ravell.tech');
+    expect(API_BASE_URL).toBe('https://api.ravell.tech');
   }
   if (frontendHost === 'ravell.tech' || frontendHost === 'www.ravell.tech') {
     expect(API_BASE_URL).toBe('https://api.ravell.tech');
@@ -368,11 +393,8 @@ function assertExpectedApiBaseMatchesFrontend() {
 }
 
 function inferApiBaseUrl(frontendBaseUrl: string) {
-  const hostname = new URL(frontendBaseUrl).hostname;
-  if (hostname === 'ravell.tech' || hostname === 'www.ravell.tech') {
-    return 'https://api.ravell.tech';
-  }
-  return 'https://api-dev.ravell.tech';
+  new URL(frontendBaseUrl);
+  return 'https://api.ravell.tech';
 }
 
 function isServiceWorkerCapableOrigin() {

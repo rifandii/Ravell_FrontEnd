@@ -11,7 +11,6 @@ const HASHED_ASSET_PREFIXES = [
 ];
 const API_HOSTNAMES = new Set([
   'api.ravell.tech',
-  'api-dev.ravell.tech',
 ]);
 
 self.addEventListener('install', (event) => {
