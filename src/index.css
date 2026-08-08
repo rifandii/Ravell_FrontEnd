@@ -2,6 +2,179 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* Ravell Core theme tokens. The component tree keeps its existing utility
+   classes; only their color values follow the warm ivory/brass palette used by
+   the related Ravell workspace. */
+@theme {
+  --color-white: #fffdfa;
+  --color-black: #1b1a17;
+
+  --color-gray-50: #fcfaf7;
+  --color-gray-100: #f3ede4;
+  --color-gray-200: #e3dbcd;
+  --color-gray-300: #d2c2ae;
+  --color-gray-400: #a99682;
+  --color-gray-500: #81705e;
+  --color-gray-600: #665646;
+  --color-gray-700: #4c3e32;
+  --color-gray-800: #34291f;
+  --color-gray-900: #1b1a17;
+  --color-gray-950: #120e0b;
+
+  --color-slate-100: #f3ede4;
+  --color-slate-200: #e3dbcd;
+  --color-slate-400: #a99682;
+  --color-slate-500: #81705e;
+  --color-slate-600: #665646;
+  --color-slate-700: #4c3e32;
+  --color-slate-800: #34291f;
+  --color-slate-900: #1b1a17;
+
+  --color-purple-50: #faf3e8;
+  --color-purple-100: #f3e7d5;
+  --color-purple-200: #ead6bb;
+  --color-purple-300: #ddbb91;
+  --color-purple-400: #c9975f;
+  --color-purple-500: #a86b2a;
+  --color-purple-600: #8a5a25;
+  --color-purple-700: #6d461b;
+  --color-purple-800: #583612;
+  --color-purple-900: #43280d;
+  --color-purple-950: #2d1908;
+
+  --color-violet-50: #faf3e8;
+  --color-violet-400: #c9975f;
+  --color-violet-600: #8a5a25;
+  --color-violet-900: #43280d;
+
+  --color-amber-50: #faf3e8;
+  --color-amber-100: #f3e7d5;
+  --color-amber-300: #ddbb91;
+  --color-amber-400: #c9975f;
+  --color-amber-600: #8a5a25;
+  --color-amber-900: #43280d;
+  --color-amber-950: #2d1908;
+
+  --color-orange-50: #faf3e8;
+  --color-orange-400: #c9975f;
+  --color-orange-500: #a86b2a;
+  --color-orange-600: #8a5a25;
+  --color-orange-900: #43280d;
+  --color-orange-950: #2d1908;
+
+  --color-yellow-100: #f3e7d5;
+  --color-yellow-400: #c9975f;
+  --color-yellow-500: #a86b2a;
+  --color-yellow-700: #6d461b;
+  --color-yellow-900: #43280d;
+
+  --color-blue-50: #f1f4f3;
+  --color-blue-100: #e1ebe8;
+  --color-blue-400: #5f9b88;
+  --color-blue-600: #2f6d5f;
+  --color-blue-900: #235448;
+  --color-blue-950: #16372f;
+
+  --color-green-100: #dfece8;
+  --color-green-400: #5f9b88;
+  --color-green-500: #2f6d5f;
+  --color-green-700: #235448;
+  --color-green-900: #16372f;
+
+  --color-red-50: #f7e5df;
+  --color-red-100: #f7e5df;
+  --color-red-400: #d06d52;
+  --color-red-500: #a8442a;
+  --color-red-600: #943b25;
+  --color-red-900: #5e291d;
+  --color-red-950: #401c14;
+}
+
+.dark {
+  --color-white: #ece7dd;
+  --color-black: #0d141a;
+
+  --color-gray-50: #f7f2ea;
+  --color-gray-100: #eee7dc;
+  --color-gray-200: #d9d0c3;
+  --color-gray-300: #bfb5a7;
+  --color-gray-400: #a89f90;
+  --color-gray-500: #8f877a;
+  --color-gray-600: #7b7367;
+  --color-gray-700: #5f574c;
+  --color-gray-800: #1e1d1a;
+  --color-gray-900: #171614;
+  --color-gray-950: #100f0e;
+
+  --color-slate-100: #1c252b;
+  --color-slate-200: #223039;
+  --color-slate-400: #7d919f;
+  --color-slate-500: #8fa2ad;
+  --color-slate-600: #b0bec6;
+  --color-slate-700: #c3d0d7;
+  --color-slate-800: #141d25;
+  --color-slate-900: #0d141a;
+
+  --color-purple-50: #221b12;
+  --color-purple-100: #2e2418;
+  --color-purple-200: #3a2d1d;
+  --color-purple-300: #4d3923;
+  --color-purple-400: #e6b47c;
+  --color-purple-500: #d29a5c;
+  --color-purple-600: #d29a5c;
+  --color-purple-700: #e6b47c;
+  --color-purple-800: #583612;
+  --color-purple-900: #2e2418;
+  --color-purple-950: #221b12;
+
+  --color-violet-50: #221b12;
+  --color-violet-400: #e6b47c;
+  --color-violet-600: #d29a5c;
+  --color-violet-900: #2e2418;
+
+  --color-amber-50: #221b12;
+  --color-amber-100: #2e2418;
+  --color-amber-300: #4d3923;
+  --color-amber-400: #e6b47c;
+  --color-amber-600: #d29a5c;
+  --color-amber-900: #2e2418;
+  --color-amber-950: #221b12;
+
+  --color-orange-50: #221b12;
+  --color-orange-400: #e6b47c;
+  --color-orange-500: #d29a5c;
+  --color-orange-600: #d29a5c;
+  --color-orange-900: #2e2418;
+  --color-orange-950: #221b12;
+
+  --color-yellow-100: #2e2418;
+  --color-yellow-400: #e6b47c;
+  --color-yellow-500: #d29a5c;
+  --color-yellow-700: #e6b47c;
+  --color-yellow-900: #2e2418;
+
+  --color-blue-50: #162327;
+  --color-blue-100: #162924;
+  --color-blue-400: #8ed5c0;
+  --color-blue-600: #6dbfa8;
+  --color-blue-900: #162924;
+  --color-blue-950: #10201d;
+
+  --color-green-100: #162924;
+  --color-green-400: #6dbfa8;
+  --color-green-500: #6dbfa8;
+  --color-green-700: #8ed5c0;
+  --color-green-900: #162924;
+
+  --color-red-50: #2e1d16;
+  --color-red-100: #2e1d16;
+  --color-red-400: #e08a6c;
+  --color-red-500: #e08a6c;
+  --color-red-600: #e08a6c;
+  --color-red-900: #2e1d16;
+  --color-red-950: #1c110d;
+}
+
 html {
   overflow-x: clip;
   -webkit-text-size-adjust: 100%;
@@ -48,18 +221,18 @@ img, video, iframe, embed, object {
 
 *::-webkit-scrollbar-track {
   /* Warna track (latar belakang) */
-  background: #25252d; /* Warna gelap serasi dengan background dark mode */
+  background: var(--color-gray-100);
 }
 
 *::-webkit-scrollbar-thumb {
   /* Warna thumb (penggeser) */
-  background-color: #4b5563; /* Gray-600 */
+  background-color: var(--color-gray-600);
   border-radius: 4px;
-  border: 1px solid #1f2937; /* Border gelap */
+  border: 1px solid var(--color-gray-900);
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background-color: #6b7280; /* Gray-500 saat hover */
+  background-color: var(--color-gray-500);
 }
 
 .hide-scrollbar {
@@ -124,8 +297,17 @@ img, video, iframe, embed, object {
 }
 
 :focus-visible {
-  outline: 2px solid rgb(147 51 234 / 0.7);
+  outline: 2px solid color-mix(in srgb, var(--color-purple-600) 70%, transparent);
   outline-offset: 3px;
+}
+
+/* The primary browse action keeps the brass emphasis of the reference theme. */
+a.bg-gray-950 {
+  background-color: var(--color-purple-600);
+}
+
+a.bg-gray-950:hover {
+  background-color: var(--color-purple-700);
 }
 
 @media (prefers-reduced-motion: reduce) {
