@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, Star, Folder, Tag as TagIcon, MessageCircle, CalendarDays, BookOpen, Network, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Star, Folder, Tag as TagIcon, MessageCircle, CalendarDays, BookOpen, Network } from 'lucide-react';
 import ArticleCardNext from '../components/next/ArticleCardNext';
 import BackendUnavailable from '../components/BackendUnavailable';
 import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS } from '../lib/cachePolicy';
@@ -55,11 +55,6 @@ export default async function HomePage() {
       <section className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 md:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:py-14">
           <div className="max-w-3xl">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-purple-100 bg-purple-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-purple-700 dark:border-purple-900/60 dark:bg-purple-950/40 dark:text-purple-300">
-              <ShieldCheck className="h-3.5 w-3.5" />
-              Network & Security Notes
-            </div>
-
             <h1 className="text-3xl font-black leading-tight tracking-tight text-gray-950 dark:text-white sm:text-5xl lg:text-6xl">
               Ravell Tech
             </h1>

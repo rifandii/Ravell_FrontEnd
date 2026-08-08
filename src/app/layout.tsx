@@ -14,6 +14,11 @@ export const metadata: Metadata = {
   title: 'Ravell Tech',
   description: 'Your Hub for Networking & Security Insights',
   manifest: '/manifest.json',
+  icons: {
+    icon: '/logo-ravell.svg',
+    shortcut: '/logo-ravell.svg',
+    apple: '/logo-ravell.svg',
+  },
 };
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
