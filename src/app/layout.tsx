@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import { Suspense } from 'react';
 import { SidebarProvider } from '../SidebarContext';
@@ -15,10 +15,22 @@ export const metadata: Metadata = {
   description: 'Your Hub for Networking & Security Insights',
   manifest: '/manifest.json',
   icons: {
-    icon: '/logo-ravell.svg',
-    shortcut: '/logo-ravell.svg',
-    apple: '/logo-ravell.svg',
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/pwa-192.png', type: 'image/png', sizes: '192x192' },
+      { url: '/pwa-512.png', type: 'image/png', sizes: '512x512' },
+    ],
+    shortcut: '/favicon.svg',
+    apple: '/apple-touch-icon.png',
   },
+};
+
+export const viewport: Viewport = {
+  colorScheme: 'light dark',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#f7f3ed' },
+    { media: '(prefers-color-scheme: dark)', color: '#111827' },
+  ],
 };
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
