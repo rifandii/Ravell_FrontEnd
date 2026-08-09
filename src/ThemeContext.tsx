@@ -14,24 +14,31 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window === 'undefined') {
-      return 'light'; // SSR fallback before localStorage/system preference is available.
-    }
+  // Stable SSR initial state: resolve the real theme after mount to avoid
+  // hydration mismatches between the server-rendered HTML and the client.
+  const [theme, setTheme] = useState<Theme>('light');
+  const [resolved, setResolved] = useState(false);
+
+  useEffect(() => {
     // Prefer explicit user choice, then fall back to the OS color scheme.
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-      return savedTheme as Theme;
-    }
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  });
+    const resolvedTheme: Theme = savedTheme
+      ? (savedTheme as Theme)
+      : window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
+    setTheme(resolvedTheme);
+    setResolved(true);
+  }, []);
 
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
   };
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    // Only sync the html class and persist after the stored/system theme has
+    // been resolved; this prevents overwriting a saved preference on mount.
+    if (!resolved) return;
     // Tailwind dark mode is class-based, so keep the html class in sync with context state.
     const root = window.document.documentElement;
     if (root && root.classList) {
@@ -40,7 +47,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     }
     // Persist the explicit choice for the next visit.
     localStorage.setItem('theme', theme);
-  }, [theme]);
+  }, [theme, resolved]);
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>

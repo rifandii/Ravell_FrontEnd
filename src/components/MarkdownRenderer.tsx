@@ -5,6 +5,7 @@ import type { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import slugify from 'slugify';
 import CodeBlock from './CodeBlock';
+import { API_BASE_URL } from '../lib/apiConfig';
 
 interface MarkdownRendererProps {
   content: string;
@@ -96,8 +97,7 @@ export default function MarkdownRenderer({ content, onImageClick }: MarkdownRend
       const src = typeof props.src === 'string' ? props.src : undefined;
       const alt = typeof props.alt === 'string' ? props.alt : undefined;
       const isRelative = src?.startsWith('/') ?? false;
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech';
-      const fullSrc = src && isRelative ? `${apiBaseUrl}${src}` : src;
+      const fullSrc = src && isRelative ? `${API_BASE_URL}${src}` : src;
       const imageClickProps = onImageClick && fullSrc
         ? { onClick: () => onImageClick(fullSrc) }
         : {};

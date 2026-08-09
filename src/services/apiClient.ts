@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { backendUnavailable } from '../lib/backendFailure';
+import { API_BASE_URL as API_ORIGIN } from '../lib/apiConfig';
 import type {
   ApiArticle,
   ApiArticleListResponse,
@@ -13,8 +14,7 @@ import type { Article, Category, Tag } from '../types/types';
 
 // Shared browser-side API client. Next server components use native fetch so
 // ISR/revalidation metadata stays attached to each server-rendered request.
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech';
-const API_BASE_URL = `${BASE_URL}/api`;
+const API_BASE_URL = `${API_ORIGIN}/api`;
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS } from '../../lib/cachePolicy';
 import BackendUnavailable from '../../components/BackendUnavailable';
 import { fetchBackendJson } from '../../lib/backendFetch';
+import { API_BASE_URL } from '../../lib/apiConfig';
 import {
   Calendar,
   History,
@@ -27,9 +28,6 @@ export const metadata: Metadata = {
   title: 'Archives | Ravell Tech',
   description: 'A chronological history of all published articles and updates.',
 };
-
-declare const process: { env: { [key: string]: string | undefined } };
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech';
 
 async function getArchivesData() {
   try {

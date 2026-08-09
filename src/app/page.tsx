@@ -5,10 +5,8 @@ import ArticleCardNext from '../components/next/ArticleCardNext';
 import BackendUnavailable from '../components/BackendUnavailable';
 import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS } from '../lib/cachePolicy';
 import { fetchBackendJson } from '../lib/backendFetch';
+import { API_BASE_URL } from '../lib/apiConfig';
 import type { Article, Category, Tag } from '../types/types';
-
-declare const process: { env: { [key: string]: string | undefined } };
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.ravell.tech';
 
 // Home is a server component with ISR-backed data so the first response is real
 // HTML instead of an empty SPA shell.
@@ -20,16 +18,22 @@ export const metadata: Metadata = {
 async function getHomeData() {
   try {
     // Fetch the homepage data in parallel; each request participates in Next ISR.
-    const [latestArticles, categoriesData, tagsData] = await Promise.all([
-      fetchBackendJson<Article[]>(`${API_BASE_URL}/api/articles/latest/`, { next: { revalidate: CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ARTICLES, CACHE_TAGS.ARTICLES_LATEST] } }),
+    // A slightly larger article pool keeps Featured and Latest sections distinct
+    // instead of re-rendering a subset of the same recent articles.
+    const [articlesData, categoriesData, tagsData] = await Promise.all([
+      fetchBackendJson<{ results?: Article[] }>(`${API_BASE_URL}/api/articles/?page_size=9`, { next: { revalidate: CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ARTICLES, CACHE_TAGS.ARTICLES_LIST, CACHE_TAGS.ARTICLES_LATEST] } }),
       fetchBackendJson<{ results?: Category[] }>(`${API_BASE_URL}/api/categories/`, { next: { revalidate: CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.CATEGORIES] } }),
       fetchBackendJson<{ results?: Tag[] }>(`${API_BASE_URL}/api/tags/`, { next: { revalidate: CACHE_REVALIDATE_SECONDS, tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.TAGS] } }),
     ]);
 
+    const allArticles = (articlesData.results || []).slice(0, 9);
+    const featuredArticles = allArticles.slice(0, 3);
+    const latestArticles = allArticles.slice(3, 9);
+
     return {
       status: 'available' as const,
-      latestArticles: latestArticles.slice(0, 6),
-      featuredArticles: latestArticles.filter((_, idx) => idx % 2 === 0).slice(0, 3),
+      latestArticles,
+      featuredArticles,
       categories: (categoriesData.results || []).slice(0, 4) as Category[],
       tags: (tagsData.results || []).slice(0, 6) as Tag[],
       error: null
@@ -117,7 +121,7 @@ export default async function HomePage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
               {featuredArticles.map((article) => (
-                <ArticleCardNext key={article.id} article={article} />
+                <ArticleCardNext key={article.id} article={article} showThumbnail={false} />
               ))}
             </div>
           </div>
@@ -142,7 +146,7 @@ export default async function HomePage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
               {latestArticles.map((article) => (
-                <ArticleCardNext key={article.id} article={article} />
+                <ArticleCardNext key={article.id} article={article} showThumbnail={false} />
               ))}
             </div>
           </div>
@@ -174,7 +178,7 @@ export default async function HomePage() {
                 {categories.map((category) => (
                   <Link
                     key={category.id}
-                    href={`/articles?category_name=${category.name}`}
+                    href={`/articles?categories__slug=${encodeURIComponent(category.slug)}&category_name=${encodeURIComponent(category.name)}`}
                     className="flex items-center justify-between p-3 sm:p-5 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-purple-400 dark:hover:border-purple-600 hover:shadow-md transition-all duration-300 group"
                   >
                     <span className="text-sm sm:text-base md:text-lg font-medium text-gray-800 dark:text-gray-200 group-hover:text-purple-600 dark:group-hover:text-purple-400">
