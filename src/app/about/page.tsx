@@ -28,7 +28,7 @@ export default function AboutPage() {
         <div className="max-w-3xl mb-10 sm:mb-16">
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 dark:text-white mb-4 sm:mb-6">
             Architecting Secure <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-fuchsia-600">Digital Infrastructures</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-teal-600">Digital Infrastructures</span>
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 leading-relaxed">
             Hi, I'm the human behind <span className="font-semibold text-gray-900 dark:text-gray-200">Ravell Networks</span>.

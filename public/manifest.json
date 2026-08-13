@@ -4,8 +4,8 @@
   "description": "Ravell Networks - Blog tentang rekayasa perangkat lunak dan teknologi",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f7f3ed",
-  "theme_color": "#8a5a25",
+  "background_color": "#F7F8FA",
+  "theme_color": "#9A3E16",
   "orientation": "portrait-primary",
   "categories": ["education", "technology"],
   "icons": [
