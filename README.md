@@ -4,7 +4,7 @@ Public Next.js frontend for the Ravell Tech technical knowledge base. The
 application renders articles, taxonomy, search, archives, syndication routes,
 and a signed cache-revalidation boundary for content updates from the backend.
 
-Last reviewed: 2026-08-09
+Last reviewed: 2026-08-13
 
 ## Runtime Summary
 
@@ -22,6 +22,11 @@ Development and production are separate frontend artifacts, but they consume
 the same canonical public backend and production-visible content. The
 development site is therefore a UI and release-validation surface, not a data
 isolation boundary.
+
+Branch names describe release lanes, not separate data environments. A merge
+commit can give `main` and `development` different commit IDs while their source
+trees remain identical; use a tree diff and exact Vercel deployment attribution
+when deciding whether the two sites are synchronized.
 
 ## Technology Stack
 
@@ -95,6 +100,79 @@ flowchart LR
 The browser and Next.js runtime use the public API hostname. They do not connect
 to a raw VM origin. Cloudflare and Vercel remain separate edge layers, while
 Django owns content and taxonomy data.
+
+## How the Code Fits Together
+
+The application has two data-fetching paths. Server components use native
+`fetch` so Next.js can attach ISR and cache tags. Client components use the
+shared Axios service for search, filtering, and pagination after hydration.
+
+```mermaid
+flowchart TD
+    R["App Router route"] --> Q{"Needs browser interaction?"}
+    Q -->|No| S["Server component"]
+    S --> BF["src/lib/backendFetch.ts"]
+    BF --> CP["src/lib/cachePolicy.ts"]
+    CP --> API["Canonical public API"]
+    API --> HTML["Server-rendered HTML and RSC payload"]
+
+    Q -->|Yes| CC["Client component"]
+    CC --> AC["src/services/apiClient.ts"]
+    AC --> API
+    API --> VM["View-model mapping and UI state"]
+
+    HTML --> UI["Shared shell and components"]
+    VM --> UI
+```
+
+### Execution and ownership map
+
+| Concern | Start here | Follow into | Result |
+| --- | --- | --- | --- |
+| Root providers and shell | `src/app/layout.tsx` | `LayoutClient.tsx`, contexts, service-worker registration | Header, sidebars, theme, analytics, global state |
+| Homepage | `src/app/page.tsx` | `backendFetch.ts`, cache tags, `ArticleCardNext.tsx` | ISR-backed featured/latest content |
+| Article listing | `src/app/articles/page.tsx` | `ArticleListClient.tsx`, `apiClient.ts`, pagination/card components | Search, filters, pagination, empty/error states |
+| Article detail | `src/app/articles/[slug]/page.tsx` | detail client, Markdown renderer, further reading | Metadata, article body, taxonomy, image modal |
+| Taxonomy and archive | category/tag/archive route files | server fetch helper and shared components | Server-rendered discovery pages |
+| Backend failure semantics | `src/lib/backendFailure.ts` | `backendFetch.ts`, `apiClient.ts`, `BackendUnavailable.tsx` | Outage remains distinct from empty or not-found |
+| Public feeds and sitemap | XML route handlers | `src/lib/publicSyndication.ts` | Dynamic XML responses from canonical backend data |
+| Targeted freshness | internal revalidation route | `revalidationAuth.ts`, `cachePolicy.ts` | Authenticated tag/path invalidation |
+| Browser asset caching | `public/sw.js` | `ServiceWorkerRegistration.tsx` | Static asset lifecycle, never API data freshness |
+| API type safety | generated types | `scripts/generate-api-types.mjs`, API contract test | Frontend contract aligned with backend OpenAPI |
+
+### Typical coding flows
+
+#### Add or change a page
+
+```text
+route in src/app
+-> choose server or client execution
+-> use backendFetch or apiClient
+-> map API data to existing view models
+-> render existing shared components
+-> preserve loading, empty, invalid, not-found, and outage semantics
+-> update focused Playwright coverage
+```
+
+#### Change an API response consumed by the frontend
+
+```text
+backend OpenAPI change
+-> regenerate src/types/generated/openapi.ts
+-> update compile-time contract assertions
+-> update view-model mapping only where required
+-> run api:types:check, typecheck, build, and focused smoke tests
+```
+
+Do not hand-edit generated OpenAPI types or silently coerce a failed request into
+an empty result. A successful empty response, a missing record, and an upstream
+failure are different product states.
+
+#### Change caching or content freshness
+
+Start with `cachePolicy.ts`, then inspect every route using the affected tag and
+the backend event-to-tag/path mapping. Next.js ISR, targeted revalidation, and
+the browser service worker are separate cache layers and must remain separate.
 
 ## Request and Error Flow
 
@@ -294,6 +372,20 @@ Normal work begins on `development`. Do not edit `main` directly. Promotion to
 `main` is production-sensitive because Git integration may publish the resulting
 artifact automatically.
 
+### Branch-specific meaning
+
+| Git state | What it represents | Runtime effect |
+| --- | --- | --- |
+| Local topic branch/worktree | One bounded change under development | No deployment until pushed |
+| `origin/development` | Integration source for the next candidate | Git integration creates/updates the preview used by `dev.ravell.tech` |
+| `origin/main` | Reviewed production source | A merge can trigger a Vercel production deployment |
+| Vercel Preview | Exact candidate artifact | Validate behavior without changing `ravell.tech` |
+| Vercel Production | Exact reviewed main artifact | Serves `ravell.tech` after alias assignment |
+
+`dev.ravell.tech` and `ravell.tech` may briefly differ while a candidate is being
+validated. After promotion, compare source trees and the exact deployment SHA;
+do not infer synchronization from branch names or a generic READY status.
+
 For every deployment, attribute the artifact to the exact Git SHA. Validate at
 least the relevant subset of homepage, articles, taxonomy, archive, article
 detail, search, dark mode, failure states, sitemap, RSS, and Atom routes.
@@ -313,7 +405,7 @@ detail, search, dark mode, failure states, sitemap, RSS, and Atom routes.
 - API contracts: [`docs/frontend/api-contracts.md`](docs/frontend/api-contracts.md)
 - Analytics ownership: [`docs/frontend/analytics-ownership.md`](docs/frontend/analytics-ownership.md)
 - Backend API, editorial workflow, deployment, and recovery:
-  [Ravell Backend](../Ravell_BackEnd/README.md)
+  [Ravell Backend](https://github.com/rifandii/Ravell_BackEnd)
 
 ## License
 
