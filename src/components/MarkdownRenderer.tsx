@@ -47,7 +47,7 @@ export default function MarkdownRenderer({ content, onImageClick }: MarkdownRend
     // Tables need explicit wrappers so wide technical tables remain scrollable on mobile.
     table({ children }) {
       return (
-        <div className="my-6 overflow-hidden rounded-2xl border border-gray-200 dark:border-purple-900/30 bg-white dark:bg-[#120e22]/20 shadow-md dark:shadow-purple-950/5">
+        <div className="my-6 overflow-hidden rounded-2xl border border-gray-200 dark:border-purple-900/30 bg-white dark:bg-gray-900/40 shadow-md dark:shadow-black/10">
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm font-sans" style={{ display: 'table', tableLayout: 'auto', borderCollapse: 'collapse' }}>
               {children}

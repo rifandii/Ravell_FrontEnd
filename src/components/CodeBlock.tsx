@@ -44,8 +44,8 @@ const CodeBlock = ({ codeText, language }: CodeBlockProps) => {
             <meta charset="utf-8">
             <style>
               body {
-                background-color: #07050e;
-                color: #e9d5ff;
+                background-color: #0F172A;
+                color: #E2E8F0;
                 font-family: 'Consolas', 'Courier New', Courier, monospace;
                 font-size: 0.95rem;
                 line-height: 1.6;
@@ -55,8 +55,8 @@ const CodeBlock = ({ codeText, language }: CodeBlockProps) => {
                 word-wrap: break-word;
               }
               ::selection {
-                background-color: #6b21a8;
-                color: #ffffff;
+                background-color: #9A3E16;
+                color: #FFFFFF;
               }
             </style>
           </head>
@@ -79,9 +79,9 @@ const CodeBlock = ({ codeText, language }: CodeBlockProps) => {
   const isDefaultLang = ['text', 'plaintext'].includes(language.toLowerCase());
 
   return (
-    <div className="not-prose my-6 rounded-2xl overflow-hidden border border-gray-200 dark:border-purple-900/30 bg-[#07050e] dark:bg-[#07050e]/95 backdrop-blur shadow-xl dark:shadow-purple-950/15 relative group font-mono text-sm">
+    <div className="not-prose my-6 rounded-2xl overflow-hidden border border-gray-200 dark:border-purple-900/30 bg-gray-950 dark:bg-gray-950/95 backdrop-blur shadow-xl dark:shadow-black/15 relative group font-mono text-sm">
       {/* Header Toolbar */}
-      <div className="flex items-center justify-between px-4 h-11 bg-gray-50/80 dark:bg-[#120e22]/90 border-b border-gray-200 dark:border-purple-950/50 select-none">
+      <div className="flex items-center justify-between px-4 h-11 bg-gray-50/80 dark:bg-gray-800/90 border-b border-gray-200 dark:border-gray-700/50 select-none">
         <div className="flex items-center gap-3">
           <Terminal className="w-4 h-4 text-purple-600 dark:text-purple-400" />
           {!isDefaultLang && (
@@ -162,9 +162,9 @@ const CodeBlock = ({ codeText, language }: CodeBlockProps) => {
           showLineNumbers={true}
           wrapLines={true}
           lineNumberStyle={{
-            color: 'rgba(167, 139, 250, 0.4)',
+            color: 'rgba(230, 160, 132, 0.4)',
             paddingRight: '1rem',
-            borderRight: '1px solid rgba(167, 139, 250, 0.15)',
+            borderRight: '1px solid rgba(230, 160, 132, 0.15)',
             marginRight: '0.75rem',
             minWidth: '2.5rem',
             textAlign: 'right',
@@ -180,8 +180,8 @@ const CodeBlock = ({ codeText, language }: CodeBlockProps) => {
             };
 
             if (isHoverHighlightEnabled && hoveredLine === lineNumber) {
-              style.backgroundColor = 'rgba(139, 92, 246, 0.15)'; // purple-500/15
-              style.borderLeft = '3px solid #8b5cf6';
+              style.backgroundColor = 'rgba(154, 62, 22, 0.18)'; // core-primary/18
+              style.borderLeft = '3px solid #9A3E16';
               style.paddingLeft = 'calc(0.5rem - 3px)'; // adjust to offset border
             } else {
               style.borderLeft = '3px solid transparent';

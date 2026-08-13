@@ -18,7 +18,7 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
   const { theme } = useTheme();
 
   useEffect(() => {
-    const color = theme === 'dark' ? '#e6b47c' : '#8a5a25';
+    const color = theme === 'dark' ? '#E6A084' : '#9A3E16';
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="${color}" d="${RAVELL_MARK_PATH}"/></svg>`;
     const favicon = `data:image/svg+xml,${encodeURIComponent(svg)}`;
 

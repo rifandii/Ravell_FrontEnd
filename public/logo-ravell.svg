@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-labelledby="ravell-logo-title">
   <title id="ravell-logo-title">Ravell</title>
   <style>
-    .ravell-mark { fill: #8a5a25; }
+    .ravell-mark { fill: #9A3E16; }
     @media (prefers-color-scheme: dark) {
-      .ravell-mark { fill: #d29a5c; }
+      .ravell-mark { fill: #E6A084; }
     }
   </style>
   <path class="ravell-mark" d="M12 12h42c17 0 28 10 28 26 0 14-8 22-20 26l22 24H69L48 66v12L29 88V43h21c7 0 11-3 11-8s-4-8-11-8H28z"/>
