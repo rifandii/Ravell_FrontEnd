@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import {
   Home,
   BookOpen,
@@ -63,18 +64,14 @@ const SidebarNext = ({ isMenuOpen, isMobile, onClose, onNavigate }: SidebarProps
           <div className="flex items-center gap-3 min-w-0">
             <div className="relative shrink-0">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-purple-200 bg-purple-50 text-purple-600 dark:border-purple-900/60 dark:bg-purple-950/40 dark:text-purple-400">
-                <svg
-                  aria-label="Ravell logo"
-                  className="h-5 w-5"
-                  role="img"
-                  viewBox="0 0 100 100"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill="currentColor"
-                    d="M12 12h42c17 0 28 10 28 26 0 14-8 22-20 26l22 24H69L48 66v12L29 88V43h21c7 0 11-3 11-8s-4-8-11-8H28z"
-                  />
-                </svg>
+                <Image
+                  src="/ravell-core-navbar.png"
+                  alt="Ravell"
+                  width={28}
+                  height={28}
+                  className="h-7 w-7 object-contain"
+                  priority
+                />
               </div>
               <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-900 rounded-full"></div>
             </div>
